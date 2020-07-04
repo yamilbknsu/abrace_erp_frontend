@@ -1,0 +1,55 @@
+:host > div{
+    margin-left: var(--card-inside-margin);
+    margin-right: var(--card-inside-margin);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+    border-top: solid 1px #CCC;
+    /*border-bottom: solid 1px #CCC;*/
+}
+
+:host > div:hover{
+    background-color: #EEE;
+}
+
+.left-side{
+    margin-left: 12px;
+    display: flex;
+    flex-direction: row;
+}
+
+.user-photo{
+    display: inline-block;
+    border-radius: 50%;
+    border: 1px solid #AAA;
+    background-color: #EEE;
+    height: 50px;
+    width: 50px;
+}
+
+.user-info{
+    margin-left: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.user-name{
+    font-family: 'Roboto';
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.user-email{
+    margin-top: 5px;
+    color: #999;
+    font-family: 'Roboto';
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.user-email:hover{
+    color: #000099;
+}

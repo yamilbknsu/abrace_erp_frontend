@@ -1,0 +1,33 @@
+:host > div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 12px;
+    margin-left: 12px;
+}
+
+#button-wrapper{
+    height: 43px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+#button-wrapper > button{
+    height: 100%;
+    width: 128px;
+    color: white;
+    background-color: #50A2FF;
+    
+    border: none;
+    border-radius: 20px;
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#button-wrapper > button:hover{
+    background-color: #5ea9ff;
+}
