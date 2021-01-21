@@ -1,0 +1,60 @@
+#global-wrapper{
+    width: 262px;
+    height: 100%;
+    background-color: white;
+
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    box-shadow: 1px 0px 6px 0px rgba(0,0,0,0.10);
+}
+
+.navbar-option{
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 16px;
+    margin-right: 14px;
+    margin-left: 14px;
+
+    font-family: 'Segoe UI Semibold';
+
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.navbar-option.selected{
+    color: #0099FF;
+    background-color: #DEF2FF;
+    border-radius: 12px;
+}
+
+.navbar-option.selected > *{
+    color: #0099FF;
+    background-color: #DEF2FF;
+    border-radius: 12px;
+
+    fill: #0099FF;
+}
+
+.navbar-icon{
+    width: 24px;
+    height: 24px;
+    margin-right: 13px;
+    fill: #91A8B0;
+}
+
+.back-button{
+    width: 23px;
+    height: 20px;
+    margin-left: 30px;
+    margin-top: 29px;
+    margin-bottom: 80px;
+
+    cursor: pointer;
+    fill: #91A8B0;
+    stroke: #91A8B0;
+    stroke-width: 2px;
+}

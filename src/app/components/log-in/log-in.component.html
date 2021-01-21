@@ -1,17 +1,20 @@
-<div>
-    <label for="username_input">Nombre de usuario</label>
-    <div class="icon-input">
-        <img src="assets/icon/icon_person.svg" alt="">
-        <input class="input-text" type="text" name="username_input"/>
-    </div>
+<div @onAppearStagger>
 
-    <label for="password_input">Contraseña</label>
-    <div class="icon-input">
-        <img src="assets/icon/icon_fingerprint.svg" alt="">
-        <input class="input-text" type="password" name="password_input"/>
-    </div>
+    <form action="submit">
+        <div class="icon-input">
+            <img src="assets/icon/icon_person.svg" alt="">
+            <input class="input-text-login" type="text" name="username_input" [(ngModel)]="username" placeholder="Nombre de usuario"/>
+        </div>
+        <div class="icon-input">
+            <img src="assets/icon/icon_fingerprint.svg" alt="">
+            <input class="input-text-login" type="password" name="password_input" [(ngModel)]="password" placeholder="Contraseña"/>
+        </div>
+    
+        <div id="button-wrapper">
+            <button @buttonCollapse *ngIf="!successful" id="submit-button" (click)='onClickLogin()'>ENTRAR</button>
+            <div @onSuccessAnimation id="green-bar" *ngIf="successful"><img src="assets/icon/check.svg" ></div>
+        </div>
+    </form>    
 
-    <div id="button-wrapper">
-        <button id="submit-button">ENTRAR</button>
-    </div>
+    <div @onErrorAnimation id="error" *ngIf="error.length > 0"><p>{{ error }}</p></div>
 </div>

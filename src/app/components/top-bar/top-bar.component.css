@@ -1,0 +1,44 @@
+#wrapper{
+    background-color: white;
+    height: 94px;
+
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#search-icon{
+    margin-left: 40px;
+    width:22px;
+    height: 22px;
+    fill: #91A8B0;
+}
+
+#user-id-panel{
+    margin-right: 45px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#user-icon{
+    width: 52px;
+    height: 52px;
+    background-color: white;
+    border-radius: 26px;
+    margin-left: 19px;
+
+    display: flex;
+    justify-items: center;
+    align-items: center;
+
+    box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.16);
+}
+
+#user-svg{
+    width: 20px;
+    height: 25px;
+    margin-left: 16px;
+    fill: #91A8B0;
+}
