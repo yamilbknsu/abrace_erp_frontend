@@ -1,5 +1,9 @@
 <div id="wrapper">
-    <div id="search-icon" [inlineSVG]="'assets/icon/buscar.svg'"></div>
+    <div class='flex-row'>
+        <div id="search-icon" [inlineSVG]="'assets/icon/buscar.svg'" style='margin-right: 10px;'></div>
+        <input type="text" style='border: none; border-bottom: solid 2px rgba(22, 90, 125, .48); border-radius: 1px;
+                                  padding-left: 5px;' [(ngModel)]='searchInput' (ngModelChange)='updateSearchService()'>
+    </div>
     <div id="user-id-panel">
         <p>{{displayname}}</p>
         <div id="user-icon">

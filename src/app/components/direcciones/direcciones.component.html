@@ -1,0 +1,72 @@
+<div id="wrapper">
+    <div id="top-panel">
+        <div id="title-panel">
+            <h2><span>Direcciones </span> <span style='color:#848484;'>{{statusText}}</span></h2>
+            <div id="new-direccion-button" *ngIf='direccionId$.value != "new"' (click)='newDireccion()'><div class="button-icon" [inlineSVG]="'assets/icon/lapiz.svg'"></div> Nueva Dirección</div>
+        </div>
+    </div>
+
+    <div class="flex-row" style='flex: 1; overflow: hidden;'>
+        <div class="flex-column" id='column-1'>
+            <div id="direcciones-list" class='scrolled-section'>        
+                <div [ngClass]="direccionesClass(direccion._id)" *ngFor="let direccion of direcciones$ | async | direccionSearch: searchText; index as i" (click)="onClickPropiedad(direccion._id)">
+                    <p>{{direccion.direccionStr}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex-column" id='column-2'>
+            <div class='flex-column' *ngIf="direccionId$.value != ''; else nodireccion" style='justify-content: space-between; flex:1;'>
+                <div class="flex-column" style='padding: 20px; justify-content: flex-start;'>
+                    <p class='section-subtitle'>Calle</p>
+                    <input type="text" [(ngModel)]='_direccion.calle' class='medium-margin-bottom'>
+
+                    <div class="flex-row">
+                        <div class="flex-column" style='flex:1; margin-right: 8px;'>
+                            <p class='section-subtitle'>Numero</p>
+                            <input type="text" [(ngModel)]='_direccion.numero' class='medium-margin-bottom'>
+                        </div>
+                        <div class="flex-column" style='flex:1;'>
+                            <p class='section-subtitle'>Departamento/Block</p>
+                            <input type="text" [(ngModel)]='_direccion.depto' class='medium-margin-bottom'>
+                        </div>
+                    </div>
+
+                    <p class='section-subtitle'>Comuna</p>
+                    <input type="text" [(ngModel)]='_direccion.comuna' class='medium-margin-bottom'>
+
+                    <p class='section-subtitle'>Ciudad</p>
+                    <input type="text" [(ngModel)]='_direccion.ciudad' class='medium-margin-bottom'>
+
+                    <p class='section-subtitle'>Región</p>
+                    <ng-select [items]="regiones$ | async"
+                               bindLabel='name'
+                               bindValue='name'
+                               [(ngModel)]="_direccion.region" class='medium-margin-bottom'>
+                    </ng-select>
+                </div>
+                
+                <div class="flex-row" style='padding: 25px; justify-content: space-between;'>
+                    <div class='red-button' (click)='onDeleteClicked()' *ngIf='direccionId$.value != "new"'>
+                        Eliminar
+                    </div>
+                    <div class="flex-row">
+                        <div class='grey-button' (click)='onBackClicked()'>
+                            Cancelar
+                        </div>
+                        <div class='green-button' style="margin-left: 12px;" (click)='onGuardarClicked()'>
+                            Guardar
+                        </div>
+                    </div>
+                </div>
+            </div>
+              
+            <ng-template #nodireccion>
+                <div class="flex-column" style='justify-content: center; align-items: center; flex: 1;'>
+                    <div class="no-direccion-text">
+                        Haz click en una dirección para ver y editar.
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

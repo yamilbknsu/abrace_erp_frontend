@@ -53,5 +53,6 @@
     background-color: rgb(230, 0, 0);
     font-weight: 500;
     color: white;
-    /*height: 38px;*/
+    padding-top: 15px;
+    padding-bottom: 15px;
 }

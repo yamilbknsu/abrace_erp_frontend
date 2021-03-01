@@ -1,4 +1,4 @@
-const {app, BrowserWindow} = require('electron')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const url = require("url");
 const path = require("path");
 
@@ -48,4 +48,18 @@ app.on('window-all-closed', function () {
 
 app.on('activate', function () {
   if (mainWindow === null) createWindow();
+});
+
+ipcMain.on('success-message', (event, args) => {
+  dialog.showMessageBox(args)
+});
+
+ipcMain.on('error-message', (event, args) => {
+  dialog.showErrorBox(args.title, args.message)
+});
+
+ipcMain.on('confirmation-message', (event, args) => {
+  dialog.showMessageBox(args).then((response, checkboxChecked) => {
+    mainWindow.webContents.send('confirmation-response', response.response);
+  })
 });

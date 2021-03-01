@@ -1,0 +1,36 @@
+<div id="wrapper" >
+    <div id="top-panel">
+        <div id="title-panel">
+            <h2><span>Personas </span> <span style='color:#848484;'>{{statusText}}</span></h2>
+            <div *ngIf='statusText == ""' id="new-propiedad-button" [routerLink]='"./edit"' [queryParams]="{id: 'new'}"><div class="button-icon" [inlineSVG]="'assets/icon/lapiz.svg'"></div> Nueva Persona</div>
+        </div>
+    </div>
+    <div style="position: relative; flex: 1; display: flex; flex-direction: row; overflow: hidden;">
+        <div *ngIf='statusText != ""' id='big-shadow'></div>
+        <div class='scrolled-section' id="card-section">
+            <div class='persona-card' *ngFor="let persona of personas$ | async | personaSearch: searchText">
+                <div class="flex-column icon-column"><div class="persona-icon" [inlineSVG]="'assets/icon/usuarioCirculo.svg'"></div></div>
+                <div class="flex-column content-column">
+                    <div class="flex-row space-between" style='align-items: center;'>
+                        <p class='card-title'>{{persona.nombre}}</p>
+                        <div [routerLink]='"./edit"' [queryParams]="{id: persona._id}" style='width: 20px; height: 20px; cursor: pointer;' [inlineSVG]="'assets/icon/lapiz_color.svg'"></div>
+                    </div>
+                    <p class='card-rut'>{{persona.rut}}-{{persona.dv}}</p>
+                    <div style='margin-top: 8px;'>
+                        <p class='card-content'>{{persona.telefonos[0]}}</p>
+                        <p class='card-content'>{{persona.emails[0]}}</p>
+                    </div>
+                    <div style='margin-top: 5px;'>
+                        <p class='card-content'>{{persona.dirParticularStr}}</p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <router-outlet></router-outlet>
+    </div>
+    
+
+
+    
+</div>

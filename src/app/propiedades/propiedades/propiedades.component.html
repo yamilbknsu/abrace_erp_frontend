@@ -1,0 +1,46 @@
+<div id="wrapper">
+    <div id="top-panel">
+        <div id="title-panel">
+            <h2><span>Propiedades </span> <span style='color:#848484;'>{{statusText}}</span></h2>
+            <div *ngIf="idEditing=='0'" id="new-propiedad-button" [routerLink]='"./edit"' [queryParams]="{id: 'new'}"><div class="button-icon" [inlineSVG]="'assets/icon/lapiz.svg'"></div> Nueva Propiedad</div>
+        </div>
+        <div id="table-titles">
+            <p style='flex:1; margin-right: 7px;'>Código</p>
+            <p style='flex:3; margin-right: 10px;'>Dirección</p>
+            <p style='flex:3; margin-right: 10px;'>Mandante</p>
+            <p style='flex:3; margin-right: 10px;'>Arrendatario</p>
+            <p style='flex:2.5; margin-right: 10px;'>Estado</p>
+            <div style='margin-top: 12px; margin-right: 29px;' [inlineSVG]="'assets/icon/Sort.svg'"></div>
+        </div>
+    </div>
+    <div id="propiedades-list" [ngClass]='{"scrolled-section": idEditing == "0"}'>        
+        <div [ngClass]="propiedadesClass(i)" *ngFor="let prop of propiedades$ | async | idPropiedad:idEditing | propiedadSearch: searchText; index as i  ">
+            <p style='flex:1; margin-right: 10px;'>{{prop.uId}}</p>
+            <p style='flex:3; margin-right: 10px;'>{{prop.direccionStr}}</p>
+            <div class='flex-row persona-field' style='flex:3; margin-right: 10px; max-width: 270px;'><div class="persona-icon" [inlineSVG]="'assets/icon/usuarioCirculo.svg'"></div> <p class='ellipsis-text'>{{prop.mandanteData.nombre}}</p>
+                                                                                    <div class='persona-card'>
+                                                                                        <p class='title'>{{prop.mandanteData.nombre}}</p>
+                                                                                        <p class='rut'>{{prop.mandanteData.rut}} - {{prop.mandanteData.dv}}</p>
+                                                                                        <div class="flex-row general"><div style='width: 10px; margin-right: 5px;' [inlineSVG]="'assets/icon/triangule.svg'"></div><p>{{prop.mandanteData.telefonos[0]}}</p></div>
+                                                                                        <div class="flex-row general"><div style='width: 10px; margin-right: 5px;' [inlineSVG]="'assets/icon/triangule.svg'"></div><p>{{prop.mandanteData.emails[0]}}</p></div>
+                                                                                    </div>
+                                                                                </div>
+            <p style='flex:3; margin-right: 10px;'>{{prop.arrendatario}}</p>
+            <p style='flex:2.5; margin-right: 10px;'>Estado</p>
+            <div (click)="dotMenuClicked(i)" class='dot-menu' style='margin-right: 29px; width: 21px; cursor:pointer;' [inlineSVG]="'assets/icon/Menu.svg'"></div>
+            <div style="position: relative; width: 0; height: 0">
+                <div class="menu-box">
+                    <ul>
+                        <li style="float: right; font-size: 20px; margin-right: 20px; margin-top: -15px;" (click)="indexSelected = -1;">x</li>
+                        <li [routerLink]='"./mandato"' [queryParams]="{id: prop._id}"><div style='width: 21px; display: inline-block;' [inlineSVG]="'assets/icon/key.svg'"></div>Ver mandatos</li>
+                        <li><div style='width: 21px; display: inline-block;' ></div>Nuevo contrato</li>
+                        <li><div style='width: 21px; display: inline-block;' ></div>Ver último contrato activo</li>
+                        <li [routerLink]='"./edit"' [queryParams]="{id: prop._id}"><div style='width: 21px; display: inline-block;' [inlineSVG]="'assets/icon/lapiz_color.svg'"></div>Editar propiedad</li>
+                        <li (click)='deletePropiedad(prop._id)'><div style='width: 21px; display: inline-block; fill: black;' [inlineSVG]="'assets/icon/delete.svg'"></div>Eliminar propiedad</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <router-outlet></router-outlet>
+</div>

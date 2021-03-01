@@ -1,0 +1,63 @@
+<div class="flex-column" id="wrapper">
+    <p class="title">{{TitleText}} Persona</p>
+    <div class="flex-row">
+        <div class="flex-column" style='width: 326px;'>
+            <p class="section-subtitle">Nombre</p>
+            <input type="text" [(ngModel)]='_persona.nombre' class='medium-margin-bottom'>
+            
+            <p class="section-subtitle">Rut</p>
+            <div class="flex-row" style='align-items: center; width: 326px;'>
+                <input type="text" [(ngModel)]='_persona.rut' class='medium-margin-bottom'>
+                <p style="margin-left: 10px; margin-right: 10px;"> - </p>
+                <input type="text" [(ngModel)]='_persona.dv' class='medium-margin-bottom'>
+            </div>
+
+            <p class="section-subtitle">Actividad</p>
+            <input type="text" [(ngModel)]='_persona.actividad' class='medium-margin-bottom'>
+
+            <p class="section-subtitle">Empresa</p>
+            <input type="text" [(ngModel)]='_persona.empresa' class='medium-margin-bottom'>
+            
+            <p class="section-subtitle">Cargo</p>
+            <input type="text" [(ngModel)]='_persona.cargo' class='medium-margin-bottom'>
+            
+            <p class="section-subtitle">Direccion Particular</p>
+            <ng-select [items]="direcciones$ | async" 
+                        bindLabel="direccionStr" 
+                        bindValue="_id"
+                        [(ngModel)]="_persona.dirParticular"
+                        (ngModelChange)='dirParticularId$.next(_persona.dirParticular)'
+                        [clearable]='true'
+                        class='medium-margin-bottom'>
+            </ng-select>
+
+            <p class="section-subtitle">Direccion Comercial</p>
+            <ng-select [items]="direcciones$ | async" 
+                        bindLabel="direccionStr" 
+                        bindValue="_id"
+                        [(ngModel)]="_persona.dirComercial"
+                        (ngModelChange)='dirComercialId$.next(_persona.dirComercial)'
+                        [clearable]='true'
+                        class='medium-margin-bottom'>
+            </ng-select>
+        </div>
+        <div class="flex-column"  style='margin-left: 21px;'>
+            <p class="section-subtitle">Teléfonos</p>
+            <app-multi-item-box [items]='_persona.telefonos' (updateArray)='updateTelefonos($event)' class='medium-margin-bottom'></app-multi-item-box>
+
+            <p class="section-subtitle">Emails</p>
+            <app-multi-item-box [items]='_persona.emails' (updateArray)='updateEmails($event)' class='medium-margin-bottom'></app-multi-item-box>
+        </div>
+    </div>
+    <div class="flex-row space-between" style='margin-top: 25px;'>
+        <div class='grey-button' (click)='onBackClicked()'>
+            Cancelar
+        </div>
+        <div *ngIf='!newPerson' class='red-button' (click)='onDeleteClicked()'>
+            Eliminar
+        </div>
+        <div class='green-button' style="margin-left: 12px;" (click)='onGuardarClicked()'> 
+            Guardar
+        </div>
+    </div>
+</div>

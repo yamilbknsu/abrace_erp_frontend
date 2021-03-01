@@ -1,4 +1,26 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+@import "~@ng-select/ng-select/themes/default.theme.css";
+
+@font-face {
+    font-family: bloggersans;
+    src: url(assets/fonts/Blogger-Sans.otf) format("opentype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: bloggersans;
+    src: url(assets/fonts/Blogger-Sans-Bold.otf) format("opentype");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: bloggersans;
+    src: url(assets/fonts/Blogger-Sans-Italic.otf) format("opentype");
+    font-weight: bold;
+    font-style: italic;
+}
 
 /* Global CSS */
 
@@ -23,6 +45,10 @@ app-users-view{
     display: flex;
     flex-direction: column;
     max-height: 100%;
+}
+
+p{
+    margin: 0;
 }
 
 /* Shortcuts */
@@ -50,24 +76,6 @@ app-users-view{
     flex: 1;
     display: flex;
     flex-direction: column;
-}
-
-.scroller{
-    overflow: auto;
-    flex:1;
-    margin-bottom: 12px;
-}
-
-.scroller::-webkit-scrollbar {
-    width: 8px;
-}
-.scroller::-webkit-scrollbar-track {
-    border-radius: 10px;
-    background-color: #DDD;
-}
-.scroller::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-color: #AAA;
 }
 
 .icon-input{
@@ -112,6 +120,27 @@ h2{
     font-weight: 400;
 }
 
+ng-select{
+    min-width: 20px;
+}
+
+.big-margin-bottom{
+    margin-bottom: 20px;
+}
+
+.medium-margin-bottom{
+    margin-bottom: 15px;
+}
+
+.small-margin-bottom{
+    margin-bottom: 10px;
+}
+
+.medium-margin-right{
+    margin-right: 10px;
+
+}
+
 /* Section elements */
 /************************/
 
@@ -120,6 +149,8 @@ h2{
     font-size: 17px;
     font-weight: 700;
     color: #585858;
+
+    margin-bottom: 8px;
 }
 
 .section-subtitle{
@@ -128,7 +159,21 @@ h2{
     font-weight: 700;
     color: #585858;
     
-    margin-top: 5px;
+    /*margin-top: 5px;*/
+    margin-bottom: 5px;
+}
+
+.section-subtitle-disabled{
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 13px;
+    color: #B5B5B5;
+    margin-bottom: 5px;
+}
+
+.section-subtitle-small{
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 13px;
+    color: #585858;
     margin-bottom: 5px;
 }
 
@@ -138,6 +183,28 @@ h2{
 
     font-size: 14px;
     font-weight: 400;
+}
+
+.title{
+    font-weight: 600;
+    font-size: 30px;
+    color: #585858;
+
+    margin-bottom: 15px;
+}
+
+.inner-wrapper{
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-bottom: 19px;
+    margin-top: 19px;
+}
+
+.inner-wrapper-small{
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-bottom: 20px;
+    margin-top: 15px;
 }
 
 
@@ -152,6 +219,8 @@ input[type=text]:not(.input-text-login){
     border-radius: 4px;
     padding-left: 12px;
     color: #585858;
+
+    min-width: 0px;
 }
 
 input:focus, textarea:focus, select:focus{
@@ -163,6 +232,41 @@ input:focus, textarea:focus, select:focus{
     font-size: 16px;
     cursor: pointer;
 }
+
+.undecorated{
+    text-decoration: none;
+    outline: none;
+}
+
+a.undecorated{
+    color: black;
+}
+
+.scrolled-section{
+    overflow-y: auto;
+}
+
+ /* width */
+ ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: rgba(140,140,140,0);
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgb(172, 172, 172);
+    border-radius: 5px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  } 
 
 /* Custom forms elements */
 /*************************/
@@ -180,13 +284,21 @@ input:focus, textarea:focus, select:focus{
     color: #555;
 }
 
+ng-select > div{
+    max-height: 100%;
+}
+
+.ng-select{
+    min-height: 0px;
+}
+
 /* Custom Buttons */
 /******************/
 
 .red-button{
     background-color: #FF4040;
-    border-radius: 10px;
-    font-weight: 700;
+    /*border-radius: 10px;*/
+    font-weight: 500;
     color: white;
     padding-left: 12px;
     padding-right: 12px;
@@ -194,12 +306,19 @@ input:focus, textarea:focus, select:focus{
     line-height: 41px;
     display: inline-block;
     box-shadow: 0px 5px 10px -6px rgba(140,140,140,1);
+
+    cursor: pointer;
+}
+
+.red-button:hover{
+    background-color: #fa6c6c;
+
 }
 
 .grey-button{
     background-color: #EEEEEE;
-    border-radius: 10px;
-    font-weight: 700;
+    /*border-radius: 10px;*/
+    font-weight: 500;
     color: #818181;
     padding-left: 12px;
     padding-right: 12px;
@@ -209,12 +328,18 @@ input:focus, textarea:focus, select:focus{
     box-shadow: 0px 5px 10px -6px rgba(140,140,140,1);
     padding-right: 22px;
     padding-left: 22px;
+
+    cursor: pointer;
+}
+
+.grey-button:hover{
+    background-color: #FEFEFE;
 }
 
 .green-button{
     background-color: #1FDE0A;
-    border-radius: 10px;
-    font-weight: 700;
+    /*border-radius: 10px;*/
+    font-weight: 500;
     color: white;
     padding-left: 12px;
     padding-right: 12px;
@@ -224,4 +349,30 @@ input:focus, textarea:focus, select:focus{
     box-shadow: 0px 5px 10px -6px rgba(140,140,140,1);
     padding-right: 22px;
     padding-left: 22px;
+
+    cursor: pointer;
+}
+
+.green-button:hover{
+    background-color: #48f035;
+}
+
+.orange-button{
+    background-color: #E6AF19;
+    /*border-radius: 10px;*/
+    font-weight: 500;
+    color: white;
+    padding-left: 12px;
+    padding-right: 12px;
+
+    line-height: 35px;
+    display: inline-block;
+    padding-right: 22px;
+    padding-left: 22px;
+
+    cursor: pointer;
+}
+
+.orange-button:hover{
+    background-color: #ca9a14;
 }

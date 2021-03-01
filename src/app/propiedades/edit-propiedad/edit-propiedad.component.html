@@ -1,0 +1,234 @@
+<div id='wrapper-edit' *ngIf='propiedad != undefined'  class='inner-wrapper'>
+    <div id="columns">
+        <div id='column-1' class="flex-column space-between">
+            <div>
+                <p class='section-title'>Código</p>
+                <input size="10" type="text" [(ngModel)]='_propiedad.uId'>                
+            </div>
+            <div>
+                <div class="flex-row space-between">
+                    <p class='section-title'>Dirección</p>
+
+                    <p class='clickable-text' *ngIf='_propiedad.direccion != ""' [routerLink]='"/main-view/direccion"' [queryParams]="{id: _propiedad.direccion}">Editar dirección</p>
+                    <p class='clickable-text' *ngIf='_propiedad.direccion == ""' [routerLink]='"/main-view/direccion"' [queryParams]="{id: 'new'}">Nueva dirección</p>
+                </div>
+                <div class="flex-column">
+                    <!-- <input type="text" [(ngModel)]='propiedad.direccionStr'> -->
+                    <div class="flex-row big-margin-bottom">
+                        <ng-select [items]="direcciones$ | async" 
+                                   bindLabel="direccionStr" 
+                                   bindValue="_id"
+                                   [(ngModel)]="_propiedad.direccion"
+                                   (ngModelChange)='direccionId$.next(_propiedad.direccion)'
+                                   [clearable]='false'
+                                   style='min-width: 325px;'>
+                        </ng-select>
+                    </div>
+
+                    <div *ngIf='_propiedad.direccion !=""' class="flex-row space-between">
+                        <div class="flex-column space-between">
+                            <div class="flex-column">
+                                <p class='section-subtitle'>Calle</p>
+                                <p class='section-content'>{{ direccion.calle }}</p>
+                            </div>
+                            <div class="flex-column">
+                                <p class='section-subtitle'>Casa / depto</p>
+                                <p class='section-content'>{{ direccion.depto }}</p>
+                            </div>
+                            <div class="flex-column">
+                                <p class='section-subtitle'>Ciudad</p>                            
+                                <p class='section-content'>{{ direccion.ciudad }}</p>
+                            </div>
+                        </div>
+                        <div class="flex-column space-between">
+                            <div style='display: flex; flex-direction: column;'>
+                                <p class='section-subtitle'>Numero</p>
+                                <p class='section-content'>{{ direccion.numero }}</p>
+                            </div>
+                            <div style='display: flex; flex-direction: column;'>
+                                <p class='section-subtitle'>Comuna</p>
+                                <p class='section-content'>{{ direccion.comuna }}</p>
+                            </div> 
+                            <div style='display: flex; flex-direction: column;'>
+                                <p class='section-subtitle'>Región</p>
+                                <p class='section-content'>{{ direccion.region }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div style='display: flex; flex-direction: row;'>
+                    <div style='display: flex; flex-direction: column; flex: 1;'>
+                        <p class='section-title'>Rol SII</p>
+                        <input type="text" [(ngModel)]='_propiedad.rolsii'>
+                    </div>
+                    <div style='display: flex; flex-direction: column; align-items: center; flex: 1;'>
+                        <p class='section-title'>Arrendada</p>
+                        <input type="checkbox" [(ngModel)]="_propiedad.arrendada">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id='column-2' class="flex-column space-between">
+            <div class="flex-column" style='flex:1;'>
+                <div class="flex-row space-between">
+                    <p class='section-title'>Mandante</p>
+                    <!-- <p class='clickable-text' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: _propiedad.mandante}">Editar Persona</p> -->
+                    <p class='clickable-text' *ngIf='_propiedad.mandante != ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: _propiedad.mandante}">Editar persona</p>
+                    <p class='clickable-text' *ngIf='_propiedad.mandante == ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: 'new'}">Nueva persona</p>
+                </div>
+                
+                <ng-select [items]="personas$ | async" 
+                        bindLabel="nombre" 
+                        bindValue="_id"
+                        [(ngModel)]="_propiedad.mandante"
+                        (ngModelChange)='mandanteId$.next(_propiedad.mandante)'>
+                </ng-select>
+
+                <div class="flex-column" style='justify-content: center; flex: 1;'>
+                    <div *ngIf='_propiedad.mandante !="" && _propiedad.mandante != null' class="flex-row space-between">
+                        <div class="flex-column space-between">
+                            <div class="flex-column">
+                                <p class='section-subtitle'>Rut</p>
+                                <p class='section-content'>{{ mandante.rut }} - {{ mandante.dv }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf='_propiedad.mandante !="" && _propiedad.mandante != null' style='display: flex; flex-direction: row; justify-content: space-between;'>
+                        <div style='display: flex; flex-direction: column;'>
+                            <p class='section-subtitle'>Telefonos</p>                            
+                            <p *ngFor="let telefono of mandante.telefonos" class='section-content'>{{ telefono }}</p>
+                        </div>
+                        <div style='display: flex; flex-direction: column;'>
+                            <p class='section-subtitle'>Emails</p>                            
+                            <p *ngFor="let email of mandante.emails" class='section-content'>{{ email }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex-column" style='flex:1;'>
+                <div style='display: flex; flex-direction: row; justify-content: space-between;'>
+                    <p class='section-title'>Administrador</p>
+                    <!-- <p class='clickable-text' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: _propiedad.administrador}">Editar Persona</p> -->
+                    
+                    <p class='clickable-text' *ngIf='_propiedad.administrador != ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: _propiedad.administrador}">Editar persona</p>
+                    <p class='clickable-text' *ngIf='_propiedad.administrador == ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: 'new'}">Nueva persona</p>
+                </div>
+    
+                <ng-select [items]="personas$ | async" 
+                        bindLabel="nombre" 
+                        bindValue="_id"
+                        [(ngModel)]="_propiedad.administrador"
+                        (ngModelChange)='administradorId$.next(_propiedad.administrador)'>
+                </ng-select>
+                
+                <div class="flex-column" style='justify-content: center; flex: 1;'>
+                    <div *ngIf='_propiedad.administrador !=""  && _propiedad.administrador != null' style='display: flex; flex-direction: row; justify-content: space-between;'>
+                        <div style='display: flex; flex-direction: column; justify-content: space-between;'>
+                            <div style='display: flex; flex-direction: column;'>
+                                <p class='section-subtitle'>Rut</p>
+                                <p class='section-content'>{{ administrador.rut }} - {{ administrador.dv }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf='_propiedad.administrador != "" && _propiedad.administrador != null' style='display: flex; flex-direction: row; justify-content: space-between;'>
+                        <div style='display: flex; flex-direction: column;'>
+                            <p class='section-subtitle'>Telefonos</p>                            
+                            <p *ngFor="let telefono of administrador.telefonos" class='section-content'>{{ telefono }}</p>
+                        </div>
+                        <div style='display: flex; flex-direction: column;'>
+                            <p class='section-subtitle'>Emails</p>                            
+                            <p *ngFor="let email of administrador.emails" class='section-content'>{{ email }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+        </div>
+
+        <div id='column-3' class="flex-column">
+            <p class='section-title'>Características</p>
+            
+            <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                <div style="display: flex; flex-direction: column; margin-right: 33px; flex: 1;">
+                    <p class='section-subtitle'>Año edificación</p>
+                    <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.anoedificacion' (ngModelChange)='print()'>
+
+                    <p class='section-subtitle'>Mts2 construidos</p>
+                    <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.mtsconstruidos'>
+                    
+                    <p class='section-subtitle'>Habitaciones</p>
+                    <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.habitaciones'>
+
+                    <p class='section-subtitle'>Salas</p>
+                    <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.salas'>
+
+                    <p class='section-subtitle'>Piezas servicio</p>
+                    <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.piezasservicio'>
+
+                    <p class='section-subtitle'>Estacionamientos</p>
+                    <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.estacionamientos'>
+
+                    <p class='section-subtitle'>Otros</p>
+                    <input size="10" type="text" [(ngModel)]='_propiedad.caracteristicas.otros'>
+                </div>
+                <div style="display: flex; flex-direction: column; flex: 1;">
+                    <p class='section-subtitle'>Mts2 terreno</p>
+                    <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.mtsterreno'>
+
+                    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                        <div style="display: flex; flex-direction: column;">
+                            <p class='section-subtitle'>Pisos</p>
+                            <input size="3" type="text" [(ngModel)]='_propiedad.caracteristicas.pisos'>
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                            <p class='section-subtitle'>Baños</p>
+                            <input size="3" type="text" [(ngModel)]='_propiedad.caracteristicas.banos'>
+                        </div>
+                    </div>
+                    
+                    <p class='section-subtitle'>Comedores</p>
+                    <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.comedores'>
+
+                    <p class='section-subtitle'>Living comedor</p>
+                    <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.livcomedor'>
+
+                    <p class='section-subtitle'>Baños servicio</p>
+                    <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.banosservicio'>
+
+                    <p class='section-subtitle'>Bodegas</p>
+                    <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.bodegas'>
+
+                    <div style='display: flex; flex-direction: column; align-items: center; flex: 1;'>
+                        <p class='section-subtitle'>Ascensor</p>
+                        <input type="checkbox" [(ngModel)]='_propiedad.caracteristicas.ascensor'>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="bottom-row" style="margin-top: 26px;">
+        <div style='flex: 1;'>
+            <div class='red-button'>
+                Eliminar propiedad
+            </div>
+        </div>
+        <div class='flex-row' style='flex: 2; justify-content: space-around;'>
+            <div class='grey-button' [routerLink]='"../mandato"' [queryParams]="{id: _propiedad._id}">
+                Ver mandato
+            </div>
+        </div>
+        <div class='flex-row' style='flex: 1; justify-content: flex-end;'>
+            <div class='grey-button' (click)='onBackClicked()'>
+                Cancelar
+            </div>
+            <div class='green-button' style="margin-left: 12px;" (click)='onGuardarClicked()'>
+                Guardar
+            </div>
+        </div>
+    </div>
+</div>

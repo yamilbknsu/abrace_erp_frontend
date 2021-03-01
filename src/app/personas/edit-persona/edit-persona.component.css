@@ -1,0 +1,11 @@
+:host(){
+    z-index: 99;
+    flex: 1;
+    display: flex;
+}
+
+#wrapper{
+    background-color: #F9F9F9;
+    flex: 1;
+    padding: 21px 26px 0px 29px;
+}

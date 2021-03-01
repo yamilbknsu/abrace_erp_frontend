@@ -19,4 +19,21 @@ export class QueryService {
     return this.http.get<any>(`${AppSettings.API_ENDPOINT}${action}/${collection}${queryParams}`)
   }
 
+  executePostQuery(action: string, collection: string, body, params){
+    var queryParams = '?' + Object.keys(params).map(function(key) {
+      return key + '=' + params[key];
+    }).join('&');
+
+    return this.http.post<any>(`${AppSettings.API_ENDPOINT}${action}/${collection}${queryParams}`, body);
+  }
+
+  executeDeleteQuery(action: string, collection: string, body, params){
+    var queryParams = '?' + Object.keys(params).map(function(key) {
+      return key + '=' + params[key];
+    }).join('&');
+
+    return this.http.delete<any>(`${AppSettings.API_ENDPOINT}${action}/${collection}${queryParams}`, body);
+  }
+
+
 }

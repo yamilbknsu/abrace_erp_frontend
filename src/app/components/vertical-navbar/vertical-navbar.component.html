@@ -1,8 +1,7 @@
 <div id="global-wrapper">
-    <div class="back-button" [inlineSVG]="'assets/icon/flecha.svg'"></div>
-    <div class="navbar-option"><div class="navbar-icon" [inlineSVG]="'assets/icon/buscar.svg'"></div> Consulta General</div>
-    <div class="navbar-option selected"><div class="navbar-icon" [inlineSVG]="'assets/icon/casa.svg'"></div> Propiedades</div>
-    <div class="navbar-option"><div class="navbar-icon" [inlineSVG]="'assets/icon/carpeta.svg'"></div> Personas</div>
-    <div class="navbar-option"><div class="navbar-icon" [inlineSVG]="'assets/icon/noticias.svg'"></div> Informes</div>
-    <div class="navbar-option"><div class="navbar-icon" [inlineSVG]="'assets/icon/config.svg'"></div> Parámetros</div>
+    <div class="back-button" [inlineSVG]="'assets/icon/flecha.svg'" (click)='onBackClicked()'></div>
+    <div class="navbar-option undecorated" routerLinkActive="selected" [routerLinkActiveOptions]="{exact: false}" [routerLink]='option.route'
+         *ngFor='let option of options'>
+        <div class="navbar-icon undecorated" [inlineSVG]='option.svgDir' [routerLink]='option.route'></div> <a class="undecorated" [routerLink]='option.route'>{{ option.displayName }}</a>
+    </div>
 </div>

@@ -11,10 +11,12 @@ import { LogInComponent } from './components/log-in/log-in.component';
 import { LogInScreenComponent } from './components/log-in-screen/log-in-screen.component';
 import { AuthTokenIntercerptorService } from './services/auth-token-intercerptor.service';
 import { MainViewComponent } from './components/main-view/main-view.component';
-import { PropiedadesComponent } from './components/propiedades/propiedades.component';
 import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-navbar.component';
 import { TopBarComponent } from './components/top-bar/top-bar.component';
-import { EditPropiedadComponent } from './components/edit-propiedad/edit-propiedad.component';
+import { GUIModule } from './gui/gui.module';
+import { DireccionesComponent } from './components/direcciones/direcciones.component';
+import { direccionSearchPipe } from './components/direcciones/direccion-search-filter.service';
+
 
 @NgModule({
   declarations: [
@@ -22,10 +24,10 @@ import { EditPropiedadComponent } from './components/edit-propiedad/edit-propied
     LogInComponent,
     LogInScreenComponent,
     MainViewComponent,
-    PropiedadesComponent,
     VerticalNavbarComponent,
     TopBarComponent,
-    EditPropiedadComponent
+    DireccionesComponent,
+    direccionSearchPipe
   ],
   imports: [
     BrowserModule,
@@ -33,7 +35,8 @@ import { EditPropiedadComponent } from './components/edit-propiedad/edit-propied
     HttpClientModule,
     FormsModule,
     BrowserAnimationsModule,
-    InlineSVGModule
+    InlineSVGModule,
+    GUIModule
   ],
   providers: [
     {

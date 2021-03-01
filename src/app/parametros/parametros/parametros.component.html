@@ -1,0 +1,18 @@
+<div id="wrapper">
+    <div id="top-panel">
+        <div id="title-panel">
+            <h2><span>Parámetros </span> <span style='color:#848484;'>{{statusText}}</span></h2>
+        </div>
+    </div>
+    <div class="flex-row" style='flex: 1;'>
+        <div id="parametros-list" class='scrolled-section'>        
+            <div class='parametros-item' *ngFor="let parametro of parametros; index as i" [routerLink]='parametro.path'>
+                {{ parametro.nombre }}
+            </div>
+        </div>
+        <div *ngIf='noSelected' id='values-placeholder'>
+            <p>Haz click en un parámetro para ver y editar</p>
+        </div>
+        <router-outlet></router-outlet>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+:host{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 2;
+}
+
+#wrapper-edit{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+#columns{
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    justify-content: space-between;
+}
+
+#column-1{
+    flex: 1;
+    margin-right: 72px;
+    max-width: 325px;
+}
+
+#column-2{
+    flex: 1;
+    margin-right: 72px;
+    max-width: 400px;
+}
+
+#column-3{
+    flex: 1;
+    align-content: flex-end;
+    max-width: 325px;
+}
+
+#bottom-row{
+    display: flex;
+    flex-direction: row;
+}
