@@ -4,6 +4,7 @@ import { DropdownComponent } from './dropdown/dropdown.component';
 import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MultiItemBoxComponent } from './multi-item-box/multi-item-box.component';
+import {DpDatePickerModule} from 'ng2-date-picker';
 
 
 
@@ -12,8 +13,9 @@ import { MultiItemBoxComponent } from './multi-item-box/multi-item-box.component
   imports: [
     CommonModule,
     FormsModule,
-    NgSelectModule
+    NgSelectModule,
+    DpDatePickerModule
   ],
-  exports: [DropdownComponent, NgSelectModule, MultiItemBoxComponent]
+  exports: [DropdownComponent, NgSelectModule, MultiItemBoxComponent, DpDatePickerModule]
 })
 export class GUIModule { }

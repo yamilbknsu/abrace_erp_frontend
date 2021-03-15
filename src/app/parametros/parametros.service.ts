@@ -15,6 +15,7 @@ export class ParametrosService {
   regionesObject$: BehaviorSubject<Parametro> = new BehaviorSubject<Parametro>(new Parametro());
 
   formasPago$: BehaviorSubject<Array<string>> = new BehaviorSubject<Array<string>>([]);
+  funcionComision$: BehaviorSubject<Array<string>> = new BehaviorSubject<Array<string>>([]);
 
   constructor(private queryService: QueryService, private router: Router,
               private toastService: ToastService) { }
@@ -37,6 +38,12 @@ export class ParametrosService {
   loadFormasPagoFromBackend(){
     this.loadParametroFromBackend("formaspago").subscribe(res => {
       this.formasPago$.next(res[0].values[0].attributes.sort())
+    });
+  }
+
+  loadFormasFuncionComisionFromBackend(){
+    this.loadParametroFromBackend("funcioncomision").subscribe(res => {
+      this.funcionComision$.next(res[0].values[0].attributes.sort())
     });
   }
   

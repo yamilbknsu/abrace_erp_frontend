@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { EditContratoComponent } from './edit-contrato/edit-contrato.component';
 import { EditMandatoComponent } from './edit-mandato/edit-mandato.component';
 import { EditPropiedadComponent } from './edit-propiedad/edit-propiedad.component';
 import { PropiedadesIdResolverService } from './propiedades-id-resolver.service';
@@ -21,6 +22,13 @@ const routes: Routes = [
         component: EditMandatoComponent,
         resolve: {
           propiedad: PropiedadesIdResolverService
+        }
+      },
+      {
+        path: 'contrato',
+        component:EditContratoComponent,
+        resolve: {
+          
         }
       }
     ]

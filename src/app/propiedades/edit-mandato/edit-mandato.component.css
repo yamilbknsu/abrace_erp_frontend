@@ -65,3 +65,7 @@ textarea{
 .historial-item.selected{
     background-color: #F2F5FF;
 }
+
+.historial-item:hover{
+    background-color: #eaefff;
+}

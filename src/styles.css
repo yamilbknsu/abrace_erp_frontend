@@ -336,6 +336,13 @@ ng-select > div{
     background-color: #FEFEFE;
 }
 
+.grey-button.small{
+    line-height: 30px;
+    font-weight: 400;
+    box-shadow: none;
+    border: 1px solid #DDD;
+}
+
 .green-button{
     background-color: #1FDE0A;
     /*border-radius: 10px;*/

@@ -9,8 +9,8 @@
                 <div class="flex-row space-between">
                     <p class='section-title'>Dirección</p>
 
-                    <p class='clickable-text' *ngIf='_propiedad.direccion != ""' [routerLink]='"/main-view/direccion"' [queryParams]="{id: _propiedad.direccion}">Editar dirección</p>
-                    <p class='clickable-text' *ngIf='_propiedad.direccion == ""' [routerLink]='"/main-view/direccion"' [queryParams]="{id: 'new'}">Nueva dirección</p>
+                    <p class='clickable-text' *ngIf='_propiedad.direccion != "" || _propiedad.direccion' [routerLink]='"/main-view/direccion"' [queryParams]="{id: _propiedad.direccion}">Editar dirección</p>
+                    <p class='clickable-text' *ngIf='_propiedad.direccion == "" || !_propiedad.direccion' [routerLink]='"/main-view/direccion"' [queryParams]="{id: 'new'}">Nueva dirección</p>
                 </div>
                 <div class="flex-column">
                     <!-- <input type="text" [(ngModel)]='propiedad.direccionStr'> -->

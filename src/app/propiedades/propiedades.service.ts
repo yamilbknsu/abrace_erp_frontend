@@ -138,6 +138,31 @@ export class PropiedadesService {
     return result;
   }
 
+  updateMandato$(mandato): Observable<any>{
+    // Get an Observable from the response of the backend
+    return this.queryService.executePostQuery('update', 'mandatos', this.cleanMandato(mandato), {id: mandato._id}).pipe(
+
+      // Catch a Forbidden acces error (return to login).
+      catchError(err => {
+        if (err.status == 403){
+          this.toastService.error('No tienes permiso para realizar esta acción.')
+        }else{
+          console.log(err)
+          var message = err.status + ' ';
+          if (err.error)
+             message += (err.error.details ? err.error.details[0].message: err.error);
+          this.toastService.error('Error desconocido. ' + message)
+
+        }
+        return EMPTY;
+      })
+    )
+  }
+
+  cleanMandato(mandato){
+    return mandato;
+  }
+
 }
 
 

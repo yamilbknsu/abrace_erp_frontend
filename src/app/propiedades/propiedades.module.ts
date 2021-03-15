@@ -10,13 +10,15 @@ import { EditPropiedadComponent } from './edit-propiedad/edit-propiedad.componen
 import { GUIModule } from '../gui/gui.module';
 import { propiedadSearchPipe } from './propiedad-search-filter.pipe';
 import { EditMandatoComponent } from './edit-mandato/edit-mandato.component';
+import { EditContratoComponent } from './edit-contrato/edit-contrato.component';
 
 @NgModule({
   declarations: [PropiedadesComponent,
                  EditPropiedadComponent,
                  idPropiedadPipe,
                  propiedadSearchPipe,
-                 EditMandatoComponent],
+                 EditMandatoComponent,
+                 EditContratoComponent],
   imports: [
     CommonModule,
     PropiedadesRoutingModule,

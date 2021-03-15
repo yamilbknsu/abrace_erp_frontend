@@ -1,15 +1,15 @@
 <div id="main" class='inner-wrapper-small'>
     <div class="flex-column" style='flex: 1; overflow: hidden;'>
-        <div *ngIf='mandatoSelected; else NoMandatos' class='flex-row' style='flex: 1; overflow: hidden;'>
+        <div *ngIf='mandatoSelected._id != ""; else NoMandatos' class='flex-row' style='flex: 1; overflow: hidden;'>
             <div class='flex-column' id="column-1" style='flex:1; justify-content: space-evenly;'>
                 <div class="flex-row">
                     <div class="flex-column medium-margin-right" style='flex:1;'>
                         <p class='section-subtitle-disabled'>Fecha inicio</p>
-                        <input type="text" [(ngModel)]='mandatoSelected.fechaInicio'>
+                        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [displayDate]='inicioDisplay' [(ngModel)]='inicioPlaceholder' (ngModelChange)='updateInicio()'></dp-date-picker>
                     </div>
                     <div class="flex-column" style='flex:1;'>
                         <p class='section-subtitle-disabled'>Fecha termino</p>
-                        <input type="text" [(ngModel)]='mandatoSelected.fechaTermino'>
+                        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='terminoPlaceholder' (ngModelChange)='updateTermino()'></dp-date-picker>
                     </div>
                 </div>
                 
@@ -19,8 +19,14 @@
                         <div class="flex-column">
                             <p class="section-subtitle-small" style='margin-bottom: 7px;'>Administración</p>
                             <div class="flex-row">
-                                <input type="text" [(ngModel)]='mandatoSelected.comisiones.tipoadm'  style='width:135px; margin-right: 5px;'>
-                                <input type="text" [(ngModel)]='mandatoSelected.comisiones.valoradm' style='width:50px; margin-right: 12px; text-align: end; padding-left: 1px; padding-right: 10px;'>
+                                <ng-select [items]="funcionComision$ | async" 
+                                        bindLabel="name" 
+                                        bindValue="name"
+                                        [(ngModel)]="mandatoSelected.comisiones.tipoadm"
+                                        [clearable]='false'
+                                        style='margin-right: 5px; width: 120px'>
+                                </ng-select>
+                                <input type="text" [(ngModel)]='mandatoSelected.comisiones.valoradm' style='width:80px; margin-right: 12px; text-align: end; padding-left: 1px; padding-right: 10px;'>
                             </div>
     
                             <div class="flex-row" style='margin: 5px; justify-content: space-between;'>
@@ -51,8 +57,14 @@
                                 </div>
                             </div>
                             <div class="flex-row">
-                                <input type="text" [(ngModel)]='mandatoSelected.comisiones.tipoadm'  style='width:135px; margin-right: 5px;'>
-                                <input type="text" [(ngModel)]='mandatoSelected.comisiones.valoradm' style='width:50px; text-align: end; padding-left: 1px; padding-right: 10px;'>
+                                <ng-select [items]="funcionComision$ | async" 
+                                        bindLabel="name" 
+                                        bindValue="name"
+                                        [(ngModel)]="mandatoSelected.comisiones.tipocontrato"
+                                        [clearable]='false'
+                                        style='margin-right: 5px; width: 120px'>
+                                </ng-select>
+                                <input type="text" [(ngModel)]='mandatoSelected.comisiones.valorcontrato' style='width:80px; text-align: end; padding-left: 1px; padding-right: 10px;'>
                             </div>
     
                             <div class="flex-row" style='margin: 5px; justify-content: space-between;'>
@@ -60,7 +72,7 @@
                                     <p class="section-subtitle-small" style='margin-bottom: 3px; margin-top: 5px;'>Impuesto</p>
                                     <div class="flex-row" style='align-items: center;'>
                                         <p class="section-content" style='margin-right: 5px;'>%</p>
-                                        <input type="text" [(ngModel)]='mandatoSelected.comisiones.impuestoadm' style='width:50px; margin-right: 8px; text-align: end; padding-left: 1px; padding-right: 10px;'>
+                                        <input type="text" [(ngModel)]='mandatoSelected.comisiones.impuestocontrato' style='width:50px; margin-right: 8px; text-align: end; padding-left: 1px; padding-right: 10px;'>
                                     </div>
                                 </div>
                                 <div class="flex-column"  style='justify-content: space-evenly;'>
@@ -90,7 +102,6 @@
                                         [clearable]='false'
                                         style='height: 32px; margin-right: 5px;'>
                             </ng-select>
-                            <!-- <input type="text" [(ngModel)]='mandatoSelected.liquidacion.formapago' style='width:120px; margin-right: 5px;'> -->
                         </div>
                         <div class="flex-column"  style='flex: 1;'>
                             <p class="section-subtitle-small">Cuenta</p>
@@ -140,21 +151,62 @@
                 <div class="flex-column" style='flex: 1; overflow: hidden;'>
                     <p class="section-title">Otros destinatarios</p>
                     <div class="scrolled-section" id='otros-destinatarios'>
-                        <div class='flex-column' *ngFor='let persona of mandatoSelected.otrosdestinatarios'>
-                            <div class="flex-row medium-margin-bottom">
+                        <div class='flex-column medium-margin-bottom' *ngFor='let persona of mandatoSelected.otrosdestinatarios; index as j;'>
+                            <div class="flex-row">
                                 <div class="flex-column">
                                     <p class="section-subtitle-small">Nombre</p>
-                                    <input type="text" [(ngModel)]='persona.nombre' style='width:135px; margin-right: 5px;' class='small-margin-bottom'>
-                                    <input type="text" [(ngModel)]='persona.moneda'style='width:135px; margin-right: 5px;'>
+                                    <input type="text" [(ngModel)]='persona.nombre' style='width:135px; margin-right: 5px; margin-bottom: 5px;' class='small-margin-bottom'>
                                 </div>
                                 <div class="flex-column" style='justify-content: flex-end;'>
-                                    <input type="text" [(ngModel)]='persona.tipocalculo' style='width:135px; margin-right: 5px;'>
-                                </div>
-                                <div class="flex-column" style='justify-content: flex-end;'>
-                                    <p class="section-subtitle-small">Monto</p>
-                                    <input type="text" [(ngModel)]='persona.monto' style='width:135px;'>
+                                    <div class="grey-button small" (click)='removeOtrosDestinatarios(j)' style='margin-bottom: 5px; margin-right: 5px; width: 100px; text-align: center;'>Eliminar</div>
                                 </div>
                             </div>
+                            <div class="flex-row" style='margin-top: 5px; justify-content: flex-start;'>
+                                <div class="flex-column">
+                                    <p class="section-subtitle-small">Moneda</p>
+                                    <input type="text" [(ngModel)]='persona.moneda'style='width:135px; margin-right: 5px; height: 32px;'>
+                                </div>
+                                <div class="flex-column">
+                                    <p class="section-subtitle-small">Tipo</p>
+                                    <ng-select [items]="funcionComision$ | async" 
+                                        bindLabel="name" 
+                                        bindValue="name"
+                                        [(ngModel)]="persona.tipocalculo"
+                                        [clearable]='false'
+                                        style='margin-right: 5px; width: 150px'>
+                                    </ng-select>
+                                </div>
+                                <div class="flex-column">
+                                    <p class="section-subtitle-small">Monto</p>
+                                    <input type="text" [(ngModel)]='persona.monto' style='width:135px; height: 32px;'>
+                                </div>
+                            </div>
+                            <div class="flex-row" style='margin-top: 5px; justify-content: flex-start;'> 
+                                <div class="flex-column">
+                                    <p class="section-subtitle-small">Forma de pago</p>
+                                    <ng-select [items]="formasPago$ | async" 
+                                                bindLabel="name" 
+                                                bindValue="name"
+                                                [(ngModel)]="persona.formapago"
+                                                [clearable]='false'
+                                                style='height: 32px; margin-right: 5px; width: 150px;'>
+                                    </ng-select>
+                                </div>
+                                <div class="flex-column">
+                                    <p class="section-subtitle-small">Cuenta</p>
+                                    <input type="text" [(ngModel)]='persona.nrocuenta' style='width:135px; margin-right: 5px; height: 32px;'>
+                                </div>
+                                <div class="flex-column" style='justify-content:flex-end;'>
+                                    <p class="section-subtitle-small">Banco</p>
+                                    <input type="text" [(ngModel)]='persona.banco' style='max-width:135px;  height: 32px;'>
+                                </div>             
+                            </div>
+                        </div>
+                        <div *ngIf='mandatoSelected.otrosdestinatarios.length == 0'>
+                            No hay otros destinatarios
+                        </div>
+                        <div class='flex-row' style='justify-content: center; margin-top: 10px; margin-bottom: 5px;'>
+                            <div class="grey-button" style='font-weight: 400; box-shadow: none;' (click)='addOtrosDestinatarios()'>Agregar</div>
                         </div>
                     </div>
                 </div>
@@ -165,7 +217,7 @@
                             <app-multi-item-box [items]='instruccionesNombres' (updateSelection)='changeInstruccionSelected($event)' (updateArray)='updateInstrucciones($event)'></app-multi-item-box>
                         </div>
                         <div class="flex-column" style='flex: 1;'>
-                            <div *ngIf='selectedInstruccion != -1; else nodetalle' class="flex-column" style='flex: 1;'>
+                            <div *ngIf='selectedInstruccion != -1 && mandatoId$.value != ""; else nodetalle' class="flex-column" style='flex: 1;'>
                                 <textarea style="resize: none;" [(ngModel)]='mandatoSelected.instrucciones[selectedInstruccion].detalle'></textarea>
                             </div>
     
@@ -196,21 +248,25 @@
     <p class="section-title" style='color: black; font-size: 22px; margin-left: 10px; margin-top: 15px; margin-bottom: 10px;'>
         Historial mandatos
     </p>
-    <div class='orange-button' style="margin-left: 10px; margin-bottom: 10px;">
+    <div class='orange-button' style="margin-left: 10px; margin-bottom: 10px;" (click)='onNewClicked()'>
         Nuevo mandato
     </div>
-    <div *ngFor='let mandato of mandatos$ | async; index as i;' class='historial-item'>
+    <div *ngFor='let mandato of mandatos$ | async; index as i;' [ngClass]='historialClass(mandato._id)'>
         <div class="flex-row">
-            <div class="flex-column" style='justify-content: center;'>
+            <div class="flex-column" style='justify-content: center;' (click)='selectMandato(mandato._id)'>
                 <div [inlineSVG]="'assets/icon/documentos.svg'" style='width: 25px; margin-left: 15px; margin-right: 15px;'></div>
             </div>
-            <div class="flex-column">
+            <div class="flex-column" style='flex: 1;' (click)='selectMandato(mandato._id)'>
                 <p>{{formatDate(mandato.fechaInicio)}}</p>
                 <p *ngIf='checkFechaTermino(mandato.fechaTermino); else noTermino'>
                     {{formatDate(mandato.fechaTermino)}}
                 </p>
 
                 <ng-template #noTermino>-</ng-template>
+            </div>
+
+            <div class="flex-column" style='justify-content: center;' (click)='deleteMandato(mandato._id)'>
+                <div [inlineSVG]="'assets/icon/delete.svg'" style='width: 25px; margin-left: 15px; margin-right: 15px;'></div>
             </div>
         </div>
     </div>
