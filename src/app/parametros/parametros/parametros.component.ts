@@ -12,8 +12,8 @@ export class ParametrosComponent implements OnInit {
 
   parametros: Array<object> = [
     {nombre: 'Regiones', path: 'regiones'},
-    {nombre: 'Prueba1'},
-    {nombre: 'Prueba2'}
+    {nombre: 'Bancos', path: 'bancos'},
+    {nombre: 'IPC y UF', path: 'ipcuf'}
   ];
 
   constructor(private router: Router, private route: ActivatedRoute) {

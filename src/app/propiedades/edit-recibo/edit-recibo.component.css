@@ -1,0 +1,88 @@
+:host(){
+    /*flex: 1;*/
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 99;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#wrapper{
+    background-color: #F9F9F9;
+    flex: 1;
+    padding: 21px 26px 21px 29px;
+}
+
+#recibos-list{
+    background-color: white;
+    width: 350px;
+    /*height: 220px;*/
+    flex: 1;
+    border: 1px solid #DDD;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#recibos-container{
+    flex: 1;
+}
+
+.recibo-item{
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #CCC;
+
+    cursor: pointer;
+}
+
+.recibo-item:hover{
+    background-color: #EEE;
+}
+
+#crear-button{
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    
+    border-top: 1px solid #CCC;
+
+    cursor: pointer;
+}
+
+#crear-button > p{
+    font-weight: 500;
+}
+
+#crear-button:hover{
+    background-color: #EEE;
+}
+
+#normal-button{
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 20px;
+    padding-left: 20px;
+    
+    border: 1px solid #CCC;
+
+    cursor: pointer;
+    background-color: #FFF;
+
+    margin-top: 10px;
+}
+
+#normal-button > p{
+    font-weight: 500;
+}
+
+#normal-button:hover{
+    background-color: #EEE;
+}

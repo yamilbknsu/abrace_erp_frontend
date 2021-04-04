@@ -1,0 +1,170 @@
+<p class="title">Pago de arriendo</p>
+<div class="flex-row">
+    <div class="flex-column">
+    
+        <p class="section-content">Propiedad</p>
+        <ng-select [items]="propiedades" bindLabel="uId" bindValue="_id" style='width: 535px'
+                   [(ngModel)]='selectedPropiedadId' (ngModelChange)='changePropiedad(selectedPropiedadId)'>
+            <ng-template class='flex-column' ng-option-tmp let-item="item">
+                <p class="section-content">{{item.uId}}</p>
+                <p class="section-content">{{item.direccionStr}}</p>        
+            </ng-template>
+        </ng-select>
+        
+        <div class='flex-column' *ngIf='selectedPropiedadId$.value != ""' style='margin-top: 10px;'>
+            <p class="section-content">{{selectedPropiedad.direccionStr}}</p>
+            <div class="flex-row">
+                <div class="flex-column">
+                    <p class="section-content" style='margin-top: 10px;'>Contrato</p>
+                    <ng-select [items]="selectedPropiedad.contratos" bindLabel="arrendatario.nombre" [(ngModel)]='selectedContratoId' bindValue="_id"
+                               (ngModelChange)='changeContrato(selectedContratoId)' style='width: 300px'>
+                        <ng-template class='flex-column' ng-option-tmp let-item="item">
+                            <p class="section-content"><b>{{formatDate(item.fechacontrato)}}</b> - <b>{{formatDate(item.fechatermino)}}</b></p>
+                            <p class="section-content">{{item.arrendatario.nombre}}</p>
+                        </ng-template>
+                    </ng-select>
+                </div>
+            
+                <div class="flex-column" style='justify-content: flex-end; margin-left: 20px;'>
+                    <div *ngIf='selectedContratoId$.value != ""' style='margin-top: 10px;'>
+                        <p class="section-content">Fecha emisión</p>
+                        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='date' style='width: 150px'></dp-date-picker>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex-column" *ngIf='selectedContratoId$.value != ""' style='margin-left: 10px; border-left: 1px solid #EEE; padding-left: 10px; justify-content: space-between;'>
+        <div class="flex-row">
+            <div class="flex-column">
+                <p class="section-content">Forma pago</p>
+                <ng-select [items]="formaspago" bindLabel="name" bindValue="name" style='width: 120px; margin-right: 10px;' [(ngModel)]='formapago'>
+                </ng-select>
+            </div>
+            <div class="flex-column">
+                <p class="section-content">Cta. / Documento</p>
+                <input type="text" style='width: 115px; text-align: right; padding-right: 10px;' [(ngModel)]='documento'>
+            </div>
+            <div class="flex-column" style='margin-left: 10px; '>
+                <p class="section-content">Banco</p>
+                <ng-select [items]="bancos$ | async" bindLabel="name" bindValue="name" style='width: 105px; margin-right: 10px;' [(ngModel)]='banco'>
+                </ng-select>
+            </div>
+        </div>
+        <div class="flex-row">
+            <div class="flex-column">
+                <p class="section-content">Depositado en</p>
+                <input type="text" style='width: 130px; text-align: right; padding-right: 10px;' [(ngModel)]='depositadoen'>
+            </div>
+            <div class="flex-column" style='margin-left: 10px; '>
+                <p class="section-content">Banco</p>
+                <ng-select [items]="bancos$ | async" bindLabel="name" bindValue="name" style='width: 105px;'  [(ngModel)]='bancoen'>
+                </ng-select>
+            </div>
+        </div>
+    </div>    
+</div>
+
+
+<div class="flex-row" *ngIf='selectedContratoId$.value != ""' style='margin-top: 20px; flex: 1; overflow: hidden;'>
+    <div class="flex-column scrolled-section" style='flex: 1; border-right: 1px solid #DDD; margin-right: 10px; padding-right: 15px;'>
+        <p class="section-title">Cargos</p>
+        <div class='flex-row' *ngFor='let cargo of cargos; index as i;'  style='margin-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #BBB;'>
+            <div class="flex-column">
+                <p class="section-content">Tipo</p>
+                <ng-select [items]="tiposCargo" bindLabel="name" [(ngModel)]='cargo.tipo' bindValue="name" style='width: 180px' [clearable]='false'
+                          (ngModelChange)='changeTipo(i)'>
+                </ng-select>
+                
+                <p class="section-content" style='margin-top: 5px;'>Detalle</p>
+                <input type="text" [(ngModel)]='cargo.detalle' style='width: 165px'>
+            </div>
+            <div class="flex-column" *ngIf='cargo.tipo == "Arriendo"' style='margin-left: 8px;'>
+                <p class="section-content">Recibo</p>
+                <ng-select [items]="boletas" bindLabel="formatedFecha" [(ngModel)]='cargo.concepto' bindValue="_id" style='width: 172px' [clearable]='false'
+                           (ngModelChange)='changeBoleta(i)'>
+                    <ng-template class='flex-column' ng-option-tmp let-item="item">
+                        <div class="flex-row" style='justify-content: space-between;'>
+                            <p class="section-subtitle-disabled">{{item.tipo}}</p>
+                            <p class="section-content">{{item.estado}}</p>
+                        </div>
+                        <p class="section-content"><b>{{item.formatedFecha}}</b></p>
+                    </ng-template>
+                </ng-select>
+                
+                <p class="section-content" style='margin-top: 5px;'>Valor</p>
+                <input type="text" [(ngModel)]='cargo.valor' style='width: 150px; text-align: right; padding-right: 10px;' [disabled]='true' (ngModelChange)="updateTotales()">
+            </div>
+            <div class="flex-column" *ngIf='cargo.tipo == "Instruccion pago"' style='margin-left: 8px;'>
+                <p class="section-content">Concepto</p>
+                <ng-select [items]="instrucciones" bindLabel="nombre" [(ngModel)]='cargo.concepto' bindValue="nombre" style='width: 172px' [clearable]='false'
+                           (ngModelChange)='changeConcepto(i)'>
+                </ng-select>
+               
+                <p class="section-content" style='margin-top: 5px;'>Valor</p>
+                <input type="text" [(ngModel)]='cargo.valor' style='width: 150px; text-align: right; padding-right: 10px;' (ngModelChange)="updateTotales()">
+            </div>
+
+            <div class="flex-column" *ngIf='cargo.tipo == "Otro"' style='margin-left: 8px;'>
+                <p class="section-content">Concepto</p>
+                <input type="text" [(ngModel)]='cargo.concepto' style='width: 158px;'>
+               
+                <p class="section-content" style='margin-top: 5px;'>Valor</p>
+                <input type="text" [(ngModel)]='cargo.valor' style='width: 150px; text-align: right; padding-right: 10px;' (ngModelChange)="updateTotales()">
+            </div>
+        </div> 
+        <div class="flex-row" style='justify-content: center; margin-top: 10px;'>
+            <div class="grey-button" style='font-weight: 400; margin-right: 20px;' (click)='addCargo()'>
+                Agregar
+            </div>
+
+            <div class="red-button" *ngIf='cargos.length > 0' style='font-weight: 400;' (click)='removeCargo()'>
+                Eliminar
+            </div>
+        </div>
+    </div>
+    <div class="flex-column scrolled-section" style='flex: 1;'>
+        <p class="section-title">Descuentos</p>
+        <div class='flex-row' *ngFor='let descuento of descuentos; index as i;'>
+            <div class="flex-column">
+                <p class="section-content">Concepto</p>
+                <input type="text" [(ngModel)]='descuento.detalle' style='width: 158px; margin-right: 10px;'>
+            </div>
+            <div class="flex-column">
+                <p class="section-content">Valor</p>
+                <input type="text" [(ngModel)]='descuento.valor' style='width: 150px; text-align: right; padding-right: 10px;'  (ngModelChange)="updateTotales()">
+            </div>            
+        </div> 
+        <div class="flex-row" style='justify-content: center; margin-top: 10px;'>
+            <div class="grey-button" style='font-weight: 400; margin-right: 20px;' (click)='addDescuento()'>
+                Agregar
+            </div>
+
+            <div class="red-button" *ngIf='descuentos.length > 0' style='font-weight: 400;' (click)='removeDescuento()'>
+                Eliminar
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="flex-column" *ngIf='selectedContratoId$.value != ""' style='margin-top: 10px; border-top: solid 1px black; padding-top: 10px'>
+    <div class="flex-row" style="justify-content: space-between;">
+        <div class="flex-column">
+            <p class="section-content">Fecha pago</p>
+            <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='datePago' style='width: 150px'></dp-date-picker>
+        </div>
+
+        <div class="flex-column">
+            <p class='section-content'><b>Total cargos: </b> {{totalCargos}}</p>
+        </div>
+
+        <div class="flex-column">
+            <p class='section-content'><b>Total Descuentos: </b> {{totalDescuentos}}</p>
+            <p class='section-content'><b>Subtotal: </b> {{subtotal}}</p>
+        </div>
+
+    </div>
+    <div class="flex-row" style='justify-content: flex-end;'>
+        <div class="green-button" (click)='onGuardar()'>Guardar</div>
+    </div>
+</div>

@@ -72,7 +72,7 @@
 
 #propiedades-list{
     display: flex;
-    flex: 1;
+    /*flex: 1;*/
     height: min-content;
     flex-direction: column;
 }
@@ -244,4 +244,30 @@
 
 .persona-field:hover > .persona-card{
     display: flex;
+}
+
+.batch{
+    height: 26px;
+    width: 98px;
+    border-radius: 12px;
+    text-align: center;
+    color: white;
+
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.batch.green{
+    background-color: #7BC556;
+}
+
+.batch.blue{
+    background-color: #4C76D5;
+}
+
+.batch.purple{
+    background-color: #7856BC;
 }

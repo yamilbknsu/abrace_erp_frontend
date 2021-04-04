@@ -36,5 +36,10 @@ export class ToastService {
     this.ipc.once('confirmation-response', callback);
   }
 
+  fileSaving(filters, defaultPath, callback){
+    this.ipc.send('file-saving-message', {title: 'Elija una ubicación para el archivo', filters, defaultPath});
+    this.ipc.once('file-saving-response', callback);
+  }
+
 
 }

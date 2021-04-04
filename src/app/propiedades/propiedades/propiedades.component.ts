@@ -16,7 +16,7 @@ import { ToastService } from 'src/app/services/toast.service';
 })
 export class PropiedadesComponent implements OnInit {
 
-  propiedades$ : Observable<Propiedad[]>;
+  propiedades$: Observable<Propiedad[]>;
 
   statusText: string;
 
@@ -33,32 +33,39 @@ export class PropiedadesComponent implements OnInit {
     private route: ActivatedRoute, private propiedadService: PropiedadesService,
     private searchBarService: SearchBarService, private toastService: ToastService) {
 
-      this.router.events.subscribe((event) => {
-        if (event instanceof NavigationEnd) {
-          if(this.route.firstChild){
-            var url = this.route.firstChild.snapshot.url;
-            if (url[0].path == 'edit'){
-              this.statusText = '/ Editar';
-              this.editingProperty = 0;
-            }else if(url[0].path == 'mandato'){
-              this.statusText = '/ Mandato';
-              this.editingProperty = 1;
-            }
-          }else{
-            this.indexSelected = -1;
-            this.idEditing = "0";   
-            this.statusText = '';       
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        if (this.route.firstChild) {
+          var url = this.route.firstChild.snapshot.url;
+          if (url[0].path == 'edit') {
+            this.statusText = '/ Editar';
+            this.editingProperty = 0;
+          } else if (url[0].path == 'mandato') {
+            this.statusText = '/ Mandato';
+            this.editingProperty = 1;
+          } else if (url[0].path == 'contrato') {
+            this.statusText = '/ Contrato';
+            this.editingProperty = 2;
+          } else if (url[0].path == 'recibos') {
+            this.statusText = '/ Recibos';
+            this.editingProperty = 3;
           }
+
+        } else {
+          this.indexSelected = -1;
+          this.idEditing = "0";
+          this.statusText = '';
         }
-      });
+      }
+    });
   }
 
   ngOnInit(): void {
     this.propiedadService.loadPropiedadesFromBackend();
     this.propiedades$ = this.propiedadService.getPropiedades$()
-    
+
     this.route.queryParams.subscribe(params => {
-      if(params.hasOwnProperty('id')){
+      if (params.hasOwnProperty('id')) {
         this.idEditing = params['id'];
       }
     });
@@ -67,34 +74,41 @@ export class PropiedadesComponent implements OnInit {
   }
 
 
-  propiedadesClass(i: number){
-    if(this.idEditing == "0"){
-      return {'propiedad-item': true, 'selected': this.indexSelected == i}
-    }else{
+  propiedadesClass(i: number) {
+    if (this.idEditing == "0") {
+      return { 'propiedad-item': true, 'selected': this.indexSelected == i }
+    } else {
       //return {'propiedad-item': true, 'inactive': this.indexEditing != i, 'shadowed':  this.indexEditing == i}
-      return {'propiedad-item': true, 'shadowed':  true}
+      return { 'propiedad-item': true, 'shadowed': true }
     }
   }
 
-  dotMenuClicked(i: number){
+  dotMenuClicked(i: number) {
     this.indexSelected = i;
   }
 
-  onClick(event){
-    if (!this._eref.nativeElement.contains(event.target)){
+  onClick(event) {
+    if (!this._eref.nativeElement.contains(event.target)) {
       this.indexSelected = -1;
     }
   }
 
-  deletePropiedad(id: number){
+  deletePropiedad(id: number) {
     this.indexSelected = -1;
     this.toastService.confirmation('Vas a eliminar propiedad', (event, response) => {
-      if(response == 0){
-        this.propiedadService.deletePropiedad$(id).subscribe(()=>{
+      if (response == 0) {
+        this.propiedadService.deletePropiedad$(id).subscribe(() => {
           window.location.reload();
           this.toastService.success('Operación realizada con éxito')
         });
       }
     });
+  }
+
+  batchClass(estado) {
+    return {
+      'batch': true, 'green': estado == 'Arrendada',
+      'blue': estado == 'Libre', 'purple': estado == 'En mora'
+    }
   }
 }

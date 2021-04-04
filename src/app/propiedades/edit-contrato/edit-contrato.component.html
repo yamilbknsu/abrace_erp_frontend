@@ -1,1 +1,253 @@
-<p>edit-contrato works!</p>
+<div id="wrapper">
+    <div *ngIf='statusText != ""' id='big-shadow'></div>
+    <div class="flex-column inner-wrapper" *ngIf='contratoSelected.propiedad' style="flex:1; justify-content: space-between;">
+        <div class="flex-row">
+            <div class="flex-column" id='column-1' style='flex: .7; margin-right: 15px;'>
+                <div class="flex-row" style='justify-content: space-between;'>
+                    <div class="flex-column" style='margin-right: 15px;'>
+                        <p class='section-subtitle-disabled'>Fecha inicio</p>
+                        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [displayDate]='inicioDisplay' [(ngModel)]='inicioPlaceholder' (ngModelChange)='updateInicio()' [disabled]='!newContrato'></dp-date-picker>    
+                    </div>
+                    <div class="flex-column">
+                        <p class='section-subtitle-disabled'>Fecha termino</p>
+                        <!--  [displayDate]='terminoDisplay'-->
+                         <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='terminoPlaceholder' (ngModelChange)='updateTermino()' [disabled]='!newContrato || contratoSelected.tipocontrato == "Indefinido"'></dp-date-picker>
+                    </div>
+                </div>
+            </div>
+            <div class="flex-column" id='column-2'  style='flex: 1; margin-left: 15px;'>
+                <div class="flex-row" style='justify-content: space-between;'>
+                    <div class="flex-column">
+                        <p class='section-subtitle-disabled'>Próximo reajuste</p>
+                        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='reajustePlaceholder' [disabled]='true'></dp-date-picker>
+                    </div>
+                    <div class="flex-column">
+                        <p class='section-content'>Estado</p>
+                        <ng-select [items]="estadoContrato$ | async" 
+                                                bindLabel="name" 
+                                                bindValue="name"
+                                                [(ngModel)]="contratoSelected.estado"
+                                                [clearable]='false'
+                                                style='margin-right: 5px; width: 120px'>
+                        </ng-select>
+                    </div>
+                    <div class="flex-column">
+                        <p class='section-content'>Tipo</p>
+                        <ng-select [items]="tipoContrato$ | async" 
+                                    bindLabel="name" 
+                                    bindValue="name"
+                                    [(ngModel)]="contratoSelected.tipocontrato"
+                                    [clearable]='false'
+                                    style='margin-right: 5px; width: 120px'
+                                    [disabled]='!newContrato'>
+                        </ng-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex-row" style='justify-content: space-between;'>
+            <div class="flex-column" id='column-1' style='flex: 1; margin-right: 15px;'>
+                <div class="flex-column" style='margin-top: 15px;'>
+                    <div class="flex-column" style='border-bottom: solid 1px #DDD; padding-bottom: 15px; margin-bottom: 15px;'>
+                        <p class="section-subtitle">Arrendatario</p>
+                        <p class='section-title' *ngIf='!newContrato; else arrendatarioSelection'>{{arrendatarioData.nombre}}</p>
+                        <div class="flex-column" *ngIf='arrendatarioData._id'>
+                            <p class='section-content'>{{arrendatarioData.rut}}-{{arrendatarioData.dv}}</p>
+                            <div class="flex-row" style='justify-content: space-between;'><p class='section-content' *ngFor='let telefono of arrendatarioData.telefonos | limitTo:2'>{{telefono}}</p></div>
+                            <div class="flex-row" style='justify-content: space-between;'><p class='section-content' *ngFor='let email of arrendatarioData.emails | limitTo:2'>{{email}}</p></div>
+                            <p class='section-content'>{{arrendatarioData.cargo}}</p>
+                            <p class='section-content'>{{arrendatarioData.empresa}}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-column">
+                        <p class="section-subtitle">Aval</p>
+                        <p class='section-title' *ngIf='!newContrato; else avalSelection'>{{avalData.nombre}}</p>
+                        <div class="flex-column" *ngIf='avalData._id'>
+                            <p class='section-content'>{{avalData.rut}}-{{avalData.dv}}</p>
+                            <div class="flex-row" style='justify-content: space-between;'><p class='section-content' *ngFor='let telefono of avalData.telefonos | limitTo:2'>{{telefono}}</p></div>
+                            <div class="flex-row" style='justify-content: space-between;'><p class='section-content' *ngFor='let email of avalData.emails | limitTo:2'>{{email}}</p></div>
+                            <p class='section-content'>{{avalData.cargo}}</p>
+                            <p class='section-content'>{{avalData.empresa}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-row" style='justify-content: space-between; margin-top: 35px;'>
+                    <div class="flex-column">
+                        <p class="section-subtitle-small" style='margin-bottom: 7px;'>Mes Garantía</p>
+                        <input type="text" [(ngModel)]='contratoSelected.mesgarantia' style='width:120px; margin-right: 12px; text-align: end; padding-left: 1px; padding-right: 10px;'>
+                    </div>
+                    <div class="flex-column">
+                        <p class="section-subtitle-small" style='margin-bottom: 7px;'>Dia vencimiento</p>
+                        <input type="text" [(ngModel)]='contratoSelected.diavcto' style='width:120px; margin-right: 12px; text-align: end; padding-left: 1px; padding-right: 10px;'>
+                    </div>            
+                    <div class="flex-column">
+                        <p class="section-subtitle-small" style='margin-bottom: 7px;'>Documento</p>
+                        <input type="text" [(ngModel)]='contratoSelected.nrodcto' style='width:120px; text-align: end; padding-left: 1px; padding-right: 10px;'>
+                    </div>
+                </div>
+            </div>
+            <div class="flex-column" id='column-2'  style='flex: 1; margin-left: 15px;'>   
+                <div class="flex-column" style='margin-top: 15px; margin-bottom: 25px;'>
+                    <p class="section-title">Canon</p>
+                    <div class="flex-row" style='margin-bottom: 10px; justify-content: space-between;'>
+                        <div class="flex-column" style='margin-right: 15px;'>
+                            <p class="section-subtitle">Moneda</p>
+                            <ng-select [items]="monedas$ | async" 
+                                        bindLabel="name" 
+                                        bindValue="name"
+                                        [(ngModel)]="contratoSelected.moneda"
+                                        [clearable]='false'
+                                        [disabled]='!newContrato'>
+                            </ng-select>
+                        </div>
+                        <div class="flex-column">
+                            <div class="flex-row"><p class="section-content">Inicial </p><p class="section-subtitle-disabled"> - {{formatDate(contratoSelected.fechacontrato)}}</p></div>
+                            <p *ngIf='!newContrato; else canonInput'>{{contratoSelected.canoninicial}}</p>
+                            <ng-template #canonInput>
+                                <input type="text" [(ngModel)]='contratoSelected.canoninicial' style='width:120px; text-align: end; padding-left: 1px; padding-right: 10px; margin-top: 3px;'>
+                            </ng-template>
+                        </div>
+                        <div class="flex-column" *ngIf='boletas[0] && !newContrato'>
+                            <div class="flex-row"><p class="section-content">Último </p><p class="section-subtitle-disabled"> - {{formatDate(boletas[0].fecha)}}</p></div>
+                            <p>{{boletas[0].valorfinal}}</p>
+                        </div>
+                    </div>
+                    <div class="flex-column" *ngIf='!newContrato'>
+                        <div class="flex-row"><p class="section-content">Próximo </p><p class="section-subtitle-disabled"> - {{formatDate(nextBoleta.fecha)}}</p></div>
+                        <input type="text" [(ngModel)]='contratoSelected.canonactual' style='width:120px; margin-right: 12px; text-align: end; padding-left: 1px; padding-right: 10px;'>
+
+                    </div>
+                </div>
+                
+                <div class="flex-row" style='justify-content: space-between;'>
+                    <div class="flex-column">
+                        <p class="section-content">Arriendo</p>
+                        <ng-select [items]="plazos$ | async" 
+                                    bindLabel="name" 
+                                    bindValue="name"
+                                    [(ngModel)]="contratoSelected.tiempoarriendo"
+                                    [clearable]='false'
+                                    [disabled]='!newContrato'
+                                    style='margin-right: 5px; width: 135px'>
+                        </ng-select>
+                    </div>
+                    <div class="flex-column">
+                        <p class="section-content">Reajuste</p>
+                        <ng-select [items]="plazos$ | async" 
+                                    bindLabel="name" 
+                                    bindValue="name"
+                                    [(ngModel)]="contratoSelected.tiemporeajuste"
+                                    [clearable]='false'
+                                    [disabled]='!newContrato'
+                                    style='margin-right: 5px; width: 135px'>
+                        </ng-select>
+                    </div>
+                    <div class="flex-column" style='margin-bottom: 7px;'>
+                        <p class="section-content">Banco</p>
+                        <ng-select [items]="bancos$ | async" 
+                                    bindLabel="name" 
+                                    bindValue="name"
+                                    [(ngModel)]="contratoSelected.banco"
+                                    [clearable]='false'
+                                    style='width: 135px'>
+                        </ng-select>
+                    </div>
+                </div>
+                
+
+                <div class="flex-column" style='margin-top: 10px;'>
+                    <p class="section-title">Instrucciones de pago</p>
+                    <div class="flex-row">
+                        <div class="flex-column">
+                            <app-multi-item-box [items]='instruccionesNombres' (updateSelection)='changeInstruccionSelected($event)' (updateArray)='updateInstrucciones($event)'></app-multi-item-box>
+                        </div>
+                        <div class="flex-column" style='flex: 1;'>
+                            <div *ngIf='selectedInstruccion != -1 && contratoSelected.instrucciones; else nodetalle' class="flex-column" style='flex: 1;'>
+                                <textarea style="resize: none;" [(ngModel)]='contratoSelected.instrucciones[selectedInstruccion].detalle'></textarea>
+                            </div>
+    
+                            <ng-template #nodetalle>
+                                <textarea readonly style="resize: none;">Elige o agrega un elemento para editar.</textarea>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-row" style="justify-content: space-between;">
+            <div class="flex-row" style='margin-top: 25px;'>
+                <div class='grey-button' *ngIf='!newContrato' [routerLink]='"./recibos"' [queryParams]="{id: contratoSelected.propiedad, contrato: contratoSelected._id}">
+                    Ver recibos
+                </div>
+
+                <div class='red-button' *ngIf='!newContrato' style='margin-left: 15px;' (click)='terminarContrato()'>
+                    Terminar
+                </div>
+            </div>
+            <div class='flex-row' style='justify-content: flex-end; margin-top: 25px;'>
+                <div class='grey-button' (click)='onBackClicked()'>
+                    Cancelar
+                </div>
+                <div class='green-button' style="margin-left: 12px;" (click)='onGuardarClicked()'>
+                    Guardar
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex-column" *ngIf='!contratoSelected.propiedad' style="flex:1; align-items: center; justify-content: center;">
+        <p class="big-noinfo-text">Selecciona o crea un contrato para editar</p>
+    </div>
+    
+    <div id="historial" style='border-top: 1px solid #EEE;'>
+        <p class="section-title" style='color: black; font-size: 22px; margin-left: 10px; margin-top: 15px; margin-bottom: 10px;'>
+            Historial contratos
+        </p>
+        <div class='orange-button' style="margin-left: 10px; margin-bottom: 10px;" (click)='addContrato()'>
+            Nuevo contrato
+        </div>
+        
+        <div *ngFor='let contrato of contratos$ | async; index as i;' [ngClass]='historialClass(contrato._id)'>
+            <div class="flex-row">
+                <div class="flex-column" style='justify-content: center;' (click)='selectContrato(contrato._id)'>
+                    <div [inlineSVG]="'assets/icon/documentos.svg'" style='width: 25px; margin-left: 15px; margin-right: 15px;'></div>
+                </div>
+                <div class="flex-column" style='flex: 1;' (click)='selectContrato(contrato._id)'>
+                    <p>{{formatDate(contrato.fechacontrato)}}</p>
+                    <p *ngIf='checkFechaTermino(contrato.fechatermino); else noTermino'>
+                        {{formatDate(contrato.fechatermino)}}
+                    </p>
+    
+                    <ng-template #noTermino>-</ng-template>
+                </div>
+    
+                <div class="flex-column" style='justify-content: center;' (click)='deleteContrato(contrato._id)'>
+                    <div [inlineSVG]="'assets/icon/delete.svg'" style='width: 25px; margin-left: 15px; margin-right: 15px;'></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <ng-template #arrendatarioSelection>
+        <ng-select [items]="personas$ | async" 
+                    bindLabel="nombre" 
+                    bindValue="_id"
+                    [(ngModel)]="contratoSelected.arrendatario"
+                    (ngModelChange)='arrendatarioId$.next(contratoSelected.arrendatario)'
+                    style='margin-bottom: 10px;'>
+        </ng-select>
+    </ng-template>
+
+    <ng-template #avalSelection>
+        <ng-select [items]="personas$ | async" 
+                    bindLabel="nombre" 
+                    bindValue="_id"
+                    [(ngModel)]="contratoSelected.aval"
+                    (ngModelChange)='avalId$.next(contratoSelected.aval)'
+                    style='margin-bottom: 10px;'>
+        </ng-select>
+    </ng-template>    
+</div>
+<router-outlet></router-outlet>

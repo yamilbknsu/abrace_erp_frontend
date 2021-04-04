@@ -1,0 +1,12 @@
+:host{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    background-color: white;
+    border-left: 1px solid #AAAAAA;
+
+    padding: 15px;
+    margin-top: 0px;
+}

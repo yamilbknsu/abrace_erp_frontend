@@ -229,7 +229,7 @@
                 </div>
             </div>
         </div>
-        <div class='flex-row' style='justify-content: flex-end; margin-top: 25px;'>
+        <div *ngIf='mandatoSelected._id != "";' class='flex-row' style='justify-content: flex-end; margin-top: 25px;'>
             <div class='grey-button' (click)='onBackClicked()'>
                 Cancelar
             </div>
@@ -240,7 +240,9 @@
     </div>
 
     <ng-template #NoMandatos>
-        No hay mandatos registrados
+        <div class="flex-column" style="flex:1; align-items: center; justify-content: center;">
+           <p class='big-noinfo-text'>No hay mandatos registrados</p>
+        </div>
     </ng-template>
 </div>
 

@@ -1,0 +1,39 @@
+<div class="flex-column" id="wrapper">
+    <p class="title">Recibos</p>
+    <div id="recibos-list">
+        <div class='flex-column scrolled-section' id="recibos-container">
+            <div class="flex-row recibo-item space-between" *ngFor='let recibo of recibos' (click)='selectRecibo(recibo._id)'>
+                <div class="flex-column space-between">
+                    <p class="section-subtitle-disabled">{{recibo.tipo}}</p>
+                    <p class='section-content'>{{formatDate(recibo.fecha)}}</p>
+                </div>
+                <div class="flex-column space-between">
+                    <p class='section-content' style="text-align: right;">{{recibo.valorfinal}}</p>
+                    <p class='section-content' style='font-weight: 500;'>{{recibo.estado}}</p>                    
+                </div>
+            </div>
+        </div>
+        <div id='crear-button' (click)='crearClicked()'><p class="section-content">Crear recibo</p></div>
+    </div>
+    <div class='flex-column' id="editing-panel" *ngIf='reciboSelected.tipo'>
+        <p class="section-content" style='margin-top: 15px;'>Fecha</p>
+        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='reciboSelected.fecha' [disabled]='editingId$.value != "new"'></dp-date-picker>
+        
+        <p class="section-content" style='margin-top: 8px;'>Valor</p>
+        <input type="text" [(ngModel)]='reciboSelected.valorfinal' style='text-align: right; padding-right: 15px;'  [disabled]='editingId$.value != "new"'>
+
+        <p class="section-content" style='margin-top: 8px;'>Estado</p>
+        <ng-select [items]="estados" 
+                    bindLabel="name" 
+                    bindValue="name"
+                    [(ngModel)]="reciboSelected.estado"
+                    [clearable]='false'>
+        </ng-select>
+
+        <div class="flex-row space-between">
+            <div id="normal-button" (click)='cancelar()'><p class="section-content">Cancelar</p></div>
+            <div id="normal-button" (click)='guardar()'><p class="section-content">Guardar</p></div>
+        </div>
+    </div>
+
+</div>

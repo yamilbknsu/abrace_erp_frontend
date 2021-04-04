@@ -1,15 +1,17 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog, webFrame } = require('electron')
 const url = require("url");
 const path = require("path");
 
 // We keep a reference so it doesn't get garbage collected
 let mainWindow
 
+// 1333 x 638, 83%
+
 function createWindow () {
   //Create new window
   mainWindow = new BrowserWindow({
-    width: 1600,
-    height: 900,
+    width: 1600, //1600
+    height: 900, // 900
     useContentSize: true,
     webPreferences: {
       nodeIntegration: true
@@ -61,5 +63,11 @@ ipcMain.on('error-message', (event, args) => {
 ipcMain.on('confirmation-message', (event, args) => {
   dialog.showMessageBox(args).then((response, checkboxChecked) => {
     mainWindow.webContents.send('confirmation-response', response.response);
+  })
+});
+
+ipcMain.on('file-saving-message', (event, args) => {
+  dialog.showSaveDialog(args).then((response, checkboxChecked) => {
+    mainWindow.webContents.send('file-saving-response', response);
   })
 });

@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { EditContratoComponent } from './edit-contrato/edit-contrato.component';
 import { EditMandatoComponent } from './edit-mandato/edit-mandato.component';
 import { EditPropiedadComponent } from './edit-propiedad/edit-propiedad.component';
+import { EditReciboComponent } from './edit-recibo/edit-recibo.component';
 import { PropiedadesIdResolverService } from './propiedades-id-resolver.service';
 import { PropiedadesComponent } from './propiedades/propiedades.component';
 
@@ -27,9 +28,11 @@ const routes: Routes = [
       {
         path: 'contrato',
         component:EditContratoComponent,
-        resolve: {
-          
+        children: [{
+          path: 'recibos',
+          component: EditReciboComponent          
         }
+        ]
       }
     ]
   }

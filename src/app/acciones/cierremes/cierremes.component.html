@@ -1,0 +1,49 @@
+<p class="title">Cierre de mes</p>
+<div class="flex-row" style='justify-content: space-between;'>
+    <div class="flex-column">
+        <p class="section-content">Periodo</p>
+        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='fecha' [mode]='"month"' (ngModelChange)='fechaChange()'></dp-date-picker>
+    </div>
+    <div class="grey-button" *ngIf='!reajusteExists && ipc.length > 0' (click)='OnPrepararClick()'>Preparar</div>
+    <div *ngIf='reajusteExists'>Mes ya fue cerrado</div>
+</div>
+<div class="flex-column" id='reajustes-list' [ngClass]='{"disabled": reajusteExists, "scrolled-section": true}'>
+    <div *ngFor='let reajuste of reajustes'>
+        <div class="flex-row reajuste-item" *ngIf='!reajuste.reajuste?.toString()' style='justify-content: space-between;'>
+            <div class="flex-column space-between">
+                <p class="section-subtitle-disabled">Recibo Automático</p>
+                <p class='section-content'>{{formatDate(reajuste.fecha)}}</p>
+            </div>
+            <div class="flex-column" style='margin-left: 20px; flex: 1;'>
+                <p class="section-content">{{reajuste.propiedadData.uId}}</p>
+                <p class="section-content">{{formatDireccion(reajuste.propiedadData)}}</p>
+            </div>
+            <div class="flex-column space-between">
+                <p class='section-content' style="text-align: right;">{{reajuste.valorfinal}}</p>
+                <p class='section-content' style='font-weight: 500;'>{{reajuste.estado}}</p>                   
+            </div>
+        </div>
+        <div class="flex-row space-between reajuste-item" *ngIf='reajuste.reajuste?.toString()'>
+            <div class="flex-column space-between">
+                <p class="section-subtitle-disabled">Reajuste</p>
+                <p class='section-content'>{{formatDate(reajuste.fecha)}}</p>
+            </div>
+            <div class="flex-column" style='margin-left: 20px; flex: 1;'>
+                <p class="section-content">{{reajuste.propiedadData.uId}}</p>
+                <p class="section-content">{{formatDireccion(reajuste.propiedadData)}}</p>
+            </div>
+            <div class="flex-column" style='justify-content: center; align-items: center;'>
+                <div class="flex-row" style='justify-content: center; align-items: center;'>
+                    <p class="section-content">{{reajuste.valorinicial}}</p>
+                    <div class="flex-column" style="align-items: center; justify-content: center; margin-left: 10px; margin-right: 10px;">
+                        <p class="section-content" style='color: #888;'>(+ {{formatDecimal(reajuste.reajuste)}} %)</p>
+                        <div class="persona-icon" [inlineSVG]="'assets/icon/arrow.svg'" style='width: 30px; height: 20px;'></div>
+                    </div>
+                    <p class="section-content">{{reajuste.valorfinal}}</p>
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="green-button" style='text-align: center;' *ngIf='reajustes.length != 0 && !reajusteExists' (click)='aplicar()'>Aplicar</div>

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersService } from 'src/app/services/users.service';
+import '../../../assets/fonts/Roboto-Bold-bold.js';
+import '../../../assets/fonts/Roboto-Regular-normal.js';
 
 @Component({
   selector: 'app-main-view',

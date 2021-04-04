@@ -23,7 +23,7 @@ export class RegionesComponent implements OnInit {
   }
   
   onBackClicked(){
-    this._location.back();
+    //this._location.back();
   }
 
   onGuardarClicked(){

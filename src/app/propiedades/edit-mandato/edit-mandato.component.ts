@@ -56,7 +56,7 @@ export class EditMandatoComponent implements OnInit {
     ).subscribe((mandato) => {
       if(mandato[0]){
         this.mandatoSelected = {...mandato[0]};
-        console.log(this.mandatoSelected);
+        //console.log(this.mandatoSelected);
 
         this.mandatoSelected.fechaInicio = new Date(this.mandatoSelected.fechaInicio);
         this.inicioPlaceholder = moment(this.mandatoSelected.fechaInicio);
@@ -71,7 +71,6 @@ export class EditMandatoComponent implements OnInit {
           this.terminoDisplay = moment(this.mandatoSelected.fechaTermino);
         }
         
-        console.log(this.mandatoSelected.comisiones.admimpuestoincluido)
         this.mandatoSelected.comisiones.admimpuestoincluido = this.mandatoSelected.comisiones.admimpuestoincluido === 'true' || this.mandatoSelected.comisiones.admimpuestoincluido === true;
         this.mandatoSelected.comisiones.contratoimpuestoincluido = this.mandatoSelected.comisiones.contratoimpuestoincluido === 'true' || this.mandatoSelected.comisiones.contratoimpuestoincluido === true;
 

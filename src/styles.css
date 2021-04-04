@@ -67,6 +67,10 @@ p{
     justify-content: space-between;
 }
 
+.flex-one{
+    flex: 1;
+}
+
 /* General elements */
 .component-card{
     max-height: 90%;
@@ -205,6 +209,13 @@ ng-select{
     margin-right: 30px;
     margin-bottom: 20px;
     margin-top: 15px;
+}
+
+.big-noinfo-text{
+    font-size: 41px;
+    color: #AFAFAF;
+    max-width: 468px;
+    text-align: center;
 }
 
 
@@ -382,4 +393,67 @@ ng-select > div{
 
 .orange-button:hover{
     background-color: #ca9a14;
+}
+
+#informe-container{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    border: 1px solid #222;
+
+    margin-top: 15px;
+
+    padding: 25px;
+    background-color: #CCC;
+
+    overflow-y: auto;
+}
+
+.informe-sheet{
+    background-color: white;
+    box-shadow: 0px 3px 10px 0px rgba(156,156,156,1);
+    padding: 20px;
+}
+
+.informe-sheet *{
+    font-family: 'Roboto';
+    font-size: 13px;
+}
+
+.informe-title{
+    margin-top: 20px;
+    margin-bottom: 10px;
+
+    text-align: center;
+    font-size: 16px;
+    text-decoration: underline;
+}
+
+table{
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.informe-table{
+    flex: 1;
+    margin-top: 20px;
+}
+
+.informe-table .table-heading{
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.informe-table .table-element{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.informe-table .table-title{
+    border-bottom: 2px solid black;
+    margin-bottom: 5px;
 }

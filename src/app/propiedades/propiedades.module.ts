@@ -11,6 +11,8 @@ import { GUIModule } from '../gui/gui.module';
 import { propiedadSearchPipe } from './propiedad-search-filter.pipe';
 import { EditMandatoComponent } from './edit-mandato/edit-mandato.component';
 import { EditContratoComponent } from './edit-contrato/edit-contrato.component';
+import { limitToPipe } from '../services/limit-to-filter.pipe';
+import { EditReciboComponent } from './edit-recibo/edit-recibo.component';
 
 @NgModule({
   declarations: [PropiedadesComponent,
@@ -18,7 +20,9 @@ import { EditContratoComponent } from './edit-contrato/edit-contrato.component';
                  idPropiedadPipe,
                  propiedadSearchPipe,
                  EditMandatoComponent,
-                 EditContratoComponent],
+                 EditContratoComponent,
+                 limitToPipe,
+                 EditReciboComponent],
   imports: [
     CommonModule,
     PropiedadesRoutingModule,

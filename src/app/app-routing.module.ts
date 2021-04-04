@@ -28,6 +28,14 @@ const routes: Routes = [
       path: 'parametros',
       loadChildren: () => import('./parametros/parametros.module').then(m => m.ParametrosModule)
      },
+     {
+      path: 'informes',
+      loadChildren: () => import('./informes/informes.module').then(m => m.InformesModule)
+     },
+     {
+      path: 'acciones',
+      loadChildren: () => import('./acciones/acciones.module').then(m => m.AccionesModule)
+     },
    ]},
   { path: '',   redirectTo: '/login', pathMatch: 'full'}
 ];

@@ -39,7 +39,6 @@ export class PersonasComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.personaService.loadPersonasFromBackend();
     this.personas$ = this.personaService.getPersonas();
-    this.personas$.subscribe((p) => console.log(p))
 
     this.searchBarService.getSearchInput$().subscribe((text) => this.searchText = text);
   }
