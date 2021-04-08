@@ -65,4 +65,69 @@ export class AccionesService {
     );
   }
 
+  loadPagosInforme(){
+    return this.queryService.executeGetQuery('read', 'infpago', {}, {}).pipe(  
+        // Catch a Forbidden acces error (return to login).
+        catchError(err => {
+          if (err.status == 403){
+            console.log('Forbidden access');
+            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
+          };
+          return EMPTY;
+        })
+      );
+  }
+
+  loadLiquidaciones(){
+    return this.queryService.executeGetQuery('read', 'liquidaciones', {}, {}).pipe(  
+        // Catch a Forbidden acces error (return to login).
+        catchError(err => {
+          if (err.status == 403){
+            console.log('Forbidden access');
+            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
+          };
+          return EMPTY;
+        })
+      );
+  }
+
+  loadBoletasLiquidaciones(propiedad, fecha){
+    return this.queryService.executeGetQuery('read', 'boletasliquidacion', {}, {propiedad, fecha}).pipe(  
+        // Catch a Forbidden acces error (return to login).
+        catchError(err => {
+          if (err.status == 403){
+            console.log('Forbidden access');
+            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
+          };
+          return EMPTY;
+        })
+      );
+  }
+
+  writeLiquidacion(liquidacion){
+    return this.queryService.executePostQuery('write', 'liquidaciones', liquidacion, {}).pipe(  
+      // Catch a Forbidden acces error (return to login).
+      catchError(err => {
+        if (err.status == 403){
+          console.log('Forbidden access');
+          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
+        };
+        return EMPTY;
+      })
+    );
+  }
+
+  loadLiquidacionesInforme(){
+    return this.queryService.executeGetQuery('read', 'infliquidacion', {}, {}).pipe(  
+        // Catch a Forbidden acces error (return to login).
+        catchError(err => {
+          if (err.status == 403){
+            console.log('Forbidden access');
+            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
+          };
+          return EMPTY;
+        })
+      );
+  }
+
 }

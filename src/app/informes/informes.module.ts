@@ -10,9 +10,10 @@ import { InfReajustesComponent } from './reajustes/reajustes.component';
 import { GUIModule } from '../gui/gui.module';
 import { FormsModule } from '@angular/forms';
 import { InfPagosComponent } from './inf-pagos/inf-pagos.component';
+import { InfLiquidacionComponent } from './inf-liquidacion/inf-liquidacion.component';
 
 @NgModule({
-  declarations: [InformesComponent, InfPropiedadesComponent, InfReajustesComponent, InfPagosComponent],
+  declarations: [InformesComponent, InfPropiedadesComponent, InfReajustesComponent, InfPagosComponent, InfLiquidacionComponent],
   imports: [
     CommonModule,
     InformesRoutingModule,

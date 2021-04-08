@@ -1,0 +1,37 @@
+<p class='title'>Liquidación de arriendo</p>
+
+<div class="flex-row">
+    <div class="flex-column">
+        <p class="section-content">Propiedad</p>
+        <ng-select [items]="propiedades" bindLabel="uId" bindValue="_id" style='width: 535px'
+                    [(ngModel)]='selectedPropiedadId' (ngModelChange)='changePropiedad(selectedPropiedadId)'>
+            <ng-template class='flex-column' ng-option-tmp let-item="item">
+                <p class="section-content">{{item.uId}}</p>
+                <p class="section-content">{{item.direccionStr}}</p>        
+            </ng-template>
+        </ng-select>
+        
+        
+        <div class='flex-column' *ngIf='selectedPropiedadId$.value != ""' style='margin-top: 10px;'>
+            <p class="section-content">{{selectedPropiedad.direccionStr}}</p>
+            <div class="flex-row">
+                <div class="flex-column">
+                    <p class="section-content" style='margin-top: 10px;'>Liquidación</p>
+                    <ng-select [items]="selectedPropiedad.liquidaciones" bindLabel="formatedFecha" [(ngModel)]='selectedLiquidacionId'
+                    (ngModelChange)='changeLiquidacion()' bindValue="_id" style='width: 300px'>
+                        <ng-template class='flex-column' ng-option-tmp let-item="item">
+                            <p class="section-content"><b>{{formatDate(item.fecha)}}</b></p>
+                            <p class="section-content">${{item.subtotal}}</p>
+                        </ng-template>
+                    </ng-select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex-column" style='justify-content: center; align-items: center; flex: 1;' *ngIf='selectedLiquidacionId && selectedLiquidacionId != ""'>
+        <div class="green-button" (click)='onGenerar()'>Generar</div>
+    </div>
+</div>
+
+<ng2-pdfjs-viewer style='flex:1; margin-top: 10px;' #pdfViewer></ng2-pdfjs-viewer>

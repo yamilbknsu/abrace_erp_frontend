@@ -119,4 +119,16 @@ export class EditPropiedadComponent implements OnInit {
   print(){
     console.log(this._propiedad)
   }
+
+  onEliminarClicked(){
+    this.toastService.confirmation('Vas a eliminar propiedad', (event, response) => {
+      if (response == 0) {
+        this.propiedadService.deletePropiedad$(this._propiedad._id).subscribe(() => {
+          this.propiedadService.loadPropiedadesFromBackend();
+          this.onBackClicked();
+          this.toastService.success('Operación realizada con éxito');
+        });
+      }
+    });
+  }
 }

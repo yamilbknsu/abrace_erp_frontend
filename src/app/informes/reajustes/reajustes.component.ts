@@ -18,6 +18,9 @@ export class InfReajustesComponent implements OnInit {
   outputFileName: string = 'document.pdf';
 
   reajustes: any[];
+  datePickerConfig = {
+    locale: 'es'
+  }
 
   @ViewChild('pdfViewer') public pdfViewer;
   

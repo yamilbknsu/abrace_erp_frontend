@@ -8,10 +8,11 @@ import { InlineSVGModule } from 'ng-inline-svg';
 import { GUIModule } from '../gui/gui.module';
 import { FormsModule } from '@angular/forms';
 import { PagoArriendoComponent } from './pago-arriendo/pago-arriendo.component';
+import { LiquidacionComponent } from './liquidacion/liquidacion.component';
 
 
 @NgModule({
-  declarations: [AccionesComponent, CierremesComponent, PagoArriendoComponent],
+  declarations: [AccionesComponent, CierremesComponent, PagoArriendoComponent, LiquidacionComponent],
   imports: [
     CommonModule,
     AccionesRoutingModule,

@@ -12,7 +12,10 @@ export class ParametrosComponent implements OnInit {
 
   parametros: Array<object> = [
     {nombre: 'Regiones', path: 'regiones'},
-    {nombre: 'Bancos', path: 'bancos'},
+    {nombre: 'Bancos', path: 'bancos'}
+  ];
+
+  parametrosUser : Array<object> = [
     {nombre: 'IPC y UF', path: 'ipcuf'}
   ];
 

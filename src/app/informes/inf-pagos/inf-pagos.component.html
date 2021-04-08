@@ -1,3 +1,50 @@
 <p class='title'>Comprobante de pago</p>
 
-<ng2-pdfjs-viewer style='flex:1;' #pdfViewer></ng2-pdfjs-viewer>
+<div class="flex-row">
+    <div class="flex-column">
+        <p class="section-content">Propiedad</p>
+        <ng-select [items]="propiedades" bindLabel="uId" bindValue="_id" style='width: 535px'
+                    [(ngModel)]='selectedPropiedadId' (ngModelChange)='changePropiedad(selectedPropiedadId)'>
+            <ng-template class='flex-column' ng-option-tmp let-item="item">
+                <p class="section-content">{{item.uId}}</p>
+                <p class="section-content">{{item.direccionStr}}</p>        
+            </ng-template>
+        </ng-select>
+        
+        <div class='flex-column' *ngIf='selectedPropiedadId$.value != ""' style='margin-top: 10px;'>
+            <p class="section-content">{{selectedPropiedad.direccionStr}}</p>
+            <div class="flex-row">
+                <div class="flex-column">
+                    <p class="section-content" style='margin-top: 10px;'>Contrato</p>
+                    <ng-select [items]="selectedPropiedad.contratos" bindLabel="arrendatario.nombre" [(ngModel)]='selectedContratoId' bindValue="_id"
+                               (ngModelChange)='changeContrato(selectedContratoId)' style='width: 300px'>
+                        <ng-template class='flex-column' ng-option-tmp let-item="item">
+                            <p class="section-content"><b>{{formatDate(item.fechacontrato)}}</b> - <b>{{formatDate(item.fechatermino)}}</b></p>
+                            <p class="section-content">{{item.arrendatario.nombre}}</p>
+                        </ng-template>
+                    </ng-select>
+                </div>
+            
+                <div class="flex-column" style='justify-content: flex-end; margin-left: 20px;'>
+                    <div *ngIf='selectedContratoId$.value != ""' style='margin-top: 10px;'>
+                        <p class="section-content">Pago</p>
+                        <ng-select [items]="selectedContrato.pagos" bindLabel="formatedFecha" bindValue="_id" [(ngModel)]='selectedPagoId'
+                               (ngModelChange)='changePago()' style='width: 210px'>
+                            <ng-template class='flex-column' ng-option-tmp let-item="item">
+                                <p class="section-content"><b>{{formatDate(item.formatedFecha)}}</b></p>
+                                <p class="section-content">${{item.subtotal}}</p>
+                            </ng-template>
+                        </ng-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex-column" style='justify-content: center; align-items: center; flex: 1;' *ngIf='selectedPagoId && selectedPagoId != ""'>
+        <div class="green-button" (click)='onGenerar()'>Generar</div>
+    </div>
+</div>
+
+
+<ng2-pdfjs-viewer style='flex:1; margin-top: 10px;' #pdfViewer></ng2-pdfjs-viewer>

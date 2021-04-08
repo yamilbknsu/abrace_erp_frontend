@@ -10,6 +10,7 @@ export class AccionesComponent implements OnInit {
 
   acciones: any[] = [
     {nombre: 'Cierre de mes', path: 'cierremes'},
+    {nombre: 'Liquidación de arriendo', path: 'liquidacion'},
     {nombre: 'Pago de arriendo', path: 'pagoarriendo'}
   ];
 

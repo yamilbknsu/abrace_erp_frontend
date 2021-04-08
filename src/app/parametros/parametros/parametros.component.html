@@ -5,8 +5,14 @@
         </div>
     </div>
     <div class="flex-row" style='flex: 1;'>
-        <div id="parametros-list" class='scrolled-section'>        
+        <div id="parametros-list" class='scrolled-section'>
+            <p class="section-title" style='padding-left: 5px; padding-top: 5px; padding-bottom: 5px; background-color: #e6f1fc; border-bottom: 1px solid #a2cdfc; margin-bottom: 0px;'>Parámetros globales</p>
             <div class='parametros-item' *ngFor="let parametro of parametros; index as i" [routerLink]='parametro.path'>
+                {{ parametro.nombre }}
+            </div>
+            
+            <p class="section-title" style='padding-left: 5px; padding-top: 5px; padding-bottom: 5px; background-color: #e6f1fc; border-bottom: 1px solid #a2cdfc; margin-bottom: 0px;'>Parámetros del usuario</p>
+            <div class='parametros-item' *ngFor="let parametro of parametrosUser; index as i" [routerLink]='parametro.path'>
                 {{ parametro.nombre }}
             </div>
         </div>
