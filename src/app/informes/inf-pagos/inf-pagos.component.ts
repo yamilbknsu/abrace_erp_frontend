@@ -51,6 +51,7 @@ export class InfPagosComponent implements OnInit {
       this.selectedContrato = this.propiedades.filter(prop => prop._id == this.selectedPropiedadId)?.[0]?.contratos.filter(cont => cont._id == id)?.[0]
       //this.boletas = [];
       //this.instrucciones = [];
+      console.log(this.selectedContrato);
       if(this.selectedContrato){
         this.selectedContrato.pagos = this.selectedContrato.pagos.sort(this.sortDate);
         this.selectedContrato.pagos = this.selectedContrato.pagos.map(pago => {

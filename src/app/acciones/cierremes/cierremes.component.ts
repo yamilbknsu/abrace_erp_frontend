@@ -35,6 +35,11 @@ export class CierremesComponent implements OnInit {
     this.fecha = moment().startOf('month');
 
     this.route.data.subscribe(data => {
+      data.cierres.map(cierre => {
+        if(cierre.boletas.length == 1 && !cierre.boletas[0]._id) cierre.boletas = [];
+        if(cierre.reajustes.length == 1 && !cierre.reajustes[0]._id) cierre.reajustes = [];
+        return cierre
+      });
       this.cierres = data.cierres;
     });
 
@@ -135,11 +140,11 @@ export class CierremesComponent implements OnInit {
               else if(element.contrato.tiempoarriendo == 'Semestral') arriendo_interval = 6;
               else if(element.contrato.tiempoarriendo == 'Anual') arriendo_interval = 12;
 
-              if(arriendo_diff >= arriendo_interval){
+              if(arriendo_diff >= arriendo_interval - 1){
                 this.boletasUpload.push({
                   contrato: element.contrato._id,
                   userid: element.contrato.userid,
-                  fecha: moment(last_boleta.fecha).add(arriendo_diff, 'M').toDate(),
+                  fecha: moment(last_boleta.fecha).add(arriendo_diff + 1, 'M').toDate(),
                   valorinicial: last_boleta.valorfinal,
                   valorfinal: valor_final_reajuste,
                   estado: "Generado",
@@ -149,7 +154,7 @@ export class CierremesComponent implements OnInit {
                 this.reajustes.push({
                     contrato: element.contrato,
                     userid: element.contrato.userid,
-                    fecha: moment(last_boleta.fecha).add(arriendo_diff, 'M').toDate(),
+                    fecha: moment(last_boleta.fecha).add(arriendo_diff + 1, 'M').toDate(),
                     valorinicial: last_boleta.valorfinal,
                     valorfinal: valor_final_reajuste,
                     propiedadData: element.propiedad,
@@ -172,6 +177,12 @@ export class CierremesComponent implements OnInit {
                 .subscribe((data) => {
                     this.accionesService.loadCierresMes()
                         .subscribe(data => {
+                          data.cierres.map(cierre => {
+                            if(cierre.boletas.length == 1 && !cierre.boletas[0]._id) cierre.boletas = [];
+                            if(cierre.reajustes.length == 1 && !cierre.reajustes[0]._id) cierre.reajustes = [];
+                            return cierre
+                          });
+                          
                           this.cierres = data;
                           this.fechaChange();
                           this.toastService.success('Operación realizada con éxito');

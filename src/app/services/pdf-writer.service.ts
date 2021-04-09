@@ -93,7 +93,7 @@ export class PdfWriterService {
     pago.totalCargos = this.numberWithPoints(pago.totalCargos);
     pago.totalDescuentos = this.numberWithPoints(pago.totalDescuentos);
     pago.subtotal = this.numberWithPoints(pago.subtotal);
-
+    console.log(pago.descuentos)
     var nestedTableHeight = 100
     var tableDelta = 60;
     var nestedTableCell = {
@@ -136,11 +136,12 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
+            columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             columns: [
               { dataKey: 'concepto', header: '' },
               { dataKey: 'valor', header: '' },
             ],
-            body: pago.descuentos.map(cargo => ({concepto: cargo.tipo, valor: cargo.valor})),
+            body: pago.descuentos.map(cargo => ({concepto: cargo.detalle, valor: cargo.valor})),
           });
         }
       },
@@ -261,11 +262,12 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
+            columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             columns: [
               { dataKey: 'concepto', header: '' },
               { dataKey: 'valor', header: '' },
             ],
-            body: pago.descuentos.map(cargo => ({concepto: cargo.tipo, valor: cargo.valor})),
+            body: pago.descuentos.map(cargo => ({concepto: cargo.detalle, valor: cargo.valor})),
           });
         }
       },
@@ -411,6 +413,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
+            columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             columns: [
               { dataKey: 'concepto', header: '' },
               { dataKey: 'valor', header: '' },
@@ -530,6 +533,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
+            columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             columns: [
               { dataKey: 'concepto', header: '' },
               { dataKey: 'valor', header: '' },

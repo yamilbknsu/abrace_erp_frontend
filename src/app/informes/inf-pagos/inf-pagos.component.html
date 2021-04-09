@@ -31,7 +31,7 @@
                         <ng-select [items]="selectedContrato.pagos" bindLabel="formatedFecha" bindValue="_id" [(ngModel)]='selectedPagoId'
                                (ngModelChange)='changePago()' style='width: 210px'>
                             <ng-template class='flex-column' ng-option-tmp let-item="item">
-                                <p class="section-content"><b>{{formatDate(item.formatedFecha)}}</b></p>
+                                <p class="section-content"><b>{{item.formatedFecha}}</b></p>
                                 <p class="section-content">${{item.subtotal}}</p>
                             </ng-template>
                         </ng-select>

@@ -54,9 +54,9 @@ export class LiquidacionComponent implements OnInit {
   }
 
   changePropiedad(id){
-    this.liquidacionExists = false;
     if(id) this.selectedPropiedadId$.next(id);
     else this.selectedPropiedadId$.next('');
+    this.changePeriodo();
   }
 
   changePeriodo(){
