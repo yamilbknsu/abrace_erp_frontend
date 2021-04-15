@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, webFrame } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog, webFrame, screen } = require('electron')
 const url = require("url");
 const path = require("path");
 
@@ -8,13 +8,17 @@ let mainWindow
 // 1333 x 638, 83%
 
 function createWindow () {
+
+  var screenRatio = screen.getDisplayNearestPoint({x:0, y:0}).bounds.height / 1080;
+
   //Create new window
   mainWindow = new BrowserWindow({
-    width: 1600, //1600
-    height: 900, // 900
+    width: 1600 * screenRatio, //1600
+    height: 900 * screenRatio, // 900
     useContentSize: true,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      zoomFactor: screenRatio
     }
   });
 

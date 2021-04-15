@@ -176,14 +176,14 @@ export class CierremesComponent implements OnInit {
       this.propiedadesService.cerrarMes(this.fecha.toDate(), this.boletasUpload, this.reajustesUpload)
                 .subscribe((data) => {
                     this.accionesService.loadCierresMes()
-                        .subscribe(data => {
-                          data.cierres.map(cierre => {
+                        .subscribe(data_ => {
+                          data_.map(cierre => {
                             if(cierre.boletas.length == 1 && !cierre.boletas[0]._id) cierre.boletas = [];
                             if(cierre.reajustes.length == 1 && !cierre.reajustes[0]._id) cierre.reajustes = [];
                             return cierre
                           });
                           
-                          this.cierres = data;
+                          this.cierres = data_;
                           this.fechaChange();
                           this.toastService.success('Operación realizada con éxito');
                         })

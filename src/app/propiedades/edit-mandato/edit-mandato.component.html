@@ -107,9 +107,16 @@
                             <p class="section-subtitle-small">Cuenta</p>
                             <input type="text" [(ngModel)]='mandatoSelected.liquidacion.cuenta' style='width:140px; margin-right: 5px; height: 32px;'>
                         </div>
-                        <div class="flex-column" style='justify-content:flex-end; flex: 1;'>
+                        <div class="flex-column" style='flex: 1;'>
                             <p class="section-subtitle-small">Banco</p>
-                            <input type="text" [(ngModel)]='mandatoSelected.liquidacion.banco' style='max-width:140px;  height: 32px;'>
+                            <ng-select [items]="bancos$ | async" 
+                                    bindLabel="name" 
+                                    bindValue="name"
+                                    [(ngModel)]="mandatoSelected.liquidacion.banco"
+                                    [clearable]='false'
+                                    style='height: 32px; margin-right: 5px;'>
+                            </ng-select>
+                            <!--<input type="text" [(ngModel)]='mandatoSelected.liquidacion.banco' style='max-width:140px;  height: 32px;'>-->
                         </div>             
                     </div>
                     <div class="flex-row" style='height: 35px; align-items: center; margin-top: 8px; justify-content: space-between;'>
@@ -162,10 +169,10 @@
                                 </div>
                             </div>
                             <div class="flex-row" style='margin-top: 5px; justify-content: flex-start;'>
-                                <div class="flex-column">
+                                <!--<div class="flex-column">
                                     <p class="section-subtitle-small">Moneda</p>
                                     <input type="text" [(ngModel)]='persona.moneda'style='width:135px; margin-right: 5px; height: 32px;'>
-                                </div>
+                                </div>-->
                                 <div class="flex-column">
                                     <p class="section-subtitle-small">Tipo</p>
                                     <ng-select [items]="funcionComision$ | async" 
@@ -196,9 +203,15 @@
                                     <p class="section-subtitle-small">Cuenta</p>
                                     <input type="text" [(ngModel)]='persona.nrocuenta' style='width:135px; margin-right: 5px; height: 32px;'>
                                 </div>
-                                <div class="flex-column" style='justify-content:flex-end;'>
+                                <div class="flex-column" style="width: 156px;">
                                     <p class="section-subtitle-small">Banco</p>
-                                    <input type="text" [(ngModel)]='persona.banco' style='max-width:135px;  height: 32px;'>
+                                    <ng-select [items]="bancos$ | async" 
+                                        bindLabel="name" 
+                                        bindValue="name"
+                                        [(ngModel)]="persona.banco"
+                                        [clearable]='false'
+                                        style='height: 32px; margin-right: 5px;'>
+                                    </ng-select>
                                 </div>             
                             </div>
                         </div>

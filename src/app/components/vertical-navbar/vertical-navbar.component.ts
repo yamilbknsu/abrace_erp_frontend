@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Location} from '@angular/common';
+import { LoadingIconService } from 'src/app/services/loading-icon.service';
+import { BehaviorSubject } from 'rxjs';
 
 
 @Component({
@@ -10,8 +12,9 @@ import {Location} from '@angular/common';
 export class VerticalNavbarComponent implements OnInit {
 
   options = [];
+  isLoading: BehaviorSubject<boolean>;
 
-  constructor(private _location: Location) { }
+  constructor(private _location: Location, private loadingIconService: LoadingIconService) { }
 
   ngOnInit(): void {
     this.options = [
@@ -22,6 +25,8 @@ export class VerticalNavbarComponent implements OnInit {
       {displayName: 'Informes', svgDir: 'assets/icon/noticias.svg', route: './informes'},
       {displayName: 'Parámetros', svgDir: 'assets/icon/config.svg', route: './parametros'}
     ]
+
+    this.isLoading = this.loadingIconService.getLoadingFlag();
   }
 
   onBackClicked(){

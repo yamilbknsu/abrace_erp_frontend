@@ -1,5 +1,8 @@
 <div id="global-wrapper">
-    <div class="back-button" [inlineSVG]="'assets/icon/flecha.svg'" (click)='onBackClicked()'></div>
+    <div class="flex-row space-between">
+        <div class="back-button" [inlineSVG]="'assets/icon/flecha.svg'" (click)='onBackClicked()'></div>
+        <div class="lds-ring" *ngIf='isLoading.value'><div></div><div></div><div></div><div></div></div>
+    </div>
     <div class="navbar-option undecorated" routerLinkActive="selected" [routerLinkActiveOptions]="{exact: false}" [routerLink]='option.route'
          *ngFor='let option of options'>
         <div class="navbar-icon undecorated" [inlineSVG]='option.svgDir' [routerLink]='option.route'></div> <a class="undecorated" [routerLink]='option.route'>{{ option.displayName }}</a>

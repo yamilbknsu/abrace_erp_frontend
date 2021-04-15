@@ -1,18 +1,21 @@
 import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { LoadingIconService } from './loading-icon.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthTokenIntercerptorService implements HttpInterceptor {
 
-  constructor() { }
+  constructor(private loadingIconService: LoadingIconService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let token = localStorage.getItem('id_token');
     
+    this.loadingIconService.isLoading.next(true);
+
     if (token){
       req = req.clone({
         setHeaders:{
@@ -22,12 +25,19 @@ export class AuthTokenIntercerptorService implements HttpInterceptor {
     }
 
     return next.handle(req).pipe(
+        catchError((error: HttpErrorResponse) => {
+        this.loadingIconService.isLoading.next(false);
+        return of(new HttpResponse({
+          body: error.error
+        }))
+      }),
       tap((httpEvent: any) => {
         // Skip request
         if(httpEvent.type === 0){
           return;
         }
         if (httpEvent instanceof HttpResponse) {
+          this.loadingIconService.isLoading.next(false);
           localStorage.setItem('id_token', httpEvent.headers.get('auth-token'));
         }
       })

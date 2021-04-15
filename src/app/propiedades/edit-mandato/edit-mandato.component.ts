@@ -29,6 +29,7 @@ export class EditMandatoComponent implements OnInit {
 
   formasPago$;
   funcionComision$;
+  bancos$;
 
   datePickerConfig = {
     locale: 'es'
@@ -97,6 +98,12 @@ export class EditMandatoComponent implements OnInit {
 
     this.funcionComision$ = this.parametrosService.funcionComision$.pipe(
       map(pagos => pagos.map((pago) => { return {name: pago}}))
+    );
+
+    
+    this.parametrosService.loadBancosFromBackend();
+    this.bancos$ = this.parametrosService.bancos$.pipe(
+      map(bancos => bancos.map((banco) => { return { name: banco } }))
     );
   }
 

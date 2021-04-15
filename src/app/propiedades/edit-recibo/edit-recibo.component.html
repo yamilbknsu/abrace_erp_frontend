@@ -1,6 +1,6 @@
 <div class="flex-column" id="wrapper">
     <p class="title">Recibos</p>
-    <div id="recibos-list">
+    <div id="recibos-list" style='flex: 1; overflow: hidden;'>
         <div class='flex-column scrolled-section' id="recibos-container">
             <div class="flex-row recibo-item space-between" *ngFor='let recibo of recibos' (click)='selectRecibo(recibo._id)'>
                 <div class="flex-column space-between">

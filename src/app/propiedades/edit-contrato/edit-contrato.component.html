@@ -10,7 +10,6 @@
                     </div>
                     <div class="flex-column">
                         <p class='section-subtitle-disabled'>Fecha termino</p>
-                        <!--  [displayDate]='terminoDisplay'-->
                          <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='terminoPlaceholder' (ngModelChange)='updateTermino()' [disabled]='!newContrato || contratoSelected.tipocontrato == "Indefinido"'></dp-date-picker>
                     </div>
                 </div>
