@@ -101,7 +101,7 @@
                             </ng-select>
                         </div>
                         <div class="flex-column">
-                            <div class="flex-row"><p class="section-content">Inicial </p><p class="section-subtitle-disabled"> - {{formatDate(contratoSelected.fechacontrato)}}</p></div>
+                            <div class="flex-row"><p class="section-content">Base </p><p *ngIf='!newContrato' class="section-subtitle-disabled"> - {{formatDate(contratoSelected.fechacontrato)}}</p></div>
                             <p *ngIf='!newContrato; else canonInput'>{{contratoSelected.canoninicial}}</p>
                             <ng-template #canonInput>
                                 <input type="text" [(ngModel)]='contratoSelected.canoninicial' style='width:120px; text-align: end; padding-left: 1px; padding-right: 10px; margin-top: 3px;'>

@@ -56,7 +56,7 @@ export class CierremesComponent implements OnInit {
     this.reajustesUpload = [];
 
     this.reajusteExists = cierresFecha.length > 0;
-    this.reajustes = this.reajusteExists ? cierresFecha[0].boletas.concat(cierresFecha[0].reajustes).sort((a,b) => new Date(a.fecha) > new Date(b.fecha) ? 1 : -1) : [];
+    this.reajustes = this.reajusteExists ? cierresFecha[0].reajustes.concat(cierresFecha[0].boletas).sort((a,b) => new Date(a.fecha) > new Date(b.fecha) ? 1 : -1) : [];
   }
 
   formatDate(date) {
@@ -165,8 +165,8 @@ export class CierremesComponent implements OnInit {
 
             });
 
-            this.reajustes = this.reajustes.filter(e => !e.reajuste?.toString()).sort((a,b) => new Date(a.fecha) > new Date(b.fecha) ? 1 : -1)
-                             .concat(this.reajustes.filter(e => e.reajuste?.toString()).sort((a,b) => new Date(a.fecha) > new Date(b.fecha) ? 1 : -1));
+            this.reajustes = this.reajustes.filter(e => e.reajuste?.toString()).sort((a,b) => new Date(a.fecha) > new Date(b.fecha) ? 1 : -1)
+                             .concat(this.reajustes.filter(e => !e.reajuste?.toString()).sort((a,b) => new Date(a.fecha) > new Date(b.fecha) ? 1 : -1));
           }
         });
   }

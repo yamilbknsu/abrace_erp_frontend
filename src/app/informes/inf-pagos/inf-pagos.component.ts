@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
+import { AccionesService } from 'src/app/acciones/acciones.service';
 import { Propiedad } from 'src/app/models/Propiedad';
 import { PdfWriterService } from 'src/app/services/pdf-writer.service';
 
@@ -36,8 +37,10 @@ export class InfPagosComponent implements OnInit {
   }
 
   sortDate = (a, b) => (new Date(a.fechacontrato) > new Date(b.fechacontrato)) ? -1 : 1;
+  sortDateReverse = (a, b) => (new Date(a.fechacontrato) > new Date(b.fechacontrato)) ? 1 : -1;
 
-  constructor(private route: ActivatedRoute, private pdfWriterService: PdfWriterService) { }
+  constructor(private route: ActivatedRoute, private pdfWriterService: PdfWriterService,
+              private accionesService: AccionesService) { }
 
   ngOnInit(): void {
     this.date = moment();
@@ -53,7 +56,7 @@ export class InfPagosComponent implements OnInit {
       //this.instrucciones = [];
       console.log(this.selectedContrato);
       if(this.selectedContrato){
-        this.selectedContrato.pagos = this.selectedContrato.pagos.sort(this.sortDate);
+        this.selectedContrato.pagos = this.selectedContrato.pagos.sort(this.sortDateReverse);
         this.selectedContrato.pagos = this.selectedContrato.pagos.map(pago => {
           pago.formatedFecha = this.formatDate(pago.fechaemision);
           return pago

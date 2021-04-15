@@ -275,13 +275,15 @@ export class EditContratoComponent implements OnInit, OnDestroy {
   }
 
   updateInstrucciones(items){
+    if(!this.contratoSelected?.instrucciones) this.contratoSelected.instrucciones = [];
+
     items.forEach(element => {
-      if(this.contratoSelected.instrucciones.filter(e => e.nombre == element).length == 0){
+      if(this.contratoSelected.instrucciones?.filter(e => e.nombre == element).length == 0){
         this.contratoSelected.instrucciones.push({nombre: element, detalle: ''})
       }
     });
 
-    this.contratoSelected.instrucciones.forEach(element => {
+    this.contratoSelected.instrucciones?.forEach(element => {
       if(!items.includes(element.nombre)){
         const index = this.contratoSelected.instrucciones.map(e => e.nombre).indexOf(element.nombre);
         if (index > -1) {

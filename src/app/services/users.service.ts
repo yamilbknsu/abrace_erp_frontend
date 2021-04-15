@@ -27,7 +27,16 @@ export class UsersService {
 
     // Setting visible values
     localStorage.setItem('logged_as', authResult.displayname);
-  }          
+  }
+  
+  public clearSession(){
+    localStorage.setItem('id_token', undefined);
+    localStorage.setItem("expires_at", undefined);
+
+    // Setting visible values
+    localStorage.setItem('logged_as', undefined);
+
+  }
 
   logout() {
       localStorage.removeItem("id_token");

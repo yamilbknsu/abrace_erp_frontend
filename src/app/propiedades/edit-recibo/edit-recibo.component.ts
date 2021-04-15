@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AccionesService } from 'src/app/acciones/acciones.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { PropiedadesService } from '../propiedades.service';
 
@@ -25,12 +26,12 @@ export class EditReciboComponent implements OnInit {
   }
 
   constructor(private propiedadesService: PropiedadesService, private route: ActivatedRoute,
-              private toastService: ToastService) { }
+              private toastService: ToastService, private accionesService : AccionesService) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params =>
       { this.contratoId = params['contrato'];
-        this.propiedadesService.loadRecibosContrato(params['contrato']).subscribe((a) => this.recibos = a)})
+        this.propiedadesService.loadRecibosContrato(params['contrato']).subscribe((a) => this.recibos = a.sort(this.accionesService.getSortByDate(true)))})
 
     this.editingId$.subscribe(id => {
       if(id == 'new'){

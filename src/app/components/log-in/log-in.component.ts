@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { UsersService } from 'src/app/services/users.service';
 import { trigger, state, style, animate, transition, keyframes, query, stagger } from '@angular/animations';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PropiedadesService } from 'src/app/propiedades/propiedades.service';
+import { BehaviorSubject } from 'rxjs';
+import { Propiedad } from 'src/app/models/Propiedad';
 
 @Component({
   selector: 'app-log-in',
@@ -51,7 +54,7 @@ export class LogInComponent implements OnInit {
   password: string;
 
 
-  constructor(private userService: UsersService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private userService: UsersService, private router: Router, private route: ActivatedRoute, private propiedadesService:PropiedadesService) { }
 
   successful: boolean;
   error: string;
@@ -63,6 +66,9 @@ export class LogInComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.error = params['expired'] ? 'Sesion expirada' : '';
     });
+
+    this.propiedadesService.propiedades$ = new BehaviorSubject<Propiedad[]>([]);
+    this.userService.clearSession();
   }
 
   onClickLogin(){

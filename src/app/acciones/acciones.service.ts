@@ -130,4 +130,18 @@ export class AccionesService {
       );
   }
 
+  sortByDate(a,b, reverse=false){
+    if(reverse)
+      return new Date(a.fecha) > new Date(b.fecha) ? -1 : 1;
+
+    return new Date(a.fecha) > new Date(b.fecha) ? 1 : -1;
+  }
+
+  getSortByDate(reverse=false){
+    if(reverse)
+      return (a,b) => new Date(a.fecha) > new Date(b.fecha) ? -1 : 1;
+
+    return (a,b) => new Date(a.fecha) > new Date(b.fecha) ? 1 : -1;
+  }
+
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { LoadingIconService } from './loading-icon.service';
 
@@ -27,9 +27,8 @@ export class AuthTokenIntercerptorService implements HttpInterceptor {
     return next.handle(req).pipe(
         catchError((error: HttpErrorResponse) => {
         this.loadingIconService.isLoading.next(false);
-        return of(new HttpResponse({
-          body: error.error
-        }))
+        console.log('Caught: ', error);
+        return throwError(error);
       }),
       tap((httpEvent: any) => {
         // Skip request

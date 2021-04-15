@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
+import { AccionesService } from 'src/app/acciones/acciones.service';
 import { Propiedad } from 'src/app/models/Propiedad';
 import { PdfWriterService } from 'src/app/services/pdf-writer.service';
 
@@ -27,7 +28,7 @@ export class InfLiquidacionComponent implements OnInit {
   selectedLiquidacion: any = {};
   selectedLiquidacionId: string = '';
 
-  constructor(private route:ActivatedRoute, private pdfWriterService: PdfWriterService) { }
+  constructor(private route:ActivatedRoute, private pdfWriterService: PdfWriterService, private accionesService: AccionesService) { }
 
   ngOnInit(): void {
     this.date = moment();
@@ -37,7 +38,11 @@ export class InfLiquidacionComponent implements OnInit {
       console.log(this.propiedades)
     });
 
-    this.selectedPropiedadId$.subscribe(id => this.selectedPropiedad = this.propiedades.filter(prop => prop._id == id)?.[0]);
+    this.selectedPropiedadId$.subscribe(id => {
+      this.selectedPropiedad = this.propiedades.filter(prop => prop._id == id)?.[0];
+      if(this.selectedPropiedad?.liquidaciones)
+        this.selectedPropiedad.liquidaciones = this.selectedPropiedad.liquidaciones.sort(this.accionesService.getSortByDate(true));
+    });
   }
 
   changePropiedad(id){
