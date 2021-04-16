@@ -451,13 +451,21 @@ export class PropiedadesService {
   }
 
   calcularReajuste(fechainicial, n_meses, ipc){
-    var ipc_acumulado = 0;
+    //var ipc_acumulado = 1;
 
-    for(let i = 0; i < n_meses; i++){
-      var fecha = moment(fechainicial).add(-(i+1), 'M');
-      ipc_acumulado += Number.parseFloat(ipc.filter(e => e.code == fecha.year().toString())[0]?.attributes[fecha.month()]);
-    }
-    return ipc_acumulado ? ipc_acumulado : 0;
+    //for(let i = 0; i < n_meses; i++){
+    //  var fecha = moment(fechainicial).add(-(i+1), 'M');
+    //  ipc_acumulado *= 1 + Number.parseFloat(ipc.filter(e => e.code == fecha.year().toString())[0]?.attributes[fecha.month()])/100;
+    //}
+    //return ipc_acumulado ?  (ipc_acumulado - 1) * 100 : 0;
+
+    var fecha = moment(fechainicial).add(-(n_meses+1), 'M');
+    var ipc_inicial = Number.parseFloat(ipc.filter(e => e.code == fecha.year().toString())[0]?.attributes[fecha.month()])
+
+    fecha = moment(fechainicial).add(-1, 'M');
+    var ipc_final = Number.parseFloat(ipc.filter(e => e.code == fecha.year().toString())[0]?.attributes[fecha.month()])
+    console.log(ipc_final, ipc_inicial, ipc_final / ipc_inicial)
+    return ipc_inicial && ipc_final ?  (ipc_final / ipc_inicial - 1) * 100 : 0;
   }
 
   cerrarMes(fecha, recibos, reajustes){
