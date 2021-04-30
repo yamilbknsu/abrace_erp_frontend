@@ -175,8 +175,8 @@
                     <p class='section-subtitle'>Estacionamientos</p>
                     <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.estacionamientos'>
 
-                    <p class='section-subtitle'>Otros</p>
-                    <input size="10" type="text" [(ngModel)]='_propiedad.caracteristicas.otros'>
+                    <!-- <p class='section-subtitle'>Otros</p>
+                    <input size="10" type="text" [(ngModel)]='_propiedad.caracteristicas.otros'>-->
                 </div>
                 <div style="display: flex; flex-direction: column; flex: 1;">
                     <p class='section-subtitle'>Mts2 terreno</p>
@@ -201,19 +201,37 @@
 
                     <p class='section-subtitle'>Baños servicio</p>
                     <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.banosservicio'>
-
-                    <p class='section-subtitle'>Bodegas</p>
-                    <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.bodegas'>
-
-                    <div style='display: flex; flex-direction: column; align-items: center; flex: 1;'>
-                        <p class='section-subtitle'>Ascensor</p>
-                        <input type="checkbox" [(ngModel)]='_propiedad.caracteristicas.ascensor'>
+                    
+                    <div style="display: flex; flex-direction: row; justify-content: space-between; flex:1;">
+                        <div style="display: flex; flex-direction: column;">
+                            <p class='section-subtitle'>Bodegas</p>
+                            <input size="8" type="text" [(ngModel)]='_propiedad.caracteristicas.bodegas'>
+                        </div>
+                        <div style='display: flex; flex-direction: column; align-items: center; flex: 1; margin-left: 10px; margin-top: 5px;'>
+                            <p class='section-subtitle'>Ascensor</p>
+                            <input type="checkbox" [(ngModel)]='_propiedad.caracteristicas.ascensor'>
+                        </div>
                     </div>
+                </div>
+            </div>
+            <div class="flex-row" style="margin-top: 10px;">
+                <div class="flex-column" style='flex: 1;'>
+                    <p class='section-subtitle'>Otros</p>
+                    <app-multi-item-box [items]='otrosnombres' (updateSelection)='changeOtroSelected($event)' (updateArray)='updateOtros($event)' style='width: 180px; height: 100px;'></app-multi-item-box>
+                </div>
+                <div class="flex-column" style='flex: 1;'>
+                    <div *ngIf='selectedOtro!= -1 && _propiedad.uId; else nodetalle' class="flex-column" style='flex: 1;'>
+                        <textarea style="resize: none;" [(ngModel)]='_propiedad.caracteristicas.otros[selectedOtro].detalle'></textarea>
+                    </div>
+
+                    <ng-template #nodetalle>
+                        <textarea readonly style="resize: none;">Elige o agrega un elemento para editar.</textarea>
+                    </ng-template>
                 </div>
             </div>
         </div>
     </div>
-    <div id="bottom-row" style="margin-top: 26px;">
+    <div id="bottom-row" style="margin-top: 20px;">
         <div style='flex: 1;'>
             <div class='red-button'(click)='onEliminarClicked()'>
                 Eliminar propiedad

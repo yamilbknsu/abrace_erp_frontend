@@ -11,4 +11,6 @@ export class Persona{
     dirComercial: string = '';
     telefonos: Array<string> = [];
     emails: Array<string> = [];
+    personalidad: string = 'Natural';
+    representante: any = {};
 }

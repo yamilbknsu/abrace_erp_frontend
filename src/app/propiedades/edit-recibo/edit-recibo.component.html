@@ -1,19 +1,21 @@
 <div class="flex-column" id="wrapper">
-    <p class="title">Recibos</p>
+    <p class="title">Canon de arriendo</p>
     <div id="recibos-list" style='flex: 1; overflow: hidden;'>
         <div class='flex-column scrolled-section' id="recibos-container">
-            <div class="flex-row recibo-item space-between" *ngFor='let recibo of recibos' (click)='selectRecibo(recibo._id)'>
+            <div class="flex-row recibo-item space-between" *ngFor='let recibo of recibos'> <!--(click)='selectRecibo(recibo._id)'-->
                 <div class="flex-column space-between">
-                    <p class="section-subtitle-disabled">{{recibo.tipo}}</p>
-                    <p class='section-content'>{{formatDate(recibo.fecha)}}</p>
+                    <!--<p class="section-subtitle-disabled">{{recibo.tipo}}</p>-->
+                    <p class='section-content'>{{getPeriodo(recibo.fecha)}}</p>
                 </div>
-                <div class="flex-column space-between">
+                <div class="flex-column" style='justify-content: center;'>
                     <p class='section-content' style="text-align: right;">{{recibo.valorfinal}}</p>
-                    <p class='section-content' style='font-weight: 500;'>{{recibo.estado}}</p>                    
+                   <!-- <p class='section-content' style='font-weight: 500;'>{{recibo.estado}}</p>-->                    
                 </div>
             </div>
         </div>
+        <!--
         <div id='crear-button' (click)='crearClicked()'><p class="section-content">Crear recibo</p></div>
+        -->
     </div>
     <div class='flex-column' id="editing-panel" *ngIf='reciboSelected.tipo'>
         <p class="section-content" style='margin-top: 15px;'>Fecha</p>

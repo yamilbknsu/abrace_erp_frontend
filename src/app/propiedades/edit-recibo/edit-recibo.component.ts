@@ -98,4 +98,8 @@ export class EditReciboComponent implements OnInit {
       });
     }
   }
+
+  getPeriodo(fecha){
+    return ((new Date(fecha)).getMonth() + 1) + '/' + ((new Date(fecha)).getFullYear())
+  }
 }

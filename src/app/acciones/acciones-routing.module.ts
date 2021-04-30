@@ -3,10 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { AccionesComponent } from './acciones/acciones.component';
 import { CierremesComponent } from './cierremes/cierremes.component';
 import { CierresResolverService } from './cierremes/cierres-resolver.service';
+import { EgresosComponent } from './egresos/egresos.component';
+import { IngresoComponent } from './ingreso/ingreso.component';
 import { LiquidacionResolverService } from './liquidacion/liquidacion-resolver.service';
 import { LiquidacionComponent } from './liquidacion/liquidacion.component';
 import { PagoArriendoResolverService } from './pago-arriendo/pago-arriendo-resolver.service';
 import { PagoArriendoComponent } from './pago-arriendo/pago-arriendo.component';
+import { ReajusteDeRentasComponent } from './reajuste-de-rentas/reajuste-de-rentas.component';
 
 const routes: Routes = [
   {
@@ -19,6 +22,10 @@ const routes: Routes = [
         resolve: {cierres: CierresResolverService}
       },
       {
+        path: 'reajustes',
+        component: ReajusteDeRentasComponent
+      },
+      {
         path: 'pagoarriendo',
         component: PagoArriendoComponent,
         resolve: {propiedades: PagoArriendoResolverService}
@@ -27,6 +34,14 @@ const routes: Routes = [
         path: 'liquidacion',
         component: LiquidacionComponent,
         resolve: {propiedades: LiquidacionResolverService}
+      },
+      {
+        path: 'ingreso',
+        component: IngresoComponent
+      },
+      {
+        path: 'egreso',
+        component: EgresosComponent
       }
     ]
   }

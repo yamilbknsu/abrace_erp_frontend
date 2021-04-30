@@ -8,4 +8,9 @@
     background-color: #F9F9F9;
     flex: 1;
     padding: 21px 26px 0px 29px;
+    overflow: hidden;
+}
+
+#personalidad-selector{
+    margin-bottom: 10px;
 }

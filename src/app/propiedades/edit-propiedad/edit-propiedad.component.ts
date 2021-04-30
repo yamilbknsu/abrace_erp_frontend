@@ -36,6 +36,9 @@ export class EditPropiedadComponent implements OnInit {
 
   newPropiedad: boolean = false;
 
+  otrosnombres = [];
+  selectedOtro: number = -1;
+
   constructor(private route: ActivatedRoute, private personasService: PersonasService,
               private direccionesService: DireccionesService, private router: Router, private _location: Location,
               private propiedadService: PropiedadesService, private toastService: ToastService) { }
@@ -57,6 +60,12 @@ export class EditPropiedadComponent implements OnInit {
 
       if(!this._propiedad.caracteristicas) this._propiedad.caracteristicas = {};
       if(!this._propiedad.telefonos) this._propiedad.telefonos = [];
+
+      if(typeof this._propiedad?.caracteristicas?.otros === "string"){
+        this._propiedad.caracteristicas.otros = [{nombre: this._propiedad.caracteristicas.otros, detalle: "Sin detalle"}];
+      }
+
+      this.otrosnombres = this._propiedad.caracteristicas.otros.map(i => i.nombre);
 
       this.mandanteId$ = new BehaviorSubject<string>(this._propiedad.mandante);
       this.administradorId$ = new BehaviorSubject<string>(this._propiedad.administrador ? this._propiedad.administrador : "");
@@ -130,5 +139,30 @@ export class EditPropiedadComponent implements OnInit {
         });
       }
     });
+  }
+
+  changeOtroSelected(number){
+    this.selectedOtro = number;
+  }
+
+  updateOtros(items){
+    items.forEach(element => {
+      if(this._propiedad.caracteristicas.otros.filter(e => e.nombre == element).length == 0){
+        this._propiedad.caracteristicas.otros.push({nombre: element, detalle: ''})
+      }
+    });
+
+    this._propiedad.caracteristicas.otros.forEach(element => {
+      if(!items.includes(element.nombre)){
+        const index = this._propiedad.caracteristicas.otros.map(e => e.nombre).indexOf(element.nombre);
+        if (index > -1) {
+          this._propiedad.caracteristicas.otros.splice(index, 1);
+        }
+      }
+    });
+    
+    if(this.selectedOtro >= this._propiedad.caracteristicas.otros.length){
+      this.selectedOtro = this._propiedad.caracteristicas.otros.length - 1;
+    }
   }
 }

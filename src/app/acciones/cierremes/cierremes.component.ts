@@ -108,30 +108,30 @@ export class CierremesComponent implements OnInit {
               var valor_reajuste = Math.round(this.propiedadesService.calcularReajuste(this.fecha, reajuste_interval, this.ipc) * 1000000) / 1000000
               var valor_final_reajuste = 0;
 
-              if(reajuste_diff >= 0){
-                valor_final_reajuste = Math.round(element.contrato.canonactual * (1 + valor_reajuste / 100));
+              //if(reajuste_diff >= 0){
+              //  valor_final_reajuste = Math.round(element.contrato.canonactual * (1 + valor_reajuste / 100));
 
-                this.reajustesUpload.push({
-                  contrato: element.contrato._id,
-                  userid: element.contrato.userid,
-                  fecha: moment(last_boleta.fecha).add(arriendo_diff, 'M').toDate(),
-                  valorinicial: element.contrato.canonactual,
-                  valorfinal: Math.round(element.contrato.canonactual * (1 + valor_reajuste / 100)),
-                  reajuste: valor_reajuste
-                });
+              //  this.reajustesUpload.push({
+              //    contrato: element.contrato._id,
+              //    userid: element.contrato.userid,
+              //    fecha: moment(last_boleta.fecha).add(arriendo_diff, 'M').toDate(),
+              //    valorinicial: element.contrato.canonactual,
+              //    valorfinal: Math.round(element.contrato.canonactual * (1 + valor_reajuste / 100)),
+              //    reajuste: valor_reajuste
+              //  });
 
-                this.reajustes.push({
-                    contrato: element.contrato,
-                    userid: element.contrato.userid,
-                    fecha: moment(last_boleta.fecha).add(arriendo_diff, 'M').toDate(),
-                    valorinicial: element.contrato.canonactual,
-                    valorfinal: Math.round(element.contrato.canonactual * (1 + valor_reajuste / 100)),
-                    propiedadData: element.propiedad,
-                    reajuste: valor_reajuste
-                  })
-              }else{
-                valor_final_reajuste = element.contrato.canonactual;
-              }
+              //  this.reajustes.push({
+              //      contrato: element.contrato,
+              //      userid: element.contrato.userid,
+              //      fecha: moment(last_boleta.fecha).add(arriendo_diff, 'M').toDate(),
+              //      valorinicial: element.contrato.canonactual,
+              //      valorfinal: Math.round(element.contrato.canonactual * (1 + valor_reajuste / 100)),
+              //      propiedadData: element.propiedad,
+              //      reajuste: valor_reajuste
+              //    })
+              //}else{
+              valor_final_reajuste = element.contrato.canonactual;
+              //}
               
 
               var arriendo_interval = 1;
@@ -140,11 +140,11 @@ export class CierremesComponent implements OnInit {
               else if(element.contrato.tiempoarriendo == 'Semestral') arriendo_interval = 6;
               else if(element.contrato.tiempoarriendo == 'Anual') arriendo_interval = 12;
 
-              if(arriendo_diff >= arriendo_interval - 1){
+              if(arriendo_diff >= arriendo_interval){
                 this.boletasUpload.push({
                   contrato: element.contrato._id,
                   userid: element.contrato.userid,
-                  fecha: moment(last_boleta.fecha).add(arriendo_diff + 1, 'M').toDate(),
+                  fecha: moment(last_boleta.fecha).add(arriendo_diff, 'M').toDate(),
                   valorinicial: last_boleta.valorfinal,
                   valorfinal: valor_final_reajuste,
                   estado: "Generado",
@@ -154,7 +154,7 @@ export class CierremesComponent implements OnInit {
                 this.reajustes.push({
                     contrato: element.contrato,
                     userid: element.contrato.userid,
-                    fecha: moment(last_boleta.fecha).add(arriendo_diff + 1, 'M').toDate(),
+                    fecha: moment(last_boleta.fecha).add(arriendo_diff, 'M').toDate(),
                     valorinicial: last_boleta.valorfinal,
                     valorfinal: valor_final_reajuste,
                     propiedadData: element.propiedad,
@@ -189,5 +189,9 @@ export class CierremesComponent implements OnInit {
                         })
                 });
     }
+  }
+
+  getPeriodo(fecha){
+    return ((new Date(fecha)).getMonth() + 1) + '/' + ((new Date(fecha)).getFullYear())
   }
 }

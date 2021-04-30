@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { jsPDF, jsPDFOptions } from "jspdf";
 import autoTable from 'jspdf-autotable'
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PdfWriterService {
 
-  constructor() { }
+  constructor(private toastService: ToastService) { }
 
   generateBlobPdfFromData(head, body, titulo, fecha, styles, columnStyles){
     const options: jsPDFOptions = {format: 'letter', unit: 'px', hotfixes: ['px_scaling']}
@@ -327,8 +328,8 @@ export class PdfWriterService {
     doc.setTextColor('black');
     doc.setFont("Roboto-Bold", "bold");
 
-    const textWidth = doc.getTextWidth('Copia de liquidación de arriendo');
-    doc.text('Copia de liquidación de arriendo', pageSize.getWidth() - 50, 60, {align: 'right'});
+    const textWidth = doc.getTextWidth('Recibo de liquidación');
+    doc.text('Recibo de liquidación', pageSize.getWidth() - 50, 60, {align: 'right'});
 
     doc.setDrawColor('black')
     doc.setLineWidth(1);
@@ -349,7 +350,7 @@ export class PdfWriterService {
     doc.text(':', 55 + doc.getTextWidth('Arrendatario'), 170);
 
     doc.setFont("Roboto-Regular", "normal");
-    doc.text(propiedad.mandanteData.nombre, 70 + doc.getTextWidth('Arrendatario'), 130);
+    doc.text(propiedad.mandanteData.nombre + " (RUT: " + propiedad.mandanteData.rut + "-" + propiedad.mandanteData.dv + ")", 70 + doc.getTextWidth('Arrendatario'), 130);
     doc.text(propiedad.direccionStr, 70 + doc.getTextWidth('Arrendatario'), 150);
     doc.text(propiedad.arrendatario, 70 + doc.getTextWidth('Arrendatario'), 170);
 
@@ -470,7 +471,7 @@ export class PdfWriterService {
     doc.setTextColor('black');
     doc.setFont("Roboto-Bold", "bold");
 
-    doc.text('Copia de liquidación de arriendo', pageSize.getWidth() - 50, startY + 60, {align: 'right'});
+    doc.text('Recibo de liquidación', pageSize.getWidth() - 50, startY + 60, {align: 'right'});
 
     doc.setDrawColor('black')
     doc.setLineWidth(1);
@@ -492,7 +493,7 @@ export class PdfWriterService {
     doc.text(':', 55 + doc.getTextWidth('Arrendatario'), startY + 170);
 
     doc.setFont("Roboto-Regular", "normal");
-    doc.text(propiedad.mandanteData.nombre, 70 + doc.getTextWidth('Arrendatario'), startY + 130);
+    doc.text(propiedad.mandanteData.nombre + " (RUT: " + propiedad.mandanteData.rut + "-" + propiedad.mandanteData.dv + ")", 70 + doc.getTextWidth('Arrendatario'), 130);
     doc.text(propiedad.direccionStr, 70 + doc.getTextWidth('Arrendatario'), startY + 150);
     doc.text(propiedad.arrendatario, 70 + doc.getTextWidth('Arrendatario'), startY + 170);
 
@@ -580,6 +581,25 @@ export class PdfWriterService {
     doc.text('RECIBI CONFORME', pageSize.getWidth() - 60, startY + 180 + nestedTableHeight + tableDelta + 115, {align: "right"})
     
     return doc.output('blob');
+  }
+
+  generateIngresoEgresoNewWindow(){
+    const options: jsPDFOptions = {format: 'letter', unit: 'px', hotfixes: ['px_scaling']}
+    var doc = new jsPDF(options);
+
+    var pageSize = doc.internal.pageSize;
+
+    doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', 50, 30, 60, 60);
+    
+    doc.setFontSize(18);
+    doc.setTextColor('black');
+    doc.setFont("Roboto-Bold", "bold");
+
+    const textWidth = doc.getTextWidth('Copia de comprobante de pago');
+    doc.text('Copia de comprobante de pago', pageSize.getWidth() - 50, 60, {align: 'right'});
+    
+    return doc.output('blob');
+    //this.toastService.pdfWindow(doc.output('dataurl', {filename: 'egreso.pdf'}), ()=>{});
   }
 
   formatDate(date, sep='/') {

@@ -10,8 +10,11 @@ export class AccionesComponent implements OnInit {
 
   acciones: any[] = [
     {nombre: 'Cierre de mes', path: 'cierremes'},
+    {nombre: 'Resjute de rentas', path: 'reajustes'},
     {nombre: 'Liquidación de arriendo', path: 'liquidacion'},
-    {nombre: 'Pago de arriendo', path: 'pagoarriendo'}
+    {nombre: 'Pago de arriendo', path: 'pagoarriendo'},
+    {nombre: 'Ingresos', path: 'ingreso'},
+    {nombre: 'Egresos', path: 'egreso'}
   ];
 
   noSelected: boolean = true;

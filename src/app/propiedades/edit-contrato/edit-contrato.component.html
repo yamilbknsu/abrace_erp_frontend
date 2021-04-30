@@ -60,7 +60,7 @@
                     </div>
                     
                     <div class="flex-column">
-                        <p class="section-subtitle">Aval</p>
+                        <p class="section-subtitle">Codeudor Solidario</p>
                         <p class='section-title' *ngIf='!newContrato; else avalSelection'>{{avalData.nombre}}</p>
                         <div class="flex-column" *ngIf='avalData._id'>
                             <p class='section-content'>{{avalData.rut}}-{{avalData.dv}}</p>
@@ -156,7 +156,7 @@
                 
 
                 <div class="flex-column" style='margin-top: 10px;'>
-                    <p class="section-title">Instrucciones de pago</p>
+                    <p class="section-title">Pagos recurrentes</p>
                     <div class="flex-row">
                         <div class="flex-column">
                             <app-multi-item-box [items]='instruccionesNombres' (updateSelection)='changeInstruccionSelected($event)' (updateArray)='updateInstrucciones($event)'></app-multi-item-box>
@@ -178,7 +178,7 @@
         <div class="flex-row" style="justify-content: space-between;">
             <div class="flex-row" style='margin-top: 25px;'>
                 <div class='grey-button' *ngIf='!newContrato' [routerLink]='"./recibos"' [queryParams]="{id: contratoSelected.propiedad, contrato: contratoSelected._id}">
-                    Ver recibos
+                    Historial canon
                 </div>
 
                 <div class='red-button' *ngIf='!newContrato' style='margin-left: 15px;' (click)='terminarContrato()'>

@@ -5,6 +5,6 @@ export class Propiedad{
     mandante: string = "";
     administrador: string = "";
     direccion:string = "";
-    caracteristicas = {};
+    caracteristicas:any = {};
     telefonos: Array<string> = [];
 }

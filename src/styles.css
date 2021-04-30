@@ -295,10 +295,6 @@ a.undecorated{
     color: #555;
 }
 
-ng-select > div{
-    max-height: 100%;
-}
-
 .ng-select{
     min-height: 0px;
 }
@@ -319,6 +315,13 @@ ng-select > div{
     box-shadow: 0px 5px 10px -6px rgba(140,140,140,1);
 
     cursor: pointer;
+}
+
+.red-button.small{
+    line-height: 30px;
+    font-weight: 400;
+    box-shadow: none;
+    border: 1px solid #DDD;
 }
 
 .red-button:hover{
@@ -496,4 +499,13 @@ table{
       transform: rotate(360deg);
     }
   }
-  
+
+/* CODE TO NEVER LOOK BACK */
+
+#personalidad-selector.ng-select .ng-select-container {
+    min-height: 35px;
+}
+
+#personalidad-selector.ng-select.ng-select-single .ng-select-container {
+    height: 35px;
+}

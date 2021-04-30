@@ -1,28 +1,16 @@
-<p class="title">Cierre de mes</p>
-<div class="flex-row" style='justify-content: space-between;'>
+<p class="title">Reajuste de rentas</p>
+
+<div class="flex-row space-between">
     <div class="flex-column">
-        <p class="section-content">Periodo</p>
-        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='fecha' [mode]='"month"' (ngModelChange)='fechaChange()'></dp-date-picker>
+        <p class="section-content">Periodo a reajustar</p>
+        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='periodoReajustar' [mode]='"month"' (ngModelChange)='changePeriodo()'></dp-date-picker>
     </div>
-    <div class="grey-button" *ngIf='!reajusteExists && ipc.length > 0' (click)='OnPrepararClick()'>Preparar</div>
-    <div *ngIf='reajusteExists'>Mes ya fue cerrado</div>
+    <div class="grey-button" *ngIf='!reajusteExists && !cargandoReajustes' (click)='OnPrepararClick()'>Preparar</div>
+    <div *ngIf='reajusteExists'>Reajustes del periodo ya aplicados</div>
 </div>
+
 <div class="flex-column" id='reajustes-list' [ngClass]='{"disabled": reajusteExists, "scrolled-section": true}'>
     <div *ngFor='let reajuste of reajustes'>
-        <div class="flex-row reajuste-item" *ngIf='!reajuste.reajuste?.toString()' style='justify-content: space-between;'>
-            <div class="flex-column space-between">
-                <p class="section-subtitle-disabled">Canon de arriendo</p>
-                <p class='section-content'>{{getPeriodo(reajuste.fecha)}}</p>
-            </div>
-            <div class="flex-column" style='margin-left: 20px; flex: 1;'>
-                <p class="section-content">{{reajuste.propiedadData.uId}}</p>
-                <p class="section-content">{{formatDireccion(reajuste.propiedadData)}}</p>
-            </div>
-            <div class="flex-column" style='justify-content: center;'>
-                <p class='section-content' style="text-align: right;">${{reajuste.valorfinal}}</p>
-                <!--<p class='section-content' style='font-weight: 500;'>{{reajuste.estado}}</p>-->          
-            </div>
-        </div>
         <div class="flex-row space-between reajuste-item" *ngIf='reajuste.reajuste?.toString()'>
             <div class="flex-column space-between">
                 <p class="section-subtitle-disabled">Reajuste</p>
@@ -44,6 +32,10 @@
             </div>
         </div>
     </div>
+
+    <div class="flex-row" style='flex: 1; justify-content: center; align-items:center;' *ngIf='reajustePreparado && reajustes.length == 0'>
+        <p class="big-noinfo-text">No hay propiedades que reajustar</p>
+    </div>
 </div>
 
-<div class="green-button" style='text-align: center;' *ngIf='reajustes.length != 0 && !reajusteExists' (click)='aplicar()'>Aplicar</div>
+<div class="green-button" style='text-align: center;' *ngIf='reajustePreparado && !reajusteExists' (click)='aplicar()'>Aplicar</div>

@@ -14,8 +14,8 @@ export class InformesComponent implements OnInit {
   informes: Array<object> = [
     {nombre: 'Informe de propiedades', path: 'propiedades'},
     {nombre: 'Informe de reajustes', path: 'reajustes'},
-    {nombre: 'Liquidación de arriendo', path: 'liquidaciones'},
-    {nombre: 'Comprobante de pago', path: 'pagos'},
+    {nombre: 'Copia de liquidación de arriendo', path: 'liquidaciones'},
+    {nombre: 'Copia de comprobante de pago', path: 'pagos'},
   ];
 
   constructor(private router: Router, private route: ActivatedRoute) {

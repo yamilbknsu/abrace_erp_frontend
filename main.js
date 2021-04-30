@@ -4,12 +4,13 @@ const path = require("path");
 
 // We keep a reference so it doesn't get garbage collected
 let mainWindow
+var screenRatio;
 
 // 1333 x 638, 83%
 
 function createWindow () {
 
-  var screenRatio = screen.getDisplayNearestPoint({x:0, y:0}).bounds.height / 1080;
+  screenRatio = screen.getDisplayNearestPoint({x:0, y:0}).bounds.height / 1080;
 
   //Create new window
   mainWindow = new BrowserWindow({
@@ -35,7 +36,7 @@ function createWindow () {
   // Open the DevTools.
   //mainWindow.webContents.openDevTools()
 
-  mainWindow.setMenu(null);
+  //mainWindow.setMenu(null);
 
   mainWindow.on('closed', function () {
     mainWindow = null
@@ -66,6 +67,10 @@ ipcMain.on('error-message', (event, args) => {
   dialog.showErrorBox(args.title, args.message)
 });
 
+ipcMain.on('warning-message', (event, args) => {
+  dialog.showMessageBox({title: args.title, message: args.message, type: "warning"})
+});
+
 ipcMain.on('confirmation-message', (event, args) => {
   dialog.showMessageBox(args).then((response, checkboxChecked) => {
     mainWindow.webContents.send('confirmation-response', response.response);
@@ -76,4 +81,20 @@ ipcMain.on('file-saving-message', (event, args) => {
   dialog.showSaveDialog(args).then((response, checkboxChecked) => {
     mainWindow.webContents.send('file-saving-response', response);
   })
+});
+
+ipcMain.on('url-pdf', (event, args) => {
+  var pdfWindow = new BrowserWindow({
+    width: 900 * screenRatio, 
+    height: 900 * screenRatio,
+    useContentSize: true,
+    webPreferences: {
+      nodeIntegration: true,
+      zoomFactor: screenRatio,
+      plugins: true
+    }
+  });
+
+  pdfWindow.loadURL(args.url);
+  pdfWindow.setMenu(null);
 });

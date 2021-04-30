@@ -1,0 +1,32 @@
+:host{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    background-color: white;
+    border-left: 1px solid #AAAAAA;
+
+    padding: 15px;
+    margin-top: 0px;
+}
+
+#reajustes-list{
+    flex: 1;
+    border: 1px solid #CCC;
+
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.disabled{
+    background-color: #EEE;
+}
+
+.reajuste-item{
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #CCC;
+}

@@ -27,8 +27,16 @@ export class EditPersonaComponent implements OnInit {
   dirComercialId$: BehaviorSubject<string>;
   dirComercial = {};
 
+  dirParticularRepresentanteId$: BehaviorSubject<string>;
+  dirParticularRepresentante = {};
+
+  dirComercialRepresentanteId$: BehaviorSubject<string>;
+  dirComercialRepresentante = {};
+
   TitleText: string = 'Editar';
   newPerson: boolean = false;
+
+  personalidades = [{name: 'Natural'}, {name: 'Jurídica'}];
 
   constructor(private router: Router, private _location: Location,
     private route: ActivatedRoute, private direccionesService: DireccionesService,
@@ -53,8 +61,21 @@ export class EditPersonaComponent implements OnInit {
       if(data.persona.emails) this._persona.emails = [... data.persona.emails]
       else this._persona.emails = []
 
+      // TODO: Add both to the backend
+      if(!data.persona?.personalidad) this._persona.personalidad = 'Natural';
+      if(!data.persona?.representante) this._persona.representante = {};
+
+      if(data.persona?.representante?.telefonos) this._persona.representante.telefonos = [... data.persona.representante.telefonos]
+      else this._persona.representante.telefonos = []
+
+      if(data.persona?.representante?.emails) this._persona.representante.emails = [... data.persona.representante.emails]
+      else this._persona.representante.emails = []
+
       this.dirParticularId$ = new BehaviorSubject<string>(this._persona.dirParticular);
       this.dirComercialId$ = new BehaviorSubject<string>(this._persona.dirComercial);
+
+      this.dirParticularRepresentanteId$ = new BehaviorSubject<string>(this._persona.representante.dirParticular);
+      this.dirComercialRepresentanteId$ = new BehaviorSubject<string>(this._persona.representante.dirComercial);
     });
 
     combineLatest(this.dirParticularId$, this.direcciones$).pipe(
@@ -76,14 +97,42 @@ export class EditPersonaComponent implements OnInit {
         this.dirComercial = {}
       }
     });
+
+    combineLatest(this.dirComercialRepresentanteId$, this.direcciones$).pipe(
+      map(([direccionId, direcciones]) => direcciones.filter(dir => dir._id == direccionId))
+    ).subscribe(x => {
+      if (x[0] != undefined){
+        this.dirComercialRepresentante = x[0]
+      }else{
+        this.dirComercialRepresentante = {}
+      }
+    });
+
+    combineLatest(this.dirParticularRepresentanteId$, this.direcciones$).pipe(
+      map(([direccionId, direcciones]) => direcciones.filter(dir => dir._id == direccionId))
+    ).subscribe(x => {
+      if (x[0] != undefined){
+        this.dirParticularRepresentante = x[0]
+      }else{
+        this.dirParticularRepresentante = {}
+      }
+    });
   }
 
   updateTelefonos(event: Array<string>){
     this._persona.telefonos = event;
   }
 
+  updateTelefonosRepresentante(event: Array<string>){
+    this._persona.representante.telefonos = event;
+  }
+
   updateEmails(event: Array<string>){
     this._persona.emails = event;
+  }
+
+  updateEmailsRepresentante(event: Array<string>){
+    this._persona.representante.emails = event;
   }
 
   onBackClicked(){

@@ -1,0 +1,125 @@
+<p class="title">Egresos</p>
+<div class="flex-column" id='ingresos-list'>
+    <div class="flex-row" style='justify-content: space-between; padding-right: 5px; padding-left: 5px;'>
+        <p style='flex: .06;'>Código</p>
+        <p style='margin-left: 5px; flex: .1; text-align: right;'>Nro. Egreso</p>
+        <p style='margin-left: 5px; flex: .15; text-align: center;'>Fecha</p>
+        <p style='margin-left: 5px; flex: .2; text-align: center;'>Afecta arriendo</p>
+        <p style='margin-left: 5px; flex: .2; text-align: center;'>Afecta liquidación</p>
+        <p style='margin-left: 5px; flex: .1; text-align: right;'>Total Ingreso</p>
+        <p style='margin-left: 5px; flex: .2; text-align: right;'>Forma de pago</p>
+    </div>
+    
+    <div class="flex-column scrolled-section">
+        <div class="flex-row item" *ngFor='let ingreso of egresos; index as i;' (click)='selectEgreso(i)' style='justify-content: space-between; padding-right: 5px;'>
+            <p style='flex: .06;'>{{selectedPropiedad.uId}}</p>
+            <p style='margin-left: 5px; flex: .1; text-align: right;'>{{padNumber(ingreso.nroegreso)}}</p>
+            <p style='margin-left: 5px; flex: .15; text-align: center;'><b>{{formatDate(ingreso.fecha)}}</b></p>
+            <p style='margin-left: 5px; flex: .2; text-align: center;'><input type="checkbox" [(ngModel)]='ingreso.afectaarriendo' [disabled]='true'></p>
+            <p style='margin-left: 5px; flex: .2; text-align: center;'><input type="checkbox" [(ngModel)]='ingreso.afectaliquidacion' [disabled]='true'></p>
+            <p style='margin-left: 5px; flex: .1; text-align: right;'>${{sumEgresos(ingreso)}}</p>
+            <p style='margin-left: 5px; flex: .2; text-align: right;'>{{ingreso.formapago}}</p>
+        </div>    
+    </div>
+</div>
+<div class="flex-row" id='nuevo-button' *ngIf='selectedPropiedad' (click)='nuevoIngreso()'>
+    Nuevo egreso
+</div>
+
+<div [ngStyle]='{"display": showPdf ? "flex" : "none"}' style='flex:1;'>
+    <ng2-pdfjs-viewer style='flex:1; margin-top: 10px;' #pdfViewer></ng2-pdfjs-viewer>
+</div>
+
+<div class="flex-column" style='flex: 1;' *ngIf='!showPdf'>
+    <p class="title">Registro de egreso</p>
+
+    <div class="flex-row" style='justify-content: space-between;'>
+        <div class="flex-column">
+            <p class="section-content">Propiedad</p>
+            <ng-select [items]="propiedades$ | async" bindLabel="uId" bindValue="_id" style='width: 535px' [clearable]='false'
+                                [(ngModel)]='selectedPropiedadId' (ngModelChange)='changePropiedad(selectedPropiedadId)'>
+                <ng-template class='flex-column' ng-option-tmp let-item="item">
+                    <p class="section-content">{{item.uId}}</p>
+                    <p class="section-content">{{item.direccionStr}}</p>        
+                </ng-template>
+                <ng-template ng-label-tmp let-item="item">
+                    <div *ngIf='item.uId'>
+                        {{item.uId}} | {{item.direccionStr}}
+                    </div>
+                </ng-template>
+            </ng-select>
+        </div>
+        <div class="flex-column" style='margin-left: 10px;' *ngIf='selectedEgreso'>
+            <p class="section-content">Periodo</p>
+            <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [mode]='"month"' [(ngModel)]='selectedEgreso.periodo' [disabled]='selectedEgreso._id'></dp-date-picker>
+        </div>
+    </div>
+
+    <div class="flex-row" *ngIf='selectedEgreso' style='justify-content: space-between;'>
+        <div class="flex-column">
+            <p class="section-content" style='margin-top: 10px;'>Nro. Ingreso</p>
+            <input type="text" [(ngModel)]='selectedEgreso.nroegreso' [disabled]='true' style="text-align: right; padding-right: 10px; width: 135px;">
+        </div>
+        <div class="flex-column" style='margin-left: 10px;'>
+            <p class="section-content" style='margin-top: 10px;'>Fecha</p>
+            <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='selectedEgreso.fecha' [disabled]='selectedEgreso._id'></dp-date-picker>
+        </div>
+        <div class="flex-column" style='margin-left: 10px; justify-content: center; align-items: center;'>
+            <p class="section-content" style='margin-top: 10px;'>Afecta Arriendo</p>
+            <input type="checkbox" [(ngModel)]='selectedEgreso.afectaarriendo' [disabled]='selectedEgreso._id'>
+        </div>
+        <div class="flex-column" style='margin-left: 10px; justify-content: center; align-items: center;'>
+            <p class="section-content" style='margin-top: 10px;'>Afecta Liquidación</p>
+            <input type="checkbox" [(ngModel)]='selectedEgreso.afectaliquidacion' [disabled]='selectedEgreso._id'>
+        </div>
+    </div>
+
+    <div class="flex-row" *ngIf='selectedEgreso' style='margin-top: 10px; flex: 1; overflow: hidden;'>
+        <div class="flex-column scrolled-section" style='flex: .6; border-right: 1px solid #EEE; padding-right: 5px;'>
+            <p class="section-title">Detalle</p>
+            <div class="flex-row" *ngFor='let concepto of selectedEgreso.conceptos' style='justify-content: space-between;'>
+                <div class="flex-column">
+                    <p class="section-content">Concepto</p> 
+                    <input type="text" [(ngModel)]='concepto.concepto' style="width: 350px;" [disabled]='selectedEgreso._id'>
+                </div>
+                <div class="flex-column">
+                    <p class="section-content">Monto</p> 
+                    <input type="text" [(ngModel)]='concepto.valor' style="width: 135px; text-align: right; padding-right: 10px;" [disabled]='selectedEgreso._id'>
+                </div>
+            </div>
+            <div class="flex-row" style='justify-content: center; align-items: center; margin-top: 10px;' *ngIf='!selectedEgreso._id'>
+                <div class="grey-button small" (click)='agregarConcepto()' style="margin-right: 5px;">Agregar elemento</div>
+                <div class="red-button small" (click)='eliminarConcepto()' *ngIf='selectedEgreso.conceptos.length > 1'>Eliminar elemento</div>
+            </div>
+        </div>
+        <div class="flex-column" style='flex: .4; padding-left: 10px;'>
+            <div class="flex-column" style='margin-top: 25px;'>
+                <p class="section-content">Forma de pago</p>
+                <ng-select [items]="formaspago" bindLabel="name" bindValue="name" style='margin-right: 10px;' [(ngModel)]='selectedEgreso.formapago' [disabled]='selectedEgreso._id'></ng-select>
+        
+                <div class="flex-column" *ngIf='selectedEgreso.formapago == "Transferencia" || selectedEgreso.formapago == "Depósito"'style='margin-top: 10px;'>
+                    <p class="section-content">Cuenta</p>
+                    <input type="text" [(ngModel)]='selectedEgreso.cuenta' style='margin-right: 10px;' [disabled]='selectedEgreso._id'>
+        
+                    <p class="section-content" style='margin-top: 10px;'>Banco</p>
+                    <ng-select [items]="bancos$ | async" bindLabel="name" bindValue="name" [(ngModel)]='selectedEgreso.banco' [disabled]='selectedEgreso._id'>
+                    </ng-select>
+                </div>
+                <div class="flex-column" *ngIf='selectedEgreso.formapago == "Cheque"'style='margin-top: 10px;'>
+                    <p class="section-content">Nro. Documento</p>
+                    <input type="text" [(ngModel)]='selectedEgreso.documento' style='margin-right: 10px;' [disabled]='selectedEgreso._id'>
+        
+                    <p class="section-content" style='margin-top: 10px;'>Banco</p>
+                    <ng-select [items]="bancos$ | async" bindLabel="name" bindValue="name" [(ngModel)]='selectedEgreso.banco' [disabled]='selectedEgreso._id'>
+                    </ng-select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-row" *ngIf='selectedEgreso' style='margin-top: 10px; justify-content: space-between;'>
+        <div class="green-button" *ngIf='!selectedEgreso._id' (click)='generarEgreso()'>Generar/Guardar</div>
+        <div class="grey-button" *ngIf='selectedEgreso._id'>Emitir copia</div>
+        <div class="red-button">Anular</div>
+    </div>
+</div>

@@ -27,6 +27,10 @@ export class ToastService {
     this.ipc.send('error-message', {title: 'Error', message});
   }
 
+  warning(message: string){
+    this.ipc.send('warning-message', {title: 'Aviso', message});
+  }
+
   success(message: string){
     this.ipc.send('success-message', {title: 'Exito', message});
   }
@@ -39,6 +43,11 @@ export class ToastService {
   fileSaving(filters, defaultPath, callback){
     this.ipc.send('file-saving-message', {title: 'Elija una ubicación para el archivo', filters, defaultPath});
     this.ipc.once('file-saving-response', callback);
+  }
+
+  pdfWindow(url, callback){
+    this.ipc.send('url-pdf', {url});
+    this.ipc.once('url-pdf-response', callback);
   }
 
 
