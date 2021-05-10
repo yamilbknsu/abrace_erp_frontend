@@ -30,6 +30,8 @@ export class LiquidacionComponent implements OnInit {
   tiposimpuestos: any[] = [{name: 'Porcentual'}, {name: 'Absoluto'}];
   bancos$;
 
+  cargandoLiquidacion = false;
+
   datePickerConfig = {
     locale: 'es'
   }
@@ -60,19 +62,55 @@ export class LiquidacionComponent implements OnInit {
   }
 
   changePeriodo(){
-    var liquidaciones = this.selectedPropiedad.liquidaciones.filter(liq => new Date(liq.fecha).getMonth() == new Date(this.date).getMonth())
-    if(liquidaciones.length > 0){
-      this.liquidacionExists = true;
-      this.selectedLiquidacion = liquidaciones[0];
-    }
-    else{
-      this.liquidacionExists = false;
-      this.selectedLiquidacion = {};
-    }
+    if(this.cargandoLiquidacion) return;
+
+    this.cargandoLiquidacion = true;
+    this.accionesService.loadLiquidaciones({fecha: this.date.toDate(), propiedad: this.selectedPropiedadId})
+        .subscribe(data => {
+          this.cargandoLiquidacion = false;
+          console.log(data)
+
+          if(data[0]?.length == 0){
+            // Primera liquidacion
+            const mandfecha = new Date(this.selectedPropiedad.mandato.fechaInicio)
+            if(mandfecha.getMonth() != this.date.toDate().getMonth() || mandfecha.getFullYear() != this.date.toDate().getFullYear()){
+              this.toastService.error('Debe ingresar el primer mes del mandato! (' + mandfecha.toLocaleString('es', { month: 'long' }) + ' ' + mandfecha.getUTCFullYear() + ')')
+              this.date = moment(mandfecha);
+              return
+            }
+            
+            //this.cargos.push({tipo: 'Arriendo', concepto: '', detalle: 'Primer mes de arriendo', valor: data[0]?.contratos[0]?.canoninicial});
+            //this.cargos.push({tipo: 'Otro', concepto: 'Mes garantía', detalle: '', valor: data[0]?.contratos[0]?.canoninicial});
+
+            this.updateTotales();
+            this.selectedLiquidacion = {}
+            //this.loadIngresosEgresos();
+            return
+          }
+
+          if((new Date(data[0][0].fecha)).getMonth() == this.date.toDate().getMonth() && (new Date(data[0][0].fecha)).getFullYear() == this.date.toDate().getFullYear()){
+            this.liquidacionExists = true;
+            this.selectedLiquidacion = data[0][0];
+          }else{
+            this.liquidacionExists = false;
+            this.selectedLiquidacion = {};
+          }
+        })
+    return
+
+    //var liquidaciones = this.selectedPropiedad.liquidaciones.filter(liq => new Date(liq.fecha).getMonth() == new Date(this.date).getMonth())
+    //if(liquidaciones.length > 0){
+    //  this.liquidacionExists = true;
+    //  this.selectedLiquidacion = liquidaciones[0];
+    //}
+    //else{
+    //  this.liquidacionExists = false;
+    //  this.selectedLiquidacion = {};
+    //}
   }
 
   addAbono(){
-    this.selectedLiquidacion.abonos.push({detalle: 'A', valor: 0});
+    this.selectedLiquidacion.abonos.push({concepto: '', valor: 0});
 
   }
 
@@ -82,7 +120,7 @@ export class LiquidacionComponent implements OnInit {
   }
 
   addCargo(){
-    this.selectedLiquidacion.cargos.push({concepto: 'A', valor: 0});
+    this.selectedLiquidacion.cargos.push({tipo:'Otro', concepto: '', detalle: 'A', valor: 0});
   }
 
   removeCargo(){
@@ -91,11 +129,11 @@ export class LiquidacionComponent implements OnInit {
   }
 
   updateTotales(){
-    var subtotalCargos = +this.selectedLiquidacion.honorarios.valor + +this.selectedLiquidacion.honorarios.impuestos;
-    this.selectedLiquidacion.cargos.forEach(cargo => subtotalCargos += +cargo.valor);
+    var subtotalCargos = +this.selectedLiquidacion.honorarios?.valor + +this.selectedLiquidacion.honorarios?.impuestos;
+    this.selectedLiquidacion?.cargos?.forEach(cargo => subtotalCargos += +cargo.valor);
 
     var subtotalAbonos = 0;
-    this.selectedLiquidacion.abonos.forEach(abono => subtotalAbonos += +abono.valor);
+    this.selectedLiquidacion.abonos?.forEach(abono => subtotalAbonos += +abono.valor);
     
     this.selectedLiquidacion.subtotal = +subtotalAbonos - +subtotalCargos;
     this.selectedLiquidacion.totalCargos = +subtotalCargos;
@@ -113,38 +151,94 @@ export class LiquidacionComponent implements OnInit {
   }
 
   preparar(){
-    this.accionesService.loadBoletasLiquidaciones(this.selectedPropiedadId, this.date.toDate())
-        .subscribe(boletas => {
+    this.accionesService.loadPropiedadesPago({propiedad: this.selectedPropiedadId, periodo: this.date.toDate()})
+        .subscribe(data => {
+          console.log(data)
+          if(data.length == 0) {
+            this.toastService.error('No se ha registrado ningún pago para esta propiedad!')
+            this.selectedLiquidacion = {}
+            return;
+          }
+
+          if(data[0].contratos?.[0]?.pagos?.length == 0) return;
+          
+          var lastPago = data[0].contratos?.[0]?.pagos[0];
           var abonos = [];
           var cargos = [];
           var totalAbonos = 0;
           var totalCargos = 0;
           var subtotal = 0;
+          var arriendo = 0;
+          var primeraLiquidacion = false;
+          var incluyeAdm = this.selectedPropiedad.mandato.comisiones.incluirhononadmin == 'true' || this.selectedPropiedad.mandato.comisiones.incluirhononadmin
+          var comisiones = this.selectedPropiedad.mandato.comisiones;
 
-          boletas.forEach(element => {
-            abonos.push({concepto: 'Renta', valor: element.valorfinal});
-            totalAbonos += +element.valorfinal;
-          });
+          if((new Date(lastPago.fechaemision)).getMonth() != this.date.toDate().getMonth() || (new Date(lastPago.fechaemision)).getFullYear() != this.date.toDate().getFullYear()){
+            this.toastService.error('No se ha generado pago para este periodo!');
+            if(data[0].contratos?.[0]?.boletas.length > 0){
+              const lastBoleta = data[0].contratos?.[0]?.boletas[0];
+              if((new Date(lastBoleta.fecha)).getMonth() == this.date.toDate().getMonth() || (new Date(lastBoleta.fecha)).getFullYear() == this.date.toDate().getFullYear()){
+                abonos.push({concepto: 'Arriendo', valor: +lastBoleta.valorfinal})
+                arriendo = +lastBoleta.valorfinal;
+              }else{
+                abonos.push({concepto: 'Arriendo', valor:data[0].contratos[0].canonactual})
+                arriendo = data[0].contratos[0].canonactual;
+              }
+            }else{
+              abonos.push({concepto: 'Arriendo', valor:data[0].contratos[0].canonactual})
+              arriendo = data[0].contratos[0].canonactual;
+            }
+          }else{
+            lastPago.cargos.forEach(cargo => {
+              if(cargo.tipo != 'Arriendo' && cargo.tipo != 'Mes garantía'){
+                abonos.push({concepto: cargo.concepto, valor: cargo.valor});
+                cargos.push({tipo: cargo.tipo, concepto: cargo.concepto, detalle: cargo.detalle, valor: cargo.valor})
+              }else{
+                abonos.push({concepto: cargo.tipo, valor: cargo.valor});
+                if(cargo.tipo == 'Arriendo'){
+                  arriendo = cargo.valor;
+                }else if(cargo.tipo == 'Mes garantía'){
+                  primeraLiquidacion = true;
+                }
+              }
+            });
+          }
+
+          if(primeraLiquidacion){
+            var valor = comisiones.tipocontrato == "Porcentual" ?  +comisiones.valorcontrato * arriendo / 100 : +comisiones.valorcontrato;
+            var incluyeContImpuesto = this.selectedPropiedad.mandato.comisiones.contratoimpuestoincluido == 'true' || this.selectedPropiedad.mandato.comisiones.contratoimpuestoincluido
+            if(!incluyeContImpuesto){
+              valor *= 1 + (+comisiones.impuestocontrato / 100)
+            }
+            cargos.push({tipo: 'Otro', concepto: 'Comisión firma contrato ('+comisiones.impuestocontrato + '% ' + (incluyeContImpuesto ? "inc. impuestos" : "+ impuestos") + ')',
+                         detalle: '', valor: valor})
+          }
+          
+          abonos.forEach(abono => totalAbonos += +abono.valor);
+          cargos.forEach(cargo => totalCargos += +cargo.valor);
+
+          subtotal = totalAbonos - totalCargos
+
 
           this.selectedPropiedad.mandato.otrosdestinatarios.forEach(element => {
-            var valor = element.tipocalculo == 'Porcentual' ? +element.monto * totalAbonos / 100 : +element.monto;
+            var valor = element.tipocalculo == 'Porcentual' ? +element.monto * +arriendo / 100 : +element.monto;
             cargos.push({concepto: "Pago a " + element.nombre + ", " + element.formapago + " cta. " + element.nrocuenta + 
                         " banco " + element.banco, valor: valor});
             totalCargos += valor;
           });
 
-
-          var comisiones = this.selectedPropiedad.mandato.comisiones;
+          var honorAdmin = !primeraLiquidacion || !incluyeAdm ? (comisiones.tipoadm == "Porcentual" ?
+                                                                        +comisiones.valoradm * arriendo / 100 :
+                                                                        +comisiones.valoradm) : 0
+          
           var honorarios = {tipo: comisiones.tipoadm,
-                            valor: comisiones.tipoadm == "Porcentual" ?
-                                      +comisiones.valoradm * totalAbonos / 100 :
-                                      +comisiones.valoradm,
+                            valor: honorAdmin,
                             descripcion: (comisiones.tipoadm == "Porcentual" ?
                                         +comisiones.valoradm + "%" : 
                                         "$" + +comisiones.valoradm) + 
                                         (comisiones.admimpuestoincluido ? " inc. impuestos" : " no inc. impuestos"),
                             impuestos: comisiones.admimpuestoincluido ? 0 :
-                                      (+comisiones.impuestoadm * totalAbonos / 100)
+                                      (+comisiones.impuestoadm * honorAdmin / 100)
                           };
           
           totalCargos += honorarios.valor + honorarios.impuestos;
@@ -164,9 +258,36 @@ export class LiquidacionComponent implements OnInit {
             userid: this.selectedPropiedad.userid,
             propiedad: this.selectedPropiedadId
           }
-        });
+
+        })
   }
 
+  loadIngresosEgresos(){
+    this.propiedadesService.loadIngresosEgresosPropiedad(this.selectedPropiedadId, this.date.toDate())
+        .subscribe(data => {
+          data.ingresos.filter(ingreso => ingreso.afectaliquidacion).forEach(ingreso => {
+            this.selectedLiquidacion.abonos.push({detalle: 'Detalle Ingreso ' + this.padNumber(ingreso.nroingreso), valor: this.sumIngresosEgresos(ingreso.conceptos)})
+          });
+          data.egresos.filter(egreso => egreso.afectaliquidacion).forEach(egreso => {
+            this.selectedLiquidacion.cargos.push({tipo: 'Otro', detalle:'', concepto: 'Detalle Egreso ' + this.padNumber(egreso.nroegreso), valor: this.sumIngresosEgresos(egreso.conceptos)})
+          });
+
+          this.updateTotales();
+        })
+  }
+
+  padNumber(number){
+    if (number<=9999) { number = ("000"+number).slice(-4); }
+    return number;
+  }
+
+  sumIngresosEgresos(array){
+    var sum = 0;
+    array.forEach(element => {
+      sum += element.valor
+    });
+    return sum;
+  }
 
   formatDate(date) {
     if(!date) return 'Presente';
