@@ -16,8 +16,8 @@ export class AccionesService {
   constructor(private queryService: QueryService, private toastService: ToastService, private router: Router) {
   }
   
-  loadCierresMes(){
-    return this.queryService.executeGetQuery('read', 'cierresmes', {}, {}).pipe(  
+  loadCierresMes(params={}){
+    return this.queryService.executeGetQuery('read', 'cierresmes', {}, params).pipe(  
         // Catch a Forbidden acces error (return to login).
         catchError(err => {
           if (err.status == 403){
@@ -81,8 +81,8 @@ export class AccionesService {
       );
   }
 
-  loadLiquidaciones(){
-    return this.queryService.executeGetQuery('read', 'liquidaciones', {}, {}).pipe(  
+  loadLiquidaciones(params={}){
+    return this.queryService.executeGetQuery('read', 'liquidaciones', {}, params).pipe(  
         // Catch a Forbidden acces error (return to login).
         catchError(err => {
           if (err.status == 403){
@@ -201,6 +201,32 @@ export class AccionesService {
 
   loadReajusteRentas(params={}){
     return this.queryService.executeGetQuery('read', 'reajusterentas', {}, params).pipe(  
+      // Catch a Forbidden acces error (return to login).
+      catchError(err => {
+        if (err.status == 403){
+          console.log('Forbidden access');
+          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
+        };
+        return EMPTY;
+      })
+    );
+  }
+
+  loadReajustesExtraordinarios(params={}){
+    return this.queryService.executeGetQuery('read', 'reajustesextraordinarios', {}, params).pipe(  
+      // Catch a Forbidden acces error (return to login).
+      catchError(err => {
+        if (err.status == 403){
+          console.log('Forbidden access');
+          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
+        };
+        return EMPTY;
+      })
+    );
+  }
+
+  writeReajustesExtraordinarios(reajuste){
+    return this.queryService.executePostQuery('write', 'reajustesextraordinarios', reajuste, {}).pipe(  
       // Catch a Forbidden acces error (return to login).
       catchError(err => {
         if (err.status == 403){

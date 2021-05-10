@@ -460,16 +460,35 @@ export class PropiedadesService {
     //return ipc_acumulado ?  (ipc_acumulado - 1) * 100 : 0;
 
     var fecha = moment(fechainicial).add(-(n_meses+1), 'M');
+    //console.log("Inicial", fecha.month(), fecha.year());
     var ipc_inicial = Number.parseFloat(ipc.filter(e => e.code == fecha.year().toString())[0]?.attributes[fecha.month()])
 
     fecha = moment(fechainicial).add(-1, 'M');
     var ipc_final = Number.parseFloat(ipc.filter(e => e.code == fecha.year().toString())[0]?.attributes[fecha.month()])
-    console.log(ipc_final, ipc_inicial, ipc_final / ipc_inicial)
+    //console.log(ipc_final, ipc_inicial, ipc_final / ipc_inicial)
+    //console.log("Final", fecha.month(), fecha.year());
     return ipc_inicial && ipc_final ?  (ipc_final / ipc_inicial - 1) * 100 : 0;
   }
 
   cerrarMes(fecha, recibos, reajustes){
     return this.queryService.executePostQuery('write', 'cierresmes', {recibos, reajustes}, {fecha});
+  }
+
+  reajustesMes(fecha, reajustes){
+    return this.queryService.executePostQuery('write', 'reajustesmes', {reajustes}, {fecha});
+  }
+
+  loadIngresosEgresosPropiedad(propiedad, fecha){
+    return this.queryService.executeGetQuery('read', 'ingresosegresospropiedad', {}, {propiedad, fecha}).pipe(  
+      // Catch a Forbidden acces error (return to login).
+      catchError(err => {
+        if (err.status == 403){
+          console.log('Forbidden access');
+          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
+        };
+        return EMPTY;
+      })
+    );
   }
 
 }

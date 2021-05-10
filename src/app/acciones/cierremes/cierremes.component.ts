@@ -19,6 +19,8 @@ export class CierremesComponent implements OnInit {
 
   fecha;
   reajusteExists: boolean = false;
+  cargandoReajustes = false;
+  //reajustePreparado = false;
   reajustes: any[] = [];
   cierres: any[] = [];
 
@@ -32,31 +34,61 @@ export class CierremesComponent implements OnInit {
               private toastService: ToastService) { }
 
   ngOnInit(): void {
-    this.fecha = moment().startOf('month');
+    this.fecha = moment().locale('es').startOf('month');
 
-    this.route.data.subscribe(data => {
-      data.cierres.map(cierre => {
-        if(cierre.boletas.length == 1 && !cierre.boletas[0]._id) cierre.boletas = [];
-        if(cierre.reajustes.length == 1 && !cierre.reajustes[0]._id) cierre.reajustes = [];
-        return cierre
-      });
-      this.cierres = data.cierres;
-    });
+    //this.route.data.subscribe(data => {
+    //});
 
     this.parametrosService.loadIPCFromBackend()
         .subscribe(ipc => this.ipc = ipc[0].values);
   }
 
   fechaChange(){
-    var cierresFecha = this.cierres.filter(c => {
-      return new Date(c.fecha).getTime() == new Date(this.fecha).getTime()
-    });
+    if(!this.fecha) this.fecha = moment().locale('es').startOf('month');
 
+    this.reajusteExists = false;
+    this.reajustes = [];
     this.boletasUpload = [];
-    this.reajustesUpload = [];
+    //this.reajustePreparado = false;
+    if(!this.cargandoReajustes){
+      this.cargandoReajustes = true;
+      console.log(this.fecha.toDate());
+      this.accionesService.loadCierresMes({fecha: this.fecha.toDate()})
+      .subscribe(data => {
+        console.log(data);
+        this.cargandoReajustes = false;
 
-    this.reajusteExists = cierresFecha.length > 0;
-    this.reajustes = this.reajusteExists ? cierresFecha[0].reajustes.concat(cierresFecha[0].boletas).sort((a,b) => new Date(a.fecha) > new Date(b.fecha) ? 1 : -1) : [];
+        data.map(cierre => {
+          if(cierre.boletas.length == 1 && !cierre.boletas[0]._id) cierre.boletas = [];
+          if(cierre.reajustes.length == 1 && !cierre.reajustes[0]._id) cierre.reajustes = [];
+          return cierre
+        });
+        this.cierres = data;
+
+        if(data.length >= 1){
+          const corresponde = moment(data[0].fecha).startOf('month').add(1, 'M').toDate();
+          if(moment(this.fecha).diff(data[0].fecha, 'months') > 1){
+            this.toastService.warning('Falta cerrar el periodo ' + corresponde.toLocaleString('es', {month: 'long'}) + 
+            ' ' + corresponde.getUTCFullYear());
+          }
+
+          if(moment(this.fecha).diff(data[0].fecha, 'months') < 0){
+            this.toastService.warning('Ya se cerró el periodo ' + (new Date(data[0].fecha)).toLocaleString('es', {month: 'long'}) + 
+            ' ' + (new Date(data[0].fecha)).getUTCFullYear());
+          }
+        }
+
+        var cierresFecha = this.cierres.filter(c => {
+          return new Date(c.fecha).getTime() == new Date(this.fecha).getTime()
+        });
+    
+        this.boletasUpload = [];
+        this.reajustesUpload = [];
+    
+        this.reajusteExists = cierresFecha.length > 0;
+        this.reajustes = this.reajusteExists ? cierresFecha[0].reajustes.concat(cierresFecha[0].boletas).sort((a,b) => new Date(a.fecha) > new Date(b.fecha) ? 1 : -1) : [];
+      });
+    }
   }
 
   formatDate(date) {
@@ -175,7 +207,7 @@ export class CierremesComponent implements OnInit {
     if(this.boletasUpload.length > 0 || this.reajustesUpload.length > 0){
       this.propiedadesService.cerrarMes(this.fecha.toDate(), this.boletasUpload, this.reajustesUpload)
                 .subscribe((data) => {
-                    this.accionesService.loadCierresMes()
+                    this.accionesService.loadCierresMes({fecha: this.fecha.toDate()})
                         .subscribe(data_ => {
                           data_.map(cierre => {
                             if(cierre.boletas.length == 1 && !cierre.boletas[0]._id) cierre.boletas = [];

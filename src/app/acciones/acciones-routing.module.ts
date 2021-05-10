@@ -10,6 +10,7 @@ import { LiquidacionComponent } from './liquidacion/liquidacion.component';
 import { PagoArriendoResolverService } from './pago-arriendo/pago-arriendo-resolver.service';
 import { PagoArriendoComponent } from './pago-arriendo/pago-arriendo.component';
 import { ReajusteDeRentasComponent } from './reajuste-de-rentas/reajuste-de-rentas.component';
+import { ReajusteExtraordinarioComponent } from './reajuste-extraordinario/reajuste-extraordinario.component';
 
 const routes: Routes = [
   {
@@ -19,11 +20,15 @@ const routes: Routes = [
       {
         path: 'cierremes',
         component: CierremesComponent,
-        resolve: {cierres: CierresResolverService}
+        //resolve: {cierres: CierresResolverService}
       },
       {
         path: 'reajustes',
         component: ReajusteDeRentasComponent
+      },
+      {
+        path: 'reajusteextraordinario',
+        component: ReajusteExtraordinarioComponent
       },
       {
         path: 'pagoarriendo',

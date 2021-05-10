@@ -15,6 +15,7 @@ export class ReajusteDeRentasComponent implements OnInit {
   periodoReajustar;
   reajustes = [];
   reajustesUpload = [];
+  reajustesExtraordinarios = [];
   reajusteExists: boolean = false;
 
   cargandoReajustes = false;
@@ -25,6 +26,10 @@ export class ReajusteDeRentasComponent implements OnInit {
   }
 
   ipc = [];
+  ipc_ultimo = [];
+  meses: string[] = ['Ene.', 'Feb.', 'Mar.', 'Abr.', 'Mayo',
+                     'Jun.', 'Jul.', 'Ago.', 'Sep.', 'Oct.',
+                     'Nov.', 'Dic.'];
 
   constructor(private accionesService: AccionesService, private toastService: ToastService,
               private propiedadesService: PropiedadesService, private parametrosService: ParametrosService) { }
@@ -39,8 +44,11 @@ export class ReajusteDeRentasComponent implements OnInit {
   changePeriodo(){
     if(!this.periodoReajustar) this.periodoReajustar = moment().locale('es').startOf('month');
 
+    this.ipc_ultimo = [];
+
     this.reajusteExists = false;
     this.reajustes = [];
+    this.reajustesExtraordinarios = [];
     this.reajustesUpload = [];
     this.reajustePreparado = false;
 
@@ -70,8 +78,20 @@ export class ReajusteDeRentasComponent implements OnInit {
   }
 
   OnPrepararClick(){
+    if(this.ipc.length > 0) {
+      this.ipc_ultimo = [...Array(13).keys()].map(value => {
+        //console.log(value, moment(this.periodoReajustar).add(-value,'M').toDate())
+        var fecha_mes = moment(this.periodoReajustar).add(-(12 - value + 1), 'M');
+        const valor = Number.parseFloat(this.ipc.filter(e => e.code == fecha_mes.year().toString())[0]?.attributes[fecha_mes.month()])
+        return ({mes: this.meses[fecha_mes.month()] + ' ' + fecha_mes.year(), valor: valor ? valor : '0'})
+      });
+    }
+
     this.reajustesUpload = [];
     this.reajustePreparado = true;
+
+    this.accionesService.loadReajustesExtraordinarios({fecha: this.periodoReajustar.toDate()})
+        .subscribe(data => this.reajustesExtraordinarios = data)
 
     this.accionesService.loadContratosCierre(this.periodoReajustar.endOf('month').toDate())
         .subscribe(data => {
@@ -100,23 +120,71 @@ export class ReajusteDeRentasComponent implements OnInit {
                 fecha: this.periodoReajustar.toDate(),
                 valorinicial: element.contrato.canonactual,
                 valorfinal: Math.round(element.contrato.canonactual * (1 + valor_reajuste / 100)),
-                reajuste: valor_reajuste
+                reajuste: valor_reajuste,
+                tipo: 'Automatico'
               });
 
               this.reajustes.push({
-                  contrato: element.contrato,
+                  contrato: element.contrato._id,
                   userid: element.contrato.userid,
                   fecha: this.periodoReajustar.toDate(),
                   valorinicial: element.contrato.canonactual,
                   valorfinal: Math.round(element.contrato.canonactual * (1 + valor_reajuste / 100)),
                   propiedadData: element.propiedad,
-                  reajuste: valor_reajuste
+                  reajuste: valor_reajuste,
+                  tiempo: element.contrato.tiemporeajuste,
+                  aplicar: true
                 })
             }else{
               valor_final_reajuste = element.contrato.canonactual;
             }
           });
         });
+  }
+
+  aplicar(){
+    //if(this.reajustesUpload.length > 0){
+      this.propiedadesService.reajustesMes(this.periodoReajustar.toDate(), {reajustes: this.reajustesUpload.map(reajuste => {
+        if(!this.reajustes.filter(r => r.contrato == reajuste.contrato)[0].aplicar){
+          reajuste.reajuste = 0;
+          reajuste.valorfinal = reajuste.valorinicial;
+        }
+        return reajuste;
+      }),
+      reajustesExtraordinarios: this.reajustesExtraordinarios.map(reajuste => {
+
+        return ({
+          contrato: reajuste.contrato,
+          userid: reajuste.userid,
+          fecha: this.periodoReajustar.toDate(),
+          valorinicial: reajuste.valorinicial,
+          valorfinal: reajuste.valorfinal,
+          reajuste: reajuste.reajuste,
+          tipo: 'Extraordinario'
+        })
+      })})
+      .subscribe((data) => {
+        this.changePeriodo();
+        this.toastService.success('Operación realizada con éxito');
+      } /*{
+          this.accionesService.loadCierresMes({fecha: this.fecha.toDate()})
+              .subscribe(data_ => {
+                data_.map(cierre => {
+                  if(cierre.boletas.length == 1 && !cierre.boletas[0]._id) cierre.boletas = [];
+                  if(cierre.reajustes.length == 1 && !cierre.reajustes[0]._id) cierre.reajustes = [];
+                  return cierre
+                });
+                
+                this.cierres = data_;
+                this.fechaChange();
+                this.toastService.success('Operación realizada con éxito');
+              })
+      }*/);
+    //}
+  }
+
+  changeReajusteAplicar(i){
+    this.reajustes[i].aplicar = !this.reajustes[i].aplicar;
   }
 
   formatDate(date) {

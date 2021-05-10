@@ -40,7 +40,7 @@ export class PagoArriendoComponent implements OnInit {
     locale: 'es'
   }
 
-  tiposCargo: any[] = [{name: 'Pago recurrente'}, {name: 'Otro'}];
+  tiposCargo: any[] = [{name: 'Pago recurrente'}, {name: 'Mes garantía'}, {name: 'Otro'}];
 
   cargos: any[] = [];
   descuentos: any[] = [];
@@ -124,6 +124,9 @@ export class PagoArriendoComponent implements OnInit {
     this.cargos[i].concepto = '';
     this.cargos[i].detalle = '';
     this.cargos[i].valor = 0;
+
+    if(this.cargos[i].tipo == 'Mes garantía') this.cargos[i].valor = this.cargos.filter(cargo => cargo.tipo == 'Arriendo')[0].valor;
+    this.updateTotales();
   }
 
   changePeriodo(){
@@ -148,7 +151,7 @@ export class PagoArriendoComponent implements OnInit {
         periodo: this.date.toDate()})
           .subscribe((data) => {
             this.cargandoPagos = false;
-            console.log(data)
+            //console.log('A', data)
             
             if(data[0]?.contratos[0]?.pagos?.length == 0){
               // Primer pago
@@ -156,12 +159,14 @@ export class PagoArriendoComponent implements OnInit {
               if(contfecha.getMonth() != this.date.toDate().getMonth() || contfecha.getFullYear() != this.date.toDate().getFullYear()){
                 this.toastService.error('Debe ingresar el primer mes del contrato! (' + contfecha.toLocaleString('es', { month: 'long' }) + ' ' + contfecha.getUTCFullYear() + ')')
                 this.date = moment(contfecha);
+                return
               }
               
               this.cargos.push({tipo: 'Arriendo', concepto: '', detalle: 'Primer mes de arriendo', valor: data[0]?.contratos[0]?.canoninicial});
-              this.cargos.push({tipo: 'Otro', concepto: 'Mes garantía', detalle: '', valor: data[0]?.contratos[0]?.canoninicial});
+              this.cargos.push({tipo: 'Mes garantía', concepto: '', detalle: '', valor: data[0]?.contratos[0]?.canoninicial});
 
               this.updateTotales();
+              this.loadIngresosEgresos();
               return
             }
 
@@ -182,12 +187,15 @@ export class PagoArriendoComponent implements OnInit {
                 this.totalCargos = this.selectedPago.totalCargos;
                 this.totalDescuentos = this.selectedPago.totalDescuentos;
                 this.subtotal = this.selectedPago.subtotal;
+
+                this.loadIngresosEgresos();
                 return
               }
 
               if(fechapago > this.date){
                 this.toastService.error('Ya se ha registrado un pago por ' + fechapago.toDate().toLocaleString('es', { month: 'long' }) + ' ' + fechapago.toDate().getUTCFullYear());
                 this.selectedPago = {cargos: [], descuentos: []}
+                this.loadIngresosEgresos();
                 return;
               };
               
@@ -211,10 +219,24 @@ export class PagoArriendoComponent implements OnInit {
               }
 
               this.updateTotales();
-
+              this.loadIngresosEgresos();
             }
           });
     }
+  }
+
+  loadIngresosEgresos(){
+    this.propiedadesService.loadIngresosEgresosPropiedad(this.selectedPropiedadId, this.date.toDate())
+        .subscribe(data => {
+          data.ingresos.filter(ingreso => ingreso.afectaarriendo).forEach(ingreso => {
+            this.descuentos.push({detalle: 'Detalle Ingreso ' + this.padNumber(ingreso.nroingreso), valor: this.sumIngresosEgresos(ingreso.conceptos)})
+          });
+          data.egresos.filter(egreso => egreso.afectaarriendo).forEach(egreso => {
+            this.cargos.push({tipo: 'Otro', detalle:'', concepto: 'Detalle Egreso ' + this.padNumber(egreso.nroegreso), valor: this.sumIngresosEgresos(egreso.conceptos)})
+          });
+
+          this.updateTotales();
+        })
   }
 
   addDescuento(){
@@ -236,11 +258,14 @@ export class PagoArriendoComponent implements OnInit {
   }
 
   updateTotales(){
+    if(this.selectedPago) return
     var subtotalCargos = 0;
     this.cargos.forEach(cargo => subtotalCargos += +cargo.valor);
+    this.selectedPago?.cargos?.forEach(cargo => subtotalCargos += +cargo.valor);
 
     var subtotalDescuentos = 0;
     this.descuentos.forEach(descuento => subtotalDescuentos += +descuento.valor);
+    this.selectedPago?.descuentos?.forEach(descuento => subtotalDescuentos += +descuento.valor);
     
     this.subtotal = +subtotalCargos - +subtotalDescuentos;
     this.totalCargos = +subtotalCargos;
@@ -296,5 +321,18 @@ export class PagoArriendoComponent implements OnInit {
                                                        date.month() == moment(contrato.fechacontrato).add(6, 'months').month() ||
                                                        date.month() == moment(contrato.fechacontrato).add(3, 'months').month() ||
                                                        date.month() == moment(contrato.fechacontrato).add(9, 'months').month()
+  }
+
+  sumIngresosEgresos(array){
+    var sum = 0;
+    array.forEach(element => {
+      sum += element.valor
+    });
+    return sum;
+  }
+
+  padNumber(number){
+    if (number<=9999) { number = ("000"+number).slice(-4); }
+    return number;
   }
 }

@@ -15,7 +15,7 @@ export class CierresResolverService implements Resolve<any> {
   constructor(private router: Router, private accionesService: AccionesService) {}
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
-    
-    return this.accionesService.loadCierresMes();
+    return EMPTY;
+    //return this.accionesService.loadCierresMes();
   }
 }

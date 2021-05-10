@@ -13,10 +13,11 @@ import { IngresoComponent } from './ingreso/ingreso.component';
 import { EgresosComponent } from './egresos/egresos.component';
 import { PdfJsViewerModule } from 'ng2-pdfjs-viewer';
 import { ReajusteDeRentasComponent } from './reajuste-de-rentas/reajuste-de-rentas.component';
+import { ReajusteExtraordinarioComponent } from './reajuste-extraordinario/reajuste-extraordinario.component';
 
 
 @NgModule({
-  declarations: [AccionesComponent, CierremesComponent, PagoArriendoComponent, LiquidacionComponent, IngresoComponent, EgresosComponent, ReajusteDeRentasComponent],
+  declarations: [AccionesComponent, CierremesComponent, PagoArriendoComponent, LiquidacionComponent, IngresoComponent, EgresosComponent, ReajusteDeRentasComponent, ReajusteExtraordinarioComponent],
   imports: [
     CommonModule,
     AccionesRoutingModule,

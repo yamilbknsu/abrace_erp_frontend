@@ -509,3 +509,10 @@ table{
 #personalidad-selector.ng-select.ng-select-single .ng-select-container {
     height: 35px;
 }
+
+#cargos-descuentos .ng-select .ng-select-container{
+    height: 25px;
+    font-size: 14px;
+    line-height: 15px;
+    min-height: 15px;
+}

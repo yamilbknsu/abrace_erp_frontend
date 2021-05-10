@@ -1,0 +1,83 @@
+<p class="title">Reajuste extraordinario</p>
+<div class="flex-row">
+  <div class="flex-column">
+    <p class="section-content">Propiedad</p>
+    <ng-select [items]="contratos" bindLabel="propiedad.uId" bindValue="propiedad._id" style='width: 485px'
+      [clearable]='false' [(ngModel)]='selectedPropiedadId' (ngModelChange)='changePropiedad(selectedPropiedadId)'>
+      <ng-template class='flex-column' ng-option-tmp let-item="item">
+        <div class="flex-row" style='justify-content: space-between;'>
+          <p class="section-content">{{item.propiedad.uId}}</p>
+          <div class="flex-row">
+            <p class="section-content" style='margin-right: 5px;'>Canon actual: </p>
+            <p class="section-content" style='color: #888'>${{item.contrato.canonactual}}</p>
+          </div>
+        </div>
+        <p class="section-content">{{item.propiedad.direccionStr}}</p>
+      </ng-template>
+      <ng-template ng-label-tmp let-item="item">
+        <div *ngIf='item?.propiedad?.uId'>
+          {{item.propiedad.uId}} | {{item.propiedad.direccionStr}}
+        </div>
+      </ng-template>
+    </ng-select>
+
+    <div class="flex-row space-between" *ngIf='selectedContrato && selectedContrato.contrato' style='margin-top: 15px;'>
+        <div class="flex-column" style='justify-content: center; align-items: center;'>
+            <p class="section-subtitle">Canon actual</p>
+            <p class="section-content">${{selectedReajuste.valorinicial}}</p>
+          </div>
+    
+          <div class="flex-column" style='margin-left: 25px;'>
+            <p class="section-content" style='margin-bottom: 5px;'>Tipo</p>
+            <ng-select [items]="tipos" bindLabel="name" bindValue="name" style='width: 135px' [clearable]='false'
+              [(ngModel)]='selectedReajuste.tipo' (ngModelChange)='updateReajuste()' [disabled]='selectedReajuste._id'>
+            </ng-select>
+          </div>
+          <div class="flex-column" style='margin-left: 25px;'>
+            <p class="section-content" style='margin-bottom: 5px;'>Monto</p>
+            <input type="text" style='width: 150px; text-align: right; padding-right: 10px;'
+              [(ngModel)]='selectedReajuste.reajuste' (ngModelChange)='updateReajuste()'  [disabled]='selectedReajuste._id'>
+          </div>
+    </div>
+
+    <div class="flex-row space-between" *ngIf='selectedContrato && selectedContrato.contrato' style='margin-top: 10px;'>
+      <div class="flex-column" style='justify-content: center; align-items: center;'>
+        <p class="section-subtitle">Canon final</p>
+        <p class="section-content">${{selectedReajuste.valorfinal}}</p>
+      </div>
+      <div class="flex-column" style='margin-left: 25px;;'>
+        <p class="section-subtitle">Aplicar en</p>
+        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [mode]='"month"'
+          [(ngModel)]='selectedReajuste.fecha' [disabled]='selectedReajuste._id'></dp-date-picker>
+      </div>
+    </div>
+
+    <div class="flex-row" *ngIf='selectedContrato && selectedContrato.contrato && !selectedReajuste._id' style='margin-top: 15px; justify-content: flex-end;'>
+      <div class="green-button" (click)='guardarReajuste()'>Aplicar</div>
+    </div>
+  </div>
+  <div class="flex-column" *ngIf='selectedContrato && selectedContrato.contrato' style='margin-left: 10px; margin-top: 15px; flex:1;'>
+    <div class="flex-column" id='ingresos-list'>
+        <div class="flex-row" style='justify-content: space-between; padding-right: 5px; padding-left: 5px;'>
+          <p style='flex: .15; text-align: center;'>Periodo</p>
+          <p style='margin-left: 5px; flex: .2; text-align: center;'>Tipo</p>
+          <p style='margin-left: 5px; flex: .2; text-align: center;'>Monto</p>
+          <p style='margin-left: 5px; flex: .2; text-align: center;'>Valor inicial</p>
+          <p style='margin-left: 5px; flex: .2; text-align: center;'>Valor final</p>
+        </div>
+        <div class="flex-column scrolled-section">
+          <div class="flex-row item" *ngFor='let reajuste of reajustes; index as i;' (click)='selectReajuste(i)'
+            style='justify-content: space-between; padding-right: 5px;'>
+            <p style='flex: .15; text-align: right;'>{{formatMonth(reajuste.fecha)}}</p>
+            <p style='margin-left: 5px; flex: .2; text-align: center;'><b>{{reajuste.tipo}}</b></p>
+            <p style='margin-left: 5px; flex: .2; text-align: center;'>{{reajuste.reajuste}}</p>
+            <p style='margin-left: 5px; flex: .2; text-align: center;'>${{reajuste.valorinicial}}</p>
+            <p style='margin-left: 5px; flex: .2; text-align: right;'>${{reajuste.valorfinal}}</p>
+          </div>
+        </div>
+      </div>
+      <div class="flex-row" id='nuevo-button' *ngIf='selectedReajuste' (click)='newReajuste()'>
+        Nuevo Reajuste extraordinario
+      </div>
+  </div>
+</div>

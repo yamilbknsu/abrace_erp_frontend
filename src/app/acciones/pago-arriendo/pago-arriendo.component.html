@@ -38,28 +38,28 @@
         <div class="flex-row">
             <div class="flex-column">
                 <p class="section-content">Forma pago</p>
-                <ng-select [items]="formaspago" bindLabel="name" bindValue="name" style='width: 120px; margin-right: 10px;' [(ngModel)]='formapago'>
+                <ng-select [items]="formaspago" bindLabel="name" bindValue="name" style='width: 120px; margin-right: 10px;' [(ngModel)]='formapago' [disabled]='selectedPago'>
                 </ng-select>
             </div>
             <div class="flex-column" *ngIf='formapago != "Efectivo" && formapago != ""'>
                 <p class="section-content" *ngIf='(formapago == "Transferencia" || formapago == "Depósito") && formapago != ""'>Cta.</p>
                 <p class="section-content" *ngIf='(formapago == "Cheque") && formapago != ""'>Documento</p>
-                <input type="text" style='width: 115px; text-align: right; padding-right: 10px;' [(ngModel)]='documento'>
+                <input type="text" style='width: 115px; text-align: right; padding-right: 10px;' [(ngModel)]='documento' [disabled]='selectedPago'>
             </div>
             <div class="flex-column" style='margin-left: 10px;' *ngIf='formapago != "Efectivo" && formapago != ""'>
                 <p class="section-content">Banco</p>
-                <ng-select [items]="bancos$ | async" bindLabel="name" bindValue="name" style='width: 105px; margin-right: 10px;' [(ngModel)]='banco'>
+                <ng-select [items]="bancos$ | async" bindLabel="name" bindValue="name" style='width: 105px; margin-right: 10px;' [(ngModel)]='banco' [disabled]='selectedPago'>
                 </ng-select>
             </div>
         </div>
         <div class="flex-row"  *ngIf='formapago != "Efectivo" && formapago != "" && formapago != "Cheque"'>
             <div class="flex-column">
                 <p class="section-content">Depositado en</p>
-                <input type="text" style='width: 130px; text-align: right; padding-right: 10px;' [(ngModel)]='depositadoen'>
+                <input type="text" style='width: 130px; text-align: right; padding-right: 10px;' [(ngModel)]='depositadoen' [disabled]='selectedPago'>
             </div>
             <div class="flex-column" style='margin-left: 10px;' *ngIf='formapago != "Efectivo" && formapago != ""'>
                 <p class="section-content">Banco</p>
-                <ng-select [items]="bancos$ | async" bindLabel="name" bindValue="name" style='width: 105px;'  [(ngModel)]='bancoen'>
+                <ng-select [items]="bancos$ | async" bindLabel="name" bindValue="name" style='width: 105px;'  [(ngModel)]='bancoen' [disabled]='selectedPago'>
                 </ng-select>
             </div>
         </div>
@@ -67,11 +67,11 @@
 </div>
 
 
-<div class="flex-row" *ngIf='selectedContratoId$.value != "" && correspondeArriendo && !selectedPago; else PagoRealizadoBody;' style='margin-top: 20px; flex: 1; overflow: hidden;'>
+<div class="flex-row" id='cargos-descuentos' *ngIf='selectedContratoId$.value != "" && correspondeArriendo && !selectedPago; else PagoRealizadoBody;' style='margin-top: 20px; flex: 1; overflow: hidden;'>
     <div class="flex-column scrolled-section" style='flex: 1; border-right: 1px solid #DDD; margin-right: 10px; padding-right: 15px;'>
         <p class="section-title">Cargos</p>
         <div class='flex-row' *ngFor='let cargo of cargos; index as i;'  style='margin-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #BBB;'>
-            <div class="flex-column" *ngIf='cargo.tipo == "Arriendo"; else noArriendo' style='margin-left: 8px;'>
+            <div class="flex-column" *ngIf='cargo.tipo == "Arriendo" || cargo.tipo == "Mes garantía"; else noArriendo' style='margin-left: 8px;'>
                 <div class="flex-row">
                     <div class="flex-column">
                         <p class="section-content">Concepto</p>
