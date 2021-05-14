@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { Propiedad } from 'src/app/models/Propiedad';
 import { ParametrosService } from 'src/app/parametros/parametros.service';
 import { PropiedadesService } from 'src/app/propiedades/propiedades.service';
+import { PdfWriterService } from 'src/app/services/pdf-writer.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { AccionesService } from '../acciones.service';
 
@@ -59,8 +60,13 @@ export class PagoArriendoComponent implements OnInit {
   correspondeArriendo = true;
   cargandoPagos = false;
 
+  showPdf = false;
+  outputFileName: string = 'document.pdf';
+  @ViewChild('pdfViewer') public pdfViewer;
+
   constructor(private route: ActivatedRoute, private accionesService: AccionesService,
-    private toastService: ToastService, private parametrosService: ParametrosService, private propiedadesService: PropiedadesService) { }
+    private toastService: ToastService, private parametrosService: ParametrosService, private propiedadesService: PropiedadesService,
+    private pdfWriterService:PdfWriterService) { }
 
   ngOnInit(): void {
     this.date = moment().startOf('month').locale('es');
@@ -106,12 +112,16 @@ export class PagoArriendoComponent implements OnInit {
     this.selectedContratoId$.next(this.selectedContratoId);
     if(id) this.selectedPropiedadId$.next(id);
     else this.selectedPropiedadId$.next('');
+
+    this.correspondeArriendo = true;
   }
 
   changeContrato(id){
     this.date = moment().startOf('month').locale('es');
     if(id) this.selectedContratoId$.next(id);
     else this.selectedContratoId$.next('');
+    
+    this.correspondeArriendo = this.isNextArriendo(this.selectedContrato, this.date);
   }
 
   changeBoleta(i){
@@ -133,6 +143,7 @@ export class PagoArriendoComponent implements OnInit {
   }
 
   changePeriodo(){
+    this.showPdf = false;
     this.correspondeArriendo = this.isNextArriendo(this.selectedContrato, this.date);
     
     if(!this.cargandoPagos){
@@ -292,11 +303,11 @@ export class PagoArriendoComponent implements OnInit {
   }
 
   onGuardar(){
-    this.accionesService.writePago({
+    this.selectedPago = {
       userid: this.selectedContrato.userid,
       propiedad: this.selectedPropiedadId,
       fechaemision: this.date.toDate(),
-      fechapago: this.date.toDate(),
+      fechapago: this.datePago.toDate(),
       contrato: this.selectedContratoId,
       cargos: this.cargos,
       descuentos: this.descuentos,
@@ -310,13 +321,38 @@ export class PagoArriendoComponent implements OnInit {
       bancoen: this.bancoen,
       observaciones: this.observaciones,
       nropago: this.nropago
-    }).subscribe(() => {
-      this.changePropiedad(null);
+    };
+    this.accionesService.writePago(this.selectedPago).subscribe(() => {
+      this.changePeriodo();
+      this.emitirInforme(false);
       this.toastService.success('Operación realizada con éxito.');
     });
   }
 
-  formatDate(date) {
+  emitirInforme(copia=false){
+    this.accionesService.loadLiquidacionesInforme({propiedad: this.selectedPropiedadId}).pipe(
+      map(propiedades => this.propiedadesService.joinPropiedadData(propiedades)))
+      .subscribe(
+        propiedades => {
+          this.propiedadesService.loadIngresosEgresosPropiedad(this.selectedPropiedadId, new Date(this.selectedPago.fechaemision))
+              .subscribe(data => {
+                console.log(data)
+                this.showPdf = true;
+                this.outputFileName = (copia ? 'Copia' : '') + 'ComprobantePago' + `_${this.selectedPropiedad.uId}_${this.formatDate(this.selectedPago.fechaemision, '')}.pdf`;
+            
+                var blob = this.pdfWriterService.generateBlobPdfFromPago(this.date, propiedades[0], this.selectedContrato, this.selectedPago,
+                  {egresos: data.egresos?.filter(egreso => egreso.afectaarriendo),
+                    ingresos: data.ingresos?.filter(ingreso => ingreso.afectaarriendo)}, copia);
+            
+                this.pdfViewer.pdfSrc = blob;
+                this.pdfViewer.downloadFileName = this.outputFileName;
+                this.pdfViewer.refresh();
+              });
+        }
+      )
+  }
+
+  formatDate(date, sep='/') {
     if(!date) return 'Presente';
 
     var d = new Date(date),
@@ -329,7 +365,7 @@ export class PagoArriendoComponent implements OnInit {
     if (day.length < 2)
       day = '0' + day;
 
-    return [day, month, year].join('/');
+    return [day, month, year].join(sep);
   }
 
   isNextArriendo(contrato, date){
@@ -355,5 +391,9 @@ export class PagoArriendoComponent implements OnInit {
   padNumber(number){
     if (number<=9999) { number = ("000"+number).slice(-4); }
     return number;
+  }
+
+  numberWithPoints(x) {
+    return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 }

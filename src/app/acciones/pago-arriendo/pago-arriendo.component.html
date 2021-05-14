@@ -66,65 +66,54 @@
     </div>    
 </div>
 
+<div [ngStyle]='{"display": showPdf ? "flex" : "none"}' style='flex:1;'>
+    <ng2-pdfjs-viewer style='flex:1; margin-top: 10px;' #pdfViewer></ng2-pdfjs-viewer>
+</div>
 
-<div class="flex-row cargos-descuentos" *ngIf='selectedContratoId$.value != "" && correspondeArriendo && !selectedPago; else PagoRealizadoBody;' style='margin-top: 20px; flex: 1; overflow: hidden;'>
+<div class="flex-row cargos-descuentos" *ngIf='(selectedContratoId$.value != "" && correspondeArriendo) && !showPdf' style='margin-top: 20px; flex: 1; overflow: hidden;'>
     <div class="flex-column scrolled-section" style='flex: 1; border-right: 1px solid #DDD; margin-right: 10px; padding-right: 15px;'>
         <p class="section-title">Cargos</p>
         <div class='flex-row' *ngFor='let cargo of cargos; index as i;'  style='margin-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #BBB;'>
-            <div class="flex-column" *ngIf='cargo.tipo == "Arriendo" || cargo.tipo == "Mes garantía"; else noArriendo' style='margin-left: 8px;'>
-                <div class="flex-row">
-                    <div class="flex-column">
-                        <p class="section-content">Concepto</p>
-                        <input type='text'  [(ngModel)]='cargo.tipo' style='width: 180px' [disabled]='true'/> 
-                    </div>
-                    <div class="flex-column" style='margin-left: 5px;'>
-                        <p class="section-content">Valor</p>
-                        <input type="text" [(ngModel)]='cargo.valor' style='width: 172px; text-align: right; padding-right: 10px;' [disabled]='true' (ngModelChange)="updateTotales()">    
-                    </div>
+            
+            <div class="flex-column" style='margin-left: 8px;  flex:1;'>
+                <!--<p class="section-content">Tipo</p>-->
+                <ng-select [items]="tiposCargo" bindLabel="name" [(ngModel)]='cargo.tipo' bindValue="name" style='flex:1;' [clearable]='false'
+                            (ngModelChange)='changeTipo(i)' [disabled]='(cargo.tipo == "Arriendo" || cargo.tipo == "Mes garantía") || selectedPago'>
+                </ng-select>
+                
+                <div class="flex-column" *ngIf='cargo.tipo == "Pago recurrente"'>
+                    <!--<p class="section-content" style='margin-top: 5px;'>Detalle</p>-->
+                    <input type="text" [(ngModel)]='cargo.detalle' style='flex:1; margin-top: 5px;' placeholder="Detalle" [disabled]='selectedPago'>
                 </div>
-                <div class="flex-row">
-                    <div class="flex-column" style='flex: 1;'>
-                        <p class="section-content" style='margin-top: 5px;'>Detalle</p>
-                        <input type="text" [(ngModel)]='cargo.detalle' style='flex: 1;'>
-                    </div>
-                </div>              
             </div>
-
-            <ng-template #noArriendo>
-                <div class="flex-column" style='margin-left: 8px;'>
-                    <p class="section-content">Tipo</p>
-                    <ng-select [items]="tiposCargo" bindLabel="name" [(ngModel)]='cargo.tipo' bindValue="name" style='width: 180px' [clearable]='false'
-                              (ngModelChange)='changeTipo(i)'>
-                    </ng-select>
-                    
-                    <p class="section-content" style='margin-top: 5px;'>Detalle</p>
-                    <input type="text" [(ngModel)]='cargo.detalle' style='width: 165px'>
-                </div>
-            </ng-template>
-            <div class="flex-column" *ngIf='cargo.tipo == "Pago recurrente"' style='margin-left: 8px;'>
-                <p class="section-content">Concepto</p>
-                <ng-select [items]="instrucciones" bindLabel="nombre" [(ngModel)]='cargo.concepto' bindValue="nombre" style='width: 172px' [clearable]='false'
-                           (ngModelChange)='changeConcepto(i)'>
+            
+            <div class="flex-column" *ngIf='cargo.tipo == "Pago recurrente"; else noPago;' style='margin-left: 8px; flex:1;'>
+                <!--<p class="section-content">Concepto</p>-->
+                <ng-select [items]="instrucciones" bindLabel="nombre" [(ngModel)]='cargo.concepto' bindValue="nombre" [clearable]='false'
+                           (ngModelChange)='changeConcepto(i)' [disabled]='selectedPago'>
                 </ng-select>
                
-                <p class="section-content" style='margin-top: 5px;'>Valor</p>
-                <input type="text" [(ngModel)]='cargo.valor' style='width: 150px; text-align: right; padding-right: 10px;' (ngModelChange)="updateTotales()">
+                <!--<p class="section-content" style='margin-top: 5px;'>Valor</p>-->
+                <input type="text" [(ngModel)]='cargo.valor' style='flex:1; text-align: right; padding-right: 10px; border: 1px solid #333; margin-top: 5px;' (ngModelChange)="updateTotales()" [disabled]='selectedPago'>
             </div>
 
-            <div class="flex-column" *ngIf='cargo.tipo == "Otro"' style='margin-left: 8px;'>
-                <p class="section-content">Concepto</p>
-                <input type="text" [(ngModel)]='cargo.concepto' style='width: 158px;'>
-               
-                <p class="section-content" style='margin-top: 9px;'>Valor</p>
-                <input type="text" [(ngModel)]='cargo.valor' style='width: 150px; text-align: right; padding-right: 10px;' (ngModelChange)="updateTotales()">
-            </div>
+            <ng-template #noPago>
+                <div class="flex-column" style='margin-left: 8px; flex:1;'>
+                    <!--<p class="section-content">Concepto</p>-->
+                    <input type='text' *ngIf='cargo.tipo != "Arriendo" && cargo.tipo != "Mes garantía"' [(ngModel)]='cargo.concepto' style='flex:1;'
+                        [disabled]='(cargo.tipo == "Arriendo" || cargo.tipo == "Mes garantía") || selectedPago' placeholder="Concepto"/> 
+                   
+                    <!--<p class="section-content" style='margin-top: 5px;'>Valor</p>-->
+                    <input type="text" [(ngModel)]='cargo.valor' style='flex:1; text-align: right; padding-right: 10px; border: 1px solid #333; margin-top: 5px;' (ngModelChange)="updateTotales()" [disabled]='selectedPago'>
+                </div>
+            </ng-template>
         </div> 
-        <div class="flex-row" style='justify-content: center; margin-top: 10px;'>
-            <div class="grey-button" style='font-weight: 400; margin-right: 20px;' (click)='addCargo()'>
+        <div class="flex-row" style='justify-content: center; margin-top: 10px;' *ngIf='!selectedPago'>
+            <div class="grey-button small" style='font-weight: 400; margin-right: 20px;' (click)='addCargo()'>
                 Agregar
             </div>
 
-            <div class="red-button" *ngIf='cargos.length > 0' style='font-weight: 400;' (click)='removeCargo()'>
+            <div class="red-button small" *ngIf='cargos.length > 0' style='font-weight: 400;' (click)='removeCargo()'>
                 Eliminar
             </div>
         </div>
@@ -134,14 +123,14 @@
         <div class='flex-row' *ngFor='let descuento of descuentos; index as i; first as first;'>
             <div class="flex-column" style='flex:1;'>
                 <p class="section-subtitle" *ngIf='first'>Concepto</p>
-                <input type="text" [(ngModel)]='descuento.detalle' style='flex:1; margin-right: 10px; margin-top: 5px;'>
+                <input type="text" [(ngModel)]='descuento.detalle' style='flex:1; margin-right: 10px; margin-top: 5px;' [disabled]='selectedPago'>
             </div>
             <div class="flex-column" style='flex:1;'>
                 <p class="section-subtitle" *ngIf='first'>Valor</p>
-                <input type="text" [(ngModel)]='descuento.valor' style='flex:1; text-align: right; padding-right: 10px; margin-top: 5px;'  (ngModelChange)="updateTotales()">
+                <input type="text" [(ngModel)]='descuento.valor' style='flex:1; text-align: right; padding-right: 10px; margin-top: 5px;'  (ngModelChange)="updateTotales()" [disabled]='selectedPago'>
             </div>            
         </div> 
-        <div class="flex-row" style='justify-content: center; margin-top: 10px;'>
+        <div class="flex-row" style='justify-content: center; margin-top: 10px;' *ngIf='!selectedPago'>
             <div class="grey-button small" style='font-weight: 400; margin-right: 20px;' (click)='addDescuento()'>
                 Agregar
             </div>
@@ -153,7 +142,7 @@
     </div>
 </div>
 
-<div class="flex-column" *ngIf='selectedContratoId$.value != "" && correspondeArriendo' style='margin-top: 10px; border-top: solid 1px black; padding-top: 10px'>
+<div class="flex-column" *ngIf='(selectedContratoId$.value != "" && correspondeArriendo) && !showPdf' style='margin-top: 10px; border-top: solid 1px black; padding-top: 10px'>
     <div class="flex-row" style="justify-content: space-between;">
         <div class="flex-column" style='justify-content: flex-end;'>
             <p class="section-content">Fecha pago</p>
@@ -161,7 +150,9 @@
         </div>
 
         <div class="flex-column" style="justify-content: space-between;">
-            <p class='section-content'><b>Total cargos: </b> {{totalCargos}}</p>
+            <div class="flex-row" style='justify-content: center;'>
+                <p class='section-content'><b>Total cargos: </b>${{numberWithPoints(totalCargos)}}</p>
+            </div>
             
             <div class="flex-row">
                 <div class="flex-column" style='justify-content: center;' style='margin-right: 10px;'>
@@ -176,10 +167,13 @@
         </div>
 
         <div class="flex-column">
-            <p class='section-content'><b>Total Descuentos: </b> {{totalDescuentos}}</p>
-            <p class='section-content'><b>Subtotal: </b> {{subtotal}}</p>
+            <p class='section-content'><b>Total Descuentos: </b>${{numberWithPoints(totalDescuentos)}}</p>
+            <p class='section-content'><b>Subtotal: </b>${{numberWithPoints(subtotal)}}</p>
             <div class="flex-row" style='justify-content: flex-end; margin-top: 5px;' *ngIf='!selectedPago'>
                 <div class="green-button" (click)='onGuardar()'>Guardar</div>
+            </div>
+            <div class="flex-row" style='justify-content: flex-end; margin-top: 5px;' *ngIf='selectedPago'>
+                <div class="grey-button" (click)='emitirInforme(true)'>Emitir copia</div>
             </div>
         </div>
     </div>
@@ -188,74 +182,3 @@
 <div class="flex-row" *ngIf='!correspondeArriendo' style='justify-content: center; align-items: center; flex: 1;'>
     <p class="big-noinfo-text">No corresponde arriendo este mes. <br> (Arriendo {{selectedContrato.tiempoarriendo}})</p>
 </div>
-
-
-<ng-template #PagoRealizadoBody>
-    <div class="flex-row cargos-descuentos" *ngIf='selectedContratoId$.value != "" && correspondeArriendo && selectedPago' style='margin-top: 20px; flex: 1; overflow: hidden;'>
-        <div class="flex-column scrolled-section" style='flex: 1; border-right: 1px solid #DDD; margin-right: 10px; padding-right: 15px;'>
-            <p class="section-title">Cargos</p>
-            <div class='flex-row' *ngFor='let cargo of selectedPago.cargos; index as i;'  style='margin-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #BBB;'>
-                <div class="flex-column" *ngIf='cargo.tipo == "Arriendo"; else noArriendo' style='margin-left: 8px;'>
-                    <div class="flex-row">
-                        <div class="flex-column">
-                            <p class="section-content">Concepto</p>
-                            <input type='text'  [(ngModel)]='cargo.tipo' style='width: 180px' [disabled]='true'/> 
-                        </div>
-                        <div class="flex-column" style='margin-left: 5px;'>
-                            <p class="section-content">Valor</p>
-                            <input type="text" [(ngModel)]='cargo.valor' style='width: 172px; text-align: right; padding-right: 10px;' [disabled]='true' (ngModelChange)="updateTotales()">    
-                        </div>
-                    </div>
-                    <div class="flex-row">
-                        <div class="flex-column" style='flex: 1;'>
-                            <p class="section-content" style='margin-top: 5px;'>Detalle</p>
-                            <input type="text" [(ngModel)]='cargo.detalle' style='flex: 1;' [disabled]='true'>
-                        </div>
-                    </div>              
-                </div>
-    
-                <ng-template #noArriendo>
-                    <div class="flex-column" style='margin-left: 8px;'>
-                        <p class="section-content">Tipo</p>
-                        <ng-select [items]="tiposCargo" bindLabel="name" [(ngModel)]='cargo.tipo' bindValue="name" style='width: 180px' [clearable]='false'
-                                  (ngModelChange)='changeTipo(i)' [disabled]='true'>
-                        </ng-select>
-                        
-                        <p class="section-content" style='margin-top: 5px;'>Detalle</p>
-                        <input type="text" [(ngModel)]='cargo.detalle' style='width: 165px' [disabled]='true'>
-                    </div>
-                </ng-template>
-                <div class="flex-column" *ngIf='cargo.tipo == "Pago recurrente"' style='margin-left: 8px;'>
-                    <p class="section-content">Concepto</p>
-                    <ng-select [items]="instrucciones" bindLabel="nombre" [(ngModel)]='cargo.concepto' bindValue="nombre" style='width: 172px' [clearable]='false'
-                               (ngModelChange)='changeConcepto(i)' [disabled]='true'>
-                    </ng-select>
-                   
-                    <p class="section-content" style='margin-top: 5px;'>Valor</p>
-                    <input type="text" [(ngModel)]='cargo.valor' style='width: 150px; text-align: right; padding-right: 10px;' (ngModelChange)="updateTotales()" [disabled]='true'>
-                </div>
-    
-                <div class="flex-column" *ngIf='cargo.tipo == "Otro"' style='margin-left: 8px;'>
-                    <p class="section-content">Concepto</p>
-                    <input type="text" [(ngModel)]='cargo.concepto' style='width: 158px;' [disabled]='true'>
-                   
-                    <p class="section-content" style='margin-top: 9px;'>Valor</p>
-                    <input type="text" [(ngModel)]='cargo.valor' style='width: 150px; text-align: right; padding-right: 10px;' (ngModelChange)="updateTotales()" [disabled]='true'>
-                </div>
-            </div>
-        </div>
-        <div class="flex-column scrolled-section" style='flex: 1;'>
-            <p class="section-title">Descuentos</p>
-            <div class='flex-row' *ngFor='let descuento of selectedPago.descuentos; index as i;'>
-                <div class="flex-column">
-                    <p class="section-content">Concepto</p>
-                    <input type="text" [(ngModel)]='descuento.detalle' style='width: 158px; margin-right: 10px;' [disabled]='true'>
-                </div>
-                <div class="flex-column">
-                    <p class="section-content">Valor</p>
-                    <input type="text" [(ngModel)]='descuento.valor' style='width: 150px; text-align: right; padding-right: 10px;'  (ngModelChange)="updateTotales()" [disabled]='true'>
-                </div>            
-            </div>
-        </div>
-    </div>
-</ng-template>

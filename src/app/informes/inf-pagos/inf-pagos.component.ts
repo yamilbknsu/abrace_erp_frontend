@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { AccionesService } from 'src/app/acciones/acciones.service';
 import { Propiedad } from 'src/app/models/Propiedad';
+import { PropiedadesService } from 'src/app/propiedades/propiedades.service';
 import { PdfWriterService } from 'src/app/services/pdf-writer.service';
 
 @Component({
@@ -40,7 +41,7 @@ export class InfPagosComponent implements OnInit {
   sortDateReverse = (a, b) => (new Date(a.fechacontrato) > new Date(b.fechacontrato)) ? 1 : -1;
 
   constructor(private route: ActivatedRoute, private pdfWriterService: PdfWriterService,
-              private accionesService: AccionesService) { }
+              private accionesService: AccionesService, private propiedadesService: PropiedadesService) { }
 
   ngOnInit(): void {
     this.date = moment();
@@ -91,13 +92,21 @@ export class InfPagosComponent implements OnInit {
   }
 
   onGenerar(){
-    this.outputFileName = `ComprobantePago_${this.selectedPropiedad.uId}_${this.formatDate(this.selectedPago.fechaemision, '')}.pdf`;
+    this.propiedadesService.loadIngresosEgresosPropiedad(this.selectedPropiedadId, new Date(this.selectedPago.fechaemision))
+                           .subscribe(data => {
+                            this.outputFileName = `ComprobantePago_${this.selectedPropiedad.uId}_${this.formatDate(this.selectedPago.fechaemision, '')}.pdf`;
+                              var blob = this.pdfWriterService.generateBlobPdfFromPago(this.date, this.selectedPropiedad, this.selectedContrato, this.selectedPago,
+                                {egresos: data.egresos?.filter(egreso => egreso.afectaarriendo),
+                                 ingresos: data.ingresos?.filter(ingreso => ingreso.afectaarriendo)}, true);
+                          
+                              this.pdfViewer.pdfSrc = blob;
+                              this.pdfViewer.downloadFileName = this.outputFileName;
+                              this.pdfViewer.refresh();
+                           });
+
 
     var blob = this.pdfWriterService.generateBlobPdfFromPago(this.date, this.selectedPropiedad, this.selectedContrato, this.selectedPago);
 
-    this.pdfViewer.pdfSrc = blob;
-    this.pdfViewer.downloadFileName = this.outputFileName;
-    this.pdfViewer.refresh()
   }
 
   formatDate(date, sep='/') {

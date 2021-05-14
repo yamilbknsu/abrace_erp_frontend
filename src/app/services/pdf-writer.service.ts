@@ -44,7 +44,7 @@ export class PdfWriterService {
     return doc.output('blob');
   }
 
-  generateBlobPdfFromPago(fecha, propiedad, contrato, pago){
+  generateBlobPdfFromPago(fecha, propiedad, contrato, pago, ingresosegresos=undefined, copia=false){
     const options: jsPDFOptions = {format: 'letter', unit: 'px', hotfixes: ['px_scaling']}
     var doc = new jsPDF(options);
 
@@ -56,18 +56,18 @@ export class PdfWriterService {
     doc.setTextColor('black');
     doc.setFont("Roboto-Bold", "bold");
 
-    const textWidth = doc.getTextWidth('Copia de comprobante de pago');
-    doc.text('Copia de comprobante de pago', pageSize.getWidth() - 50, 60, {align: 'right'});
-
+    const titletext = (copia ? 'Copia de c' : 'C') + 'omprobante de pago'
+    const textWidth = doc.getTextWidth(titletext);
+    doc.text(titletext, pageSize.getWidth() - 50, 60, {align: 'right'});
     doc.setDrawColor('black')
     doc.setLineWidth(1);
     doc.line(pageSize.getWidth() - 50 - textWidth, 63, pageSize.getWidth() - 50, 63);
 
     doc.setFontSize(12);
     doc.setFont("Roboto-Regular", "normal");
-    doc.text(`Código: ${propiedad.uId}`, pageSize.getWidth() - 50, 90, {align: 'right'});
-
-    doc.text(`Fecha de emisión: ${this.formatDate(pago.fechaemision)}`, pageSize.getWidth() - 50, 110, {align: 'right'});
+    doc.text(`${propiedad.uId}     №    ${this.padNumber(pago.nropago)}`, pageSize.getWidth() - 50, 90, {align: 'right'});
+    
+    doc.text(`Periodo: ${this.formatPeriodo(pago.fechaemision)}`, pageSize.getWidth() - 50, 110, {align: 'right'});
 
     doc.setFont("Roboto-Bold", "bold");
     doc.text('Mandante', 50, 130);
@@ -78,7 +78,7 @@ export class PdfWriterService {
     doc.text(':', 55 + doc.getTextWidth('Arrendatario'), 170);
 
     doc.setFont("Roboto-Regular", "normal");
-    doc.text(propiedad.mandanteData.nombre, 70 + doc.getTextWidth('Arrendatario'), 130);
+    doc.text(propiedad.mandanteData.nombre + " (RUT: " + propiedad.mandanteData.rut + "-" + propiedad.mandanteData.dv + ")", 70 + doc.getTextWidth('Arrendatario'), 130);
     doc.text(propiedad.direccionStr, 70 + doc.getTextWidth('Arrendatario'), 150);
     doc.text(contrato.arrendatario.nombre, 70 + doc.getTextWidth('Arrendatario'), 170);
 
@@ -95,13 +95,11 @@ export class PdfWriterService {
     pago.totalCargos = this.numberWithPoints(pago.totalCargos);
     pago.totalDescuentos = this.numberWithPoints(pago.totalDescuentos);
     pago.subtotal = this.numberWithPoints(pago.subtotal);
-    console.log(pago.descuentos)
-    var nestedTableHeight = 100
+
+    var nestedTableHeight = 140
     var tableDelta = 60;
     var nestedTableCell = {
       content: '',
-      // Dynamic height of nested tables are not supported right now
-      // so we need to define height of the parent cell
       styles: { minCellHeight: nestedTableHeight },
     }
     autoTable(doc, {
@@ -118,16 +116,17 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
+            styles: {cellPadding: 2, fontSize: 10},
             columns: [
               { dataKey: 'concepto', header: '' },
               { dataKey: 'valor', header: '' },
             ],
             columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             body: pago.cargos.map(cargo => {
-              if(cargo.tipo == 'Arriendo')
+              if(cargo.tipo == 'Arriendo' || cargo.tipo == 'Mes garantía')
                 return {concepto: cargo.tipo, valor: cargo.valor}
               else
-                return {concepto: cargo.tipo + " (" + cargo.concepto + ")", valor: cargo.valor}
+                return {concepto: cargo.concepto, valor: cargo.valor}
             }),
           });
         }
@@ -138,6 +137,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
+            styles: {cellPadding: 2, fontSize: 10},
             columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             columns: [
               { dataKey: 'concepto', header: '' },
@@ -173,24 +173,28 @@ export class PdfWriterService {
     doc.text(pago.subtotal, pageSize.getWidth() - 60, 180 + nestedTableHeight + tableDelta + 35, {align: 'right'});
     
     doc.setFontSize(10);
-    doc.text(`Cancelado con ${pago.formapago} Nro ${pago.documento} del bco ${pago.banco}`, 50, 180 + nestedTableHeight + tableDelta + 75)
-    doc.text(`Depositado en cta ${pago.depositadoen} del bco ${pago.bancoen}`, 50, 180 + nestedTableHeight + tableDelta + 95)
+    doc.text(`Cancelado con ${pago.formapago} Nro ${pago.documento} del bco ${pago.banco}`, 50, 180 + nestedTableHeight + tableDelta + 55)
+    doc.text(`Depositado en cta ${pago.depositadoen} del bco ${pago.bancoen}`, 50, 180 + nestedTableHeight + tableDelta + 75)
+    doc.text(`Obs.: ${pago.observaciones ? pago.observaciones : ''}`, 50, 180 + nestedTableHeight + tableDelta + 95);
     
     doc.setFont("Roboto-Bold", "bold");
-    doc.text(`Fecha de pago: ${this.formatDate(pago.fechapago)}`, 50, 180 + nestedTableHeight + tableDelta + 115)
-    doc.text(`Fecha de hoy: ${this.formatDate(fecha)}`, 50, 180 + nestedTableHeight + tableDelta + 135)
+    doc.text(`${this.formatFecha(pago.fechapago)}`, 50, 180 + nestedTableHeight + tableDelta + 115)
+    //doc.text(`Fecha de hoy: ${this.formatDate(fecha)}`, 50, 180 + nestedTableHeight + tableDelta + 135)
 
     doc.setFont("Roboto-Regular", "normal");
     doc.setFontSize(13);
-    doc.text('RECIBI CONFORME', pageSize.getWidth() - 60, 180 + nestedTableHeight + tableDelta + 155, {align: "right"})
+    doc.text('RECIBI CONFORME', pageSize.getWidth() - 60, 180 + nestedTableHeight + tableDelta + 115, {align: "right"})
     
     doc.setDrawColor('black')
     doc.setLineWidth(2);
     doc.setLineDashPattern([3], 0);
-    doc.line(53, 180 + nestedTableHeight + tableDelta + 175, pageSize.getWidth() - 53, 180 + nestedTableHeight + tableDelta + 175);
+    doc.line(53, 180 + nestedTableHeight + tableDelta + 135, pageSize.getWidth() - 53, 180 + nestedTableHeight + tableDelta + 135);
 
     // DESDE AQUI LA COPIA
-    var startY = 180 + nestedTableHeight + tableDelta + 190;
+    // ----------------------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------------------
+
+    var startY = 180 + nestedTableHeight + tableDelta + 140;
 
     doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', 50, startY + 30, 60, 60);
     
@@ -198,7 +202,7 @@ export class PdfWriterService {
     doc.setTextColor('black');
     doc.setFont("Roboto-Bold", "bold");
 
-    doc.text('Copia de comprobante de pago', pageSize.getWidth() - 50, startY + 60, {align: 'right'});
+    doc.text(titletext, pageSize.getWidth() - 50, startY + 60, {align: 'right'});
 
     doc.setDrawColor('black')
     doc.setLineWidth(1);
@@ -207,9 +211,9 @@ export class PdfWriterService {
 
     doc.setFontSize(12);
     doc.setFont("Roboto-Regular", "normal");
-    doc.text(`Código: ${propiedad.uId}`, pageSize.getWidth() - 50, startY + 90, {align: 'right'});
+    doc.text(`${propiedad.uId}     №    ${this.padNumber(pago.nropago)}`, pageSize.getWidth() - 50, startY + 90, {align: 'right'});
 
-    doc.text(`Fecha de emisión: ${this.formatDate(pago.fechaemision)}`, pageSize.getWidth() - 50, startY + 110, {align: 'right'});
+    doc.text(`Periodo: ${this.formatPeriodo(pago.fechaemision)}`, pageSize.getWidth() - 50, startY + 110, {align: 'right'});
 
     doc.setFont("Roboto-Bold", "bold");
     doc.text('Mandante', 50, startY + 130);
@@ -220,7 +224,7 @@ export class PdfWriterService {
     doc.text(':', 55 + doc.getTextWidth('Arrendatario'), startY + 170);
 
     doc.setFont("Roboto-Regular", "normal");
-    doc.text(propiedad.mandanteData.nombre, 70 + doc.getTextWidth('Arrendatario'), startY + 130);
+    doc.text(propiedad.mandanteData.nombre + " (RUT: " + propiedad.mandanteData.rut + "-" + propiedad.mandanteData.dv + ")", 70 + doc.getTextWidth('Arrendatario'), startY + 130);
     doc.text(propiedad.direccionStr, 70 + doc.getTextWidth('Arrendatario'), startY + 150);
     doc.text(contrato.arrendatario.nombre, 70 + doc.getTextWidth('Arrendatario'), startY + 170);
 
@@ -244,16 +248,17 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
+            styles: {cellPadding: 2, fontSize: 10},
             columns: [
               { dataKey: 'concepto', header: '' },
               { dataKey: 'valor', header: '' },
             ],
             columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             body: pago.cargos.map(cargo => {
-              if(cargo.tipo == 'Arriendo')
+              if(cargo.tipo == 'Arriendo' || cargo.tipo == 'Mes garantía')
                 return {concepto: cargo.tipo, valor: cargo.valor}
               else
-                return {concepto: cargo.tipo + " (" + cargo.concepto + ")", valor: cargo.valor}
+                return {concepto: cargo.concepto, valor: cargo.valor}
             }),
           });
         }
@@ -264,6 +269,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
+            styles: {cellPadding: 2, fontSize: 10},
             columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             columns: [
               { dataKey: 'concepto', header: '' },
@@ -299,16 +305,28 @@ export class PdfWriterService {
     doc.text(pago.subtotal, pageSize.getWidth() - 60, startY + 180 + nestedTableHeight + tableDelta + 35, {align: 'right'});
     
     doc.setFontSize(10);
-    doc.text(`Cancelado con ${pago.formapago} Nro ${pago.documento} del bco ${pago.banco}`, 50, startY + 180 + nestedTableHeight + tableDelta + 75)
-    doc.text(`Depositado en cta ${pago.depositadoen} del bco ${pago.bancoen}`, 50, startY + 180 + nestedTableHeight + tableDelta + 95)
+    doc.text(`Cancelado con ${pago.formapago} Nro ${pago.documento} del bco ${pago.banco}`, 50, startY + 180 + nestedTableHeight + tableDelta + 55)
+    doc.text(`Depositado en cta ${pago.depositadoen} del bco ${pago.bancoen}`, 50, startY + 180 + nestedTableHeight + tableDelta + 75)
+    doc.text(`Obs.: ${pago.observaciones ? pago.observaciones : ''}`, 50, startY + 180 + nestedTableHeight + tableDelta + 95);
     
     doc.setFont("Roboto-Bold", "bold");
-    doc.text(`Fecha de pago: ${this.formatDate(pago.fechapago)}`, 50, startY + 180 + nestedTableHeight + tableDelta + 115)
-    doc.text(`Fecha de hoy: ${this.formatDate(fecha)}`, 50, startY + 180 + nestedTableHeight + tableDelta + 135)
+    doc.text(`${this.formatFecha(pago.fechapago)}`, 50, startY + 180 + nestedTableHeight + tableDelta + 115)
+    //doc.text(`Fecha de hoy: ${this.formatDate(fecha)}`, 50, 180 + nestedTableHeight + tableDelta + 135)
 
     doc.setFont("Roboto-Regular", "normal");
     doc.setFontSize(13);
-    doc.text('RECIBI CONFORME', pageSize.getWidth() - 60, startY + 180 + nestedTableHeight + tableDelta + 155, {align: "right"})
+    doc.text('RECIBI CONFORME', pageSize.getWidth() - 60, startY + 180 + nestedTableHeight + tableDelta + 115, {align: "right"})
+    
+    if(ingresosegresos?.ingresos)
+      var [doc_aux, lastY] = this.addIngresosEgresos(doc, ingresosegresos.ingresos);
+
+    doc = doc_aux ? doc_aux : doc;
+
+    if(ingresosegresos?.egresos)
+      var [doc_aux_2, lastY_2] = this.addIngresosEgresos(doc, ingresosegresos.egresos, !lastY, false, lastY? lastY : 0);
+
+    doc = doc_aux_2 ? doc_aux_2 : doc; 
+    
     return doc.output('blob');
   }
 
@@ -324,7 +342,7 @@ export class PdfWriterService {
     doc.setTextColor('black');
     doc.setFont("Roboto-Bold", "bold");
 
-    const titletext = (copia ? 'Copia de r' : 'R') + 'ecibo de liquidación'
+    const titletext = (copia ? 'Copia de r' : 'R') + 'ecibo de liquidación de arriendo'
     const textWidth = doc.getTextWidth(titletext);
     doc.text(titletext, pageSize.getWidth() - 50, 60, {align: 'right'});
     doc.setDrawColor('black')
