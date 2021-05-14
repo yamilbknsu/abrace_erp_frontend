@@ -6,6 +6,7 @@ import { Propiedad } from 'src/app/models/Propiedad';
 import { ParametrosService } from 'src/app/parametros/parametros.service';
 import { PropiedadesService } from 'src/app/propiedades/propiedades.service';
 import { PdfWriterService } from 'src/app/services/pdf-writer.service';
+import { ToastService } from 'src/app/services/toast.service';
 import { AccionesService } from '../acciones.service';
 
 @Component({
@@ -23,6 +24,7 @@ export class IngresoComponent implements OnInit {
   selectedPropiedad: Propiedad;
 
   selectedIngreso;
+  fechasLiqPago:any = undefined;
 
   formaspago: any[] = [{name: 'Transferencia'}, {name: 'Cheque'}, {name: 'Efectivo'}, {name: 'Depósito'}];
 
@@ -40,7 +42,7 @@ export class IngresoComponent implements OnInit {
   }
 
   constructor(private propiedadesService: PropiedadesService, private accionesService: AccionesService,
-    private pdfWriterService: PdfWriterService, private parametrosService: ParametrosService) { }
+    private pdfWriterService: PdfWriterService, private parametrosService: ParametrosService, private toastService: ToastService) { }
 
   ngOnInit(): void {
     this.propiedadesService.loadPropiedadesFromBackend();
@@ -51,7 +53,7 @@ export class IngresoComponent implements OnInit {
       if(id != ''){
         this.accionesService.loadIngresos(id).subscribe(ingresos => {
           this.ingresos = ingresos.map(ingreso => { ingreso.fecha = moment(ingreso.fecha).locale('es'); ingreso.periodo = moment(ingreso.periodo).locale('es'); return ingreso;})
-          
+          console.log(ingresos)
           this.selectedIngreso = {
             nroingreso: ingresos.length + 1,
             periodo: moment().locale('es').startOf('month'),
@@ -77,7 +79,7 @@ export class IngresoComponent implements OnInit {
     else this.selectedPropiedadId$.next('');
   }
 
-  formatDate(date) {
+  formatDate(date, sep='/') {
     if(!date) return 'Presente';
 
     var d = new Date(date),
@@ -90,7 +92,7 @@ export class IngresoComponent implements OnInit {
     if (day.length < 2)
       day = '0' + day;
 
-    return [day, month, year].join('/');
+    return [day, month, year].join(sep);
   }
 
   padNumber(number){
@@ -121,8 +123,8 @@ export class IngresoComponent implements OnInit {
   }
 
   selectIngreso(i){
-    this.selectedIngreso = this.ingresos[i];
-    this.showPdf = false;
+    this.selectedIngreso = {...this.ingresos[i]};
+    if(this.showPdf) this.showPdf = false;
   }
 
   sumIngresos(ingreso){
@@ -134,21 +136,108 @@ export class IngresoComponent implements OnInit {
   }
 
   generarIngreso(){
-    this.accionesService.writeIngreso(this.selectedIngreso).subscribe(() => {
-      this.accionesService.loadIngresos(this.selectedPropiedadId).subscribe(ingresos => {
-        this.ingresos = ingresos.map(ingreso => { ingreso.fecha = moment(ingreso.fecha).locale('es'); ingreso.periodo = moment(ingreso.periodo).locale('es'); return ingreso;})
+    this.accionesService.loadFechasLiqPagos({propiedad: this.selectedPropiedadId})
+        .subscribe(data => {
+          this.fechasLiqPago = data
         
-        this.showPdf = true;
-        this.outputFileName = `ejemplo.pdf`;
+          var found = false;
+          
+          if(!this.selectedIngreso.afectaarriendo && !this.selectedIngreso.afectaliquidacion){
+            this.toastService.error('El ingreso no afecta liquidación ni arriendo.')
+            return;
+          }
+          if(this.fechasLiqPago){
+            var periodo = moment(this.selectedIngreso.periodo);
+            if(this.selectedIngreso.afectaarriendo){
 
-        var blob = this.pdfWriterService.generateIngresoEgresoNewWindow()
+              this.fechasLiqPago.pagos.forEach(element => {
+                if((new Date(element)).getMonth() == periodo.toDate().getMonth() && (new Date(element)).getFullYear() == periodo.toDate().getFullYear()){
+                  this.toastService.error('Ya se generó un pago para este mes')
+                  found = true;
+                  return;
+                }
+              });
+            }
 
-        this.pdfViewer.pdfSrc = blob;
-        this.pdfViewer.downloadFileName = this.outputFileName;
-        this.pdfViewer.refresh()
+            if(this.selectedIngreso.afectaliquidacion){
+              this.fechasLiqPago.liquidaciones.forEach(element => {
+                if((new Date(element)).getMonth() == periodo.toDate().getMonth() && (new Date(element)).getFullYear() == periodo.toDate().getFullYear()){
+                  this.toastService.error('Ya se generó una liquidación para este mes')
+                  found = true;
+                  return;
+                }
+              })
+            }
+          }
+
+          if(found) return;
+
+          this.accionesService.writeIngreso(this.selectedIngreso).subscribe(() => {
+            this.accionesService.loadIngresos(this.selectedPropiedadId).subscribe(ingresos => {
+              this.ingresos = ingresos.map(ingreso => { ingreso.fecha = moment(ingreso.fecha).locale('es'); ingreso.periodo = moment(ingreso.periodo).locale('es'); return ingreso;})
+              
+              this.showPdf = true;
+              this.outputFileName = `ComprobanteIngreso_${this.selectedPropiedad.uId}_${this.formatDate(this.selectedIngreso.fecha, '')}.pdf`;
+
+              var blob = this.pdfWriterService.generateIngresoEgreso([this.selectedIngreso], this.selectedPropiedad, true, false)
+
+              this.pdfViewer.pdfSrc = blob;
+              this.pdfViewer.downloadFileName = this.outputFileName;
+              this.pdfViewer.refresh()
+            });
+          });
+        });
+  }
+
+  emitirCopia(){
+    this.showPdf = true;
+    this.outputFileName = `ComprobanteIngreso_${this.selectedPropiedad.uId}_${this.formatDate(this.selectedIngreso.fecha, '')}.pdf`;
+
+    var blob = this.pdfWriterService.generateIngresoEgreso([this.selectedIngreso], this.selectedPropiedad, true, true)
+
+    this.pdfViewer.pdfSrc = blob;
+    this.pdfViewer.downloadFileName = this.outputFileName;
+    this.pdfViewer.refresh()
+  }
+
+  anularIngreso(){
+    if(!this.selectedIngreso._id) return;
+    this.accionesService.loadFechasLiqPagos({propiedad: this.selectedPropiedadId})
+    .subscribe(data => {
+      this.fechasLiqPago = data
+    
+      var found = false;
+      if(this.fechasLiqPago){
+        var periodo = moment(this.selectedIngreso.periodo);
+        if(this.selectedIngreso.afectaarriendo){
+          this.fechasLiqPago.pagos.forEach(element => {
+            if((new Date(element)).getMonth() == periodo.toDate().getMonth() && (new Date(element)).getFullYear() == periodo.toDate().getFullYear()){
+              this.toastService.error('No se puede anular, ya se generó un pago para este mes')
+              found = true;
+              return;
+            }
+          });
+        }
+        if(this.selectedIngreso.afectaliquidacion){
+          this.fechasLiqPago.liquidaciones.forEach(element => {
+            if((new Date(element)).getMonth() == periodo.toDate().getMonth() && (new Date(element)).getFullYear() == periodo.toDate().getFullYear()){
+              this.toastService.error('No se puede anular, ya se generó una liquidación para este mes')
+              found = true;
+              return;
+            }
+          })
+        }
+      }
+      if(found) return;
+
+      this.propiedadesService.deleteIngreso(this.selectedIngreso._id).subscribe(() => {
+        this.accionesService.loadIngresos(this.selectedPropiedadId).subscribe(ingresos => {
+          this.toastService.success('Operación realizada con exito')
+          this.ingresos = ingresos.map(ingreso => { ingreso.fecha = moment(ingreso.fecha).locale('es'); ingreso.periodo = moment(ingreso.periodo).locale('es'); return ingreso;});
+          this.nuevoIngreso()
+        });
       });
     });
-
   }
 
 }

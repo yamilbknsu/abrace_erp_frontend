@@ -11,7 +11,7 @@
     margin-top: 0px;
 }
 
-#cargos-descuentos input, #cargos-descuentos .ng-select-container{
+.cargos-descuentos input, .cargos-descuentos .ng-select-container{
     height: 20px;
     font-size: 14px;
     line-height: 15px;

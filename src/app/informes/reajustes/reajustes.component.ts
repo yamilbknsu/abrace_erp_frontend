@@ -28,7 +28,7 @@ export class InfReajustesComponent implements OnInit {
     private router: Router, private propiedadService: PropiedadesService) { }
 
   ngOnInit(): void {
-    this.date = moment();
+    this.date = moment().locale('es').startOf('month');
     
     this.queryService.executeGetQuery('read', 'infreajustes', {}, {})
                     .pipe(  
@@ -53,9 +53,9 @@ export class InfReajustesComponent implements OnInit {
 
     var blob = this.pdfWriterService.generateBlobPdfFromData(
                   [{uId: 'CÓDIGO', direccionStr: 'DIRECCIÓN', tiporeaj: 'TIPO REAJ.', anterior: 'RENTA ANT.', porcentaje: '%', nueva: 'RENTA NUEVA'}],
-                  data.map(e => ({uId: e.propiedad.uId, direccionStr: e.propiedad.direccionStr, tiporeaj: e.contrato.tiemporeajuste.toUpperCase(), anterior: e.valorinicial, porcentaje: e.reajuste, nueva: e.valorfinal})),
+                  data.map(e => ({uId: e.propiedad.uId, direccionStr: e.propiedad.direccionStr, tiporeaj: e.tipo != "Extraordinario" ? e.contrato.tiemporeajuste.toUpperCase() : 'EXTRAORDINARIO', anterior: e.valorinicial, porcentaje: Math.round(((e.valorfinal/e.valorinicial) - 1) * 10000)/100, nueva: e.valorfinal})),
                   'PROPIEDADES REAJUSTADAS  ' + (this.date.month() + 1).toString().padStart(2, '0') + '/' + this.date.year(),
-                  this.formatDate(this.date),
+                  this.formatDate(moment().locale('es')),
                   { overflow: 'ellipsize', cellWidth: 'wrap' },
                   { direccionStr: { cellWidth: 'auto' }, porcentaje: { cellWidth: 'wrap', overflow: 'linebreak'}, anterior: {halign: 'center'}, nueva: {halign: 'center'} });
     this.pdfViewer.pdfSrc = blob;

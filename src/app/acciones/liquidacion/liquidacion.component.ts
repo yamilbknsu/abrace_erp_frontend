@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { Propiedad } from 'src/app/models/Propiedad';
 import { ParametrosService } from 'src/app/parametros/parametros.service';
 import { PropiedadesService } from 'src/app/propiedades/propiedades.service';
+import { PdfWriterService } from 'src/app/services/pdf-writer.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { AccionesService } from '../acciones.service';
 
@@ -18,6 +19,8 @@ export class LiquidacionComponent implements OnInit {
 
   propiedades: any[] = [];
   date: any;
+
+  instrucciones: any[] = [];
 
   selectedPropiedadId: string = '';
   selectedPropiedadId$: BehaviorSubject<string> = new BehaviorSubject<string>('');
@@ -32,22 +35,34 @@ export class LiquidacionComponent implements OnInit {
 
   cargandoLiquidacion = false;
 
+  tiposCargo: any[] = [{name: 'Instrucción Pago'}, {name: 'Otro'}];
+
+  ultimonro = 1;
+  
+  showPdf = false;
+  outputFileName: string = 'document.pdf';
+  @ViewChild('pdfViewer') public pdfViewer;
+
   datePickerConfig = {
     locale: 'es'
   }
 
   constructor(private route:ActivatedRoute, private parametrosService: ParametrosService,
               private accionesService: AccionesService, private toastService: ToastService,
-              private propiedadesService: PropiedadesService, private _cdr: ChangeDetectorRef) { }
+              private propiedadesService: PropiedadesService, private _cdr: ChangeDetectorRef,
+              private pdfWriterService: PdfWriterService) { }
 
   ngOnInit(): void {
-    this.date = moment();
+    this.date = moment().locale('es').startOf('month');
 
     this.route.data.subscribe(data => {
       this.propiedades = data.propiedades;
     });
 
-    this.selectedPropiedadId$.subscribe(id => this.selectedPropiedad = this.propiedades.filter(prop => prop._id == id)?.[0]);
+    this.selectedPropiedadId$.subscribe(id => {
+      this.selectedPropiedad = this.propiedades.filter(prop => prop._id == id)?.[0];
+      this.instrucciones = this.selectedPropiedad?.mandato?.instrucciones;
+    });
 
     this.parametrosService.loadBancosFromBackend();
     this.bancos$ = this.parametrosService.bancos$.pipe(
@@ -63,12 +78,12 @@ export class LiquidacionComponent implements OnInit {
 
   changePeriodo(){
     if(this.cargandoLiquidacion) return;
+    this.showPdf = false;
 
     this.cargandoLiquidacion = true;
     this.accionesService.loadLiquidaciones({fecha: this.date.toDate(), propiedad: this.selectedPropiedadId})
         .subscribe(data => {
           this.cargandoLiquidacion = false;
-          console.log(data)
 
           if(data[0]?.length == 0){
             // Primera liquidacion
@@ -84,6 +99,7 @@ export class LiquidacionComponent implements OnInit {
 
             this.updateTotales();
             this.selectedLiquidacion = {}
+            this.ultimonro = 0;
             //this.loadIngresosEgresos();
             return
           }
@@ -91,11 +107,15 @@ export class LiquidacionComponent implements OnInit {
           if((new Date(data[0][0].fecha)).getMonth() == this.date.toDate().getMonth() && (new Date(data[0][0].fecha)).getFullYear() == this.date.toDate().getFullYear()){
             this.liquidacionExists = true;
             this.selectedLiquidacion = data[0][0];
+            this.selectedLiquidacion.fechapago = moment(this.selectedLiquidacion.fechapago);
+            //this.loadIngresosEgresos();
           }else{
             this.liquidacionExists = false;
             this.selectedLiquidacion = {};
           }
-        })
+          
+          this.ultimonro = data[0][0].nroliquidacion ? data[0][0].nroliquidacion : 0;
+        });
     return
 
     //var liquidaciones = this.selectedPropiedad.liquidaciones.filter(liq => new Date(liq.fecha).getMonth() == new Date(this.date).getMonth())
@@ -128,6 +148,18 @@ export class LiquidacionComponent implements OnInit {
     this.updateTotales();    
   }
 
+  changeTipo(i){
+    this.selectedLiquidacion.cargos[i].concepto = '';
+    this.selectedLiquidacion.cargos[i].detalle = '';
+    this.selectedLiquidacion.cargos[i].valor = 0;
+
+    this.updateTotales();
+  }
+
+  changeConcepto(i){
+    this.selectedLiquidacion.cargos[i].detalle = this.instrucciones.filter(inst => inst.nombre == this.selectedLiquidacion.cargos[i].concepto)[0]?.detalle;
+  }
+
   updateTotales(){
     var subtotalCargos = +this.selectedLiquidacion.honorarios?.valor + +this.selectedLiquidacion.honorarios?.impuestos;
     this.selectedLiquidacion?.cargos?.forEach(cargo => subtotalCargos += +cargo.valor);
@@ -142,10 +174,11 @@ export class LiquidacionComponent implements OnInit {
 
   onGuardar(){
     if(!this.liquidacionExists){
-      this.accionesService.writeLiquidacion(this.selectedLiquidacion)
+      this.accionesService.writeLiquidacion([this.selectedLiquidacion].map(liq => {liq.fechapago = liq.fechapago.toDate(); return liq;})[0])
           .subscribe(() => {
             this.toastService.success('Operación realizada con éxito');
-            window.location.reload();
+            //window.location.reload();
+            this.emitirInforme(false);
           })
     }
   }
@@ -246,6 +279,7 @@ export class LiquidacionComponent implements OnInit {
 
           this.selectedLiquidacion = {
             fecha: this.date.toDate(),
+            fechapago: this.date,
             abonos,
             cargos,
             totalAbonos,
@@ -256,9 +290,12 @@ export class LiquidacionComponent implements OnInit {
             documento:this.selectedPropiedad.mandato.liquidacion.cuenta,
             banco: this.selectedPropiedad.mandato.liquidacion.banco,
             userid: this.selectedPropiedad.userid,
-            propiedad: this.selectedPropiedadId
+            propiedad: this.selectedPropiedadId,
+            nroliquidacion: this.ultimonro + 1,
+            observaciones: ''
           }
-
+          
+          this.loadIngresosEgresos();
         })
   }
 
@@ -266,7 +303,7 @@ export class LiquidacionComponent implements OnInit {
     this.propiedadesService.loadIngresosEgresosPropiedad(this.selectedPropiedadId, this.date.toDate())
         .subscribe(data => {
           data.ingresos.filter(ingreso => ingreso.afectaliquidacion).forEach(ingreso => {
-            this.selectedLiquidacion.abonos.push({detalle: 'Detalle Ingreso ' + this.padNumber(ingreso.nroingreso), valor: this.sumIngresosEgresos(ingreso.conceptos)})
+            this.selectedLiquidacion.abonos.push({concepto: 'Detalle Ingreso ' + this.padNumber(ingreso.nroingreso), valor: this.sumIngresosEgresos(ingreso.conceptos)})
           });
           data.egresos.filter(egreso => egreso.afectaliquidacion).forEach(egreso => {
             this.selectedLiquidacion.cargos.push({tipo: 'Otro', detalle:'', concepto: 'Detalle Egreso ' + this.padNumber(egreso.nroegreso), valor: this.sumIngresosEgresos(egreso.conceptos)})
@@ -274,6 +311,28 @@ export class LiquidacionComponent implements OnInit {
 
           this.updateTotales();
         })
+  }
+
+  emitirInforme(copia){
+    this.accionesService.loadLiquidacionesInforme({propiedad: this.selectedPropiedad._id}).pipe(
+      map(propiedades => this.propiedadesService.joinPropiedadData(propiedades)))
+      .subscribe(
+        propiedades => {
+          this.propiedadesService.loadIngresosEgresosPropiedad(this.selectedPropiedadId, new Date(this.selectedLiquidacion.fecha))
+              .subscribe(data => {
+                this.showPdf = true;
+                this.outputFileName = `ComprobanteLiquidacion_${this.selectedPropiedad.uId}_${this.formatDate(this.selectedLiquidacion.fecha, '')}.pdf`;
+            
+                var blob = this.pdfWriterService.generateBlobPdfFromLiquidacion(this.date, propiedades[0], this.selectedLiquidacion,
+                  {egresos: data.egresos?.filter(egreso => egreso.afectaliquidacion),
+                    ingresos: data.ingresos?.filter(ingreso => ingreso.afectaliquidacion)}, copia);
+            
+                this.pdfViewer.pdfSrc = blob;
+                this.pdfViewer.downloadFileName = this.outputFileName;
+                this.pdfViewer.refresh();
+              });
+        }
+      )
   }
 
   padNumber(number){
@@ -289,7 +348,7 @@ export class LiquidacionComponent implements OnInit {
     return sum;
   }
 
-  formatDate(date) {
+  formatDate(date, sep='/') {
     if(!date) return 'Presente';
 
     var d = new Date(date),
@@ -302,7 +361,11 @@ export class LiquidacionComponent implements OnInit {
     if (day.length < 2)
       day = '0' + day;
 
-    return [day, month, year].join('/');
+    return [day, month, year].join(sep);
+  }
+
+  numberWithPoints(x) {
+    return x?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 
 }

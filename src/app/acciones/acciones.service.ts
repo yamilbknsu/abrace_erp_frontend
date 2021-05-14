@@ -120,8 +120,8 @@ export class AccionesService {
     );
   }
 
-  loadLiquidacionesInforme(){
-    return this.queryService.executeGetQuery('read', 'infliquidacion', {}, {}).pipe(  
+  loadLiquidacionesInforme(params={}){
+    return this.queryService.executeGetQuery('read', 'infliquidacion', {}, params).pipe(  
         // Catch a Forbidden acces error (return to login).
         catchError(err => {
           if (err.status == 403){
@@ -236,6 +236,42 @@ export class AccionesService {
         return EMPTY;
       })
     );
+  }
+
+  loadFechasLiqPagos(params={}){
+    return this.queryService.executeGetQuery('read', 'fechasliqpagos', {}, params).pipe(  
+      // Catch a Forbidden acces error (return to login).
+      catchError(err => {
+        if (err.status == 403){
+          console.log('Forbidden access');
+          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
+        };
+        return EMPTY;
+      })
+    );
+  }
+
+  deleteReajustesExtraordinarios(id) {
+    // Get an Observable from the response of the backend
+    return this.queryService.executeDeleteQuery('delete', 'reajustesextraordinarios', {}, {
+      id
+    }).pipe(
+
+      // Catch a Forbidden acces error (return to login).
+      catchError(err => {
+        if (err.status == 403) {
+          this.toastService.error('No tienes permiso para realizar esta acción.')
+        } else {
+          console.log(err)
+          var message = err.status + ' ';
+          if (err.error)
+            message += (err.error.details ? err.error.details[0].message : err.error);
+          this.toastService.error('Error desconocido. ' + message)
+
+        }
+        return EMPTY;
+      })
+    )
   }
 
 }

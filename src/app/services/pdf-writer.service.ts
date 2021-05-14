@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { jsPDF, jsPDFOptions } from "jspdf";
 import autoTable from 'jspdf-autotable'
+import * as moment from 'moment';
 import { ToastService } from './toast.service';
 
 @Injectable({
@@ -311,12 +312,7 @@ export class PdfWriterService {
     return doc.output('blob');
   }
 
-
-
-
-
-
-  generateBlobPdfFromLiquidacion(fecha, propiedad, liquidacion){
+  generateBlobPdfFromLiquidacion(fecha, propiedad, liquidacion, ingresosegresos:any = {}, copia=false){
     const options: jsPDFOptions = {format: 'letter', unit: 'px', hotfixes: ['px_scaling']}
     var doc = new jsPDF(options);
 
@@ -328,16 +324,16 @@ export class PdfWriterService {
     doc.setTextColor('black');
     doc.setFont("Roboto-Bold", "bold");
 
-    const textWidth = doc.getTextWidth('Recibo de liquidación');
-    doc.text('Recibo de liquidación', pageSize.getWidth() - 50, 60, {align: 'right'});
-
+    const titletext = (copia ? 'Copia de r' : 'R') + 'ecibo de liquidación'
+    const textWidth = doc.getTextWidth(titletext);
+    doc.text(titletext, pageSize.getWidth() - 50, 60, {align: 'right'});
     doc.setDrawColor('black')
     doc.setLineWidth(1);
     doc.line(pageSize.getWidth() - 50 - textWidth, 63, pageSize.getWidth() - 50, 63);
 
     doc.setFontSize(12);
     doc.setFont("Roboto-Regular", "normal");
-    doc.text(`Código: ${propiedad.uId}`, pageSize.getWidth() - 50, 90, {align: 'right'});
+    doc.text(`${propiedad.uId}     №    ${this.padNumber(liquidacion.nroliquidacion)}`, pageSize.getWidth() - 50, 90, {align: 'right'});
 
     doc.text(`Periodo: ${this.formatPeriodo(liquidacion.fecha)}`, pageSize.getWidth() - 50, 110, {align: 'right'});
 
@@ -397,6 +393,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
+            styles: {cellPadding: 2, fontSize: 10},
             columns: [
               { dataKey: 'concepto', header: '' },
               { dataKey: 'valor', header: '' },
@@ -414,6 +411,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
+            styles: {cellPadding: 2, fontSize: 10},
             columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             columns: [
               { dataKey: 'concepto', header: '' },
@@ -424,7 +422,7 @@ export class PdfWriterService {
         }
       },
     });
-    
+
     doc.setFont("Roboto-Bold", "bold");
     doc.text('TOTAL ABONOS', 54, 180 + nestedTableHeight + tableDelta);
     doc.text('TOTAL CARGOS', (pageSize.getWidth() - 110) / 2 + 58, 180 + nestedTableHeight + tableDelta);
@@ -450,8 +448,10 @@ export class PdfWriterService {
     
     doc.setFontSize(10);
     doc.text(`Cancelado con ${liquidacion.formapago} Nro/Cta. ${liquidacion.documento} del bco ${liquidacion.banco}`, 50, 180 + nestedTableHeight + tableDelta + 55)
+    doc.text(`Obs.: ${liquidacion.observaciones ? liquidacion.observaciones : ''}`, 50, 180 + nestedTableHeight + tableDelta + 75);
+
     doc.setFont("Roboto-Bold", "bold");
-    doc.text(`Fecha de hoy: ${this.formatDate(fecha)}`, 50, 180 + nestedTableHeight + tableDelta + 95)
+    doc.text(`${this.formatFecha(liquidacion.fecha)}`, 50, 180 + nestedTableHeight + tableDelta + 95)
 
     doc.setFont("Roboto-Regular", "normal");
     doc.setFontSize(13);
@@ -462,7 +462,12 @@ export class PdfWriterService {
     doc.setLineDashPattern([3], 0);
     doc.line(53, 180 + nestedTableHeight + tableDelta + 135, pageSize.getWidth() - 53, 180 + nestedTableHeight + tableDelta + 135);
     
+
     // DESDE AQUI LA COPIA
+    // ----------------------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------------------
+
+
     var startY = 180 + nestedTableHeight + tableDelta + 150;
 
     doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', 50, startY + 30, 60, 60);
@@ -471,7 +476,7 @@ export class PdfWriterService {
     doc.setTextColor('black');
     doc.setFont("Roboto-Bold", "bold");
 
-    doc.text('Recibo de liquidación', pageSize.getWidth() - 50, startY + 60, {align: 'right'});
+    doc.text(titletext, pageSize.getWidth() - 50, startY + 60, {align: 'right'});
 
     doc.setDrawColor('black')
     doc.setLineWidth(1);
@@ -480,7 +485,7 @@ export class PdfWriterService {
 
     doc.setFontSize(12);
     doc.setFont("Roboto-Regular", "normal");
-    doc.text(`Código: ${propiedad.uId}`, pageSize.getWidth() - 50, startY + 90, {align: 'right'});
+    doc.text(`${propiedad.uId}     №    ${this.padNumber(liquidacion.nroliquidacion)}`, pageSize.getWidth() - 50, startY + 90, {align: 'right'});
 
     doc.text(`Periodo: ${this.formatPeriodo(liquidacion.fecha)}`, pageSize.getWidth() - 50, startY + 110, {align: 'right'});
 
@@ -493,7 +498,7 @@ export class PdfWriterService {
     doc.text(':', 55 + doc.getTextWidth('Arrendatario'), startY + 170);
 
     doc.setFont("Roboto-Regular", "normal");
-    doc.text(propiedad.mandanteData.nombre + " (RUT: " + propiedad.mandanteData.rut + "-" + propiedad.mandanteData.dv + ")", 70 + doc.getTextWidth('Arrendatario'), 130);
+    doc.text(propiedad.mandanteData.nombre + " (RUT: " + propiedad.mandanteData.rut + "-" + propiedad.mandanteData.dv + ")", 70 + doc.getTextWidth('Arrendatario'), startY + 130);
     doc.text(propiedad.direccionStr, 70 + doc.getTextWidth('Arrendatario'), startY + 150);
     doc.text(propiedad.arrendatario, 70 + doc.getTextWidth('Arrendatario'), startY + 170);
 
@@ -517,6 +522,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
+            styles: {cellPadding: 2, fontSize: 10},
             columns: [
               { dataKey: 'concepto', header: '' },
               { dataKey: 'valor', header: '' },
@@ -534,6 +540,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
+            styles: {cellPadding: 2, fontSize: 10},
             columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             columns: [
               { dataKey: 'concepto', header: '' },
@@ -570,22 +577,101 @@ export class PdfWriterService {
     
     doc.setFontSize(10);
     doc.text(`Cancelado con ${liquidacion.formapago} Nro/Cta. ${liquidacion.documento} del bco ${liquidacion.banco}`, 50, startY + 180 + nestedTableHeight + tableDelta + 55)
+    doc.text(`Obs.: ${liquidacion.observaciones ? liquidacion.observaciones : ''}`, 50, startY + 180 + nestedTableHeight + tableDelta + 75);
+      
     doc.setFont("Roboto-Bold", "bold");
-    doc.text(`Fecha de hoy: ${this.formatDate(fecha)}`, 50, 180 + nestedTableHeight + tableDelta + 95)
-    
-    doc.setFont("Roboto-Bold", "bold");
-    doc.text(`Fecha de hoy: ${this.formatDate(fecha)}`, 50, startY + 180 + nestedTableHeight + tableDelta + 95)
+    doc.text(`${this.formatFecha(liquidacion.fecha)}`, 50, startY + 180 + nestedTableHeight + tableDelta + 95)
 
     doc.setFont("Roboto-Regular", "normal");
     doc.setFontSize(13);
     doc.text('RECIBI CONFORME', pageSize.getWidth() - 60, startY + 180 + nestedTableHeight + tableDelta + 115, {align: "right"})
-    
+
+    if(ingresosegresos.ingresos)
+      var [doc_aux, lastY] = this.addIngresosEgresos(doc, ingresosegresos.ingresos);
+
+    doc = doc_aux ? doc_aux : doc;
+
+    if(ingresosegresos.egresos)
+      var [doc_aux_2, lastY_2] = this.addIngresosEgresos(doc, ingresosegresos.egresos, !lastY, false, lastY? lastY : 0);
+
+    doc = doc_aux_2 ? doc_aux_2 : doc; 
     return doc.output('blob');
   }
 
-  generateIngresoEgresoNewWindow(){
+  addIngresosEgresos(doc, data, addPage=true, ingresos=true, startY = 0){
+    if(!data || data.length == 0) return [doc, startY];
+
+    const plural = ingresos ? 'Ingresos' : 'Egresos';
+    const singular = ingresos ? 'Ingreso' : 'Egreso';
+    const marginY = 60;
+
+    if(addPage) doc.addPage();
+
+    doc.setFont("Roboto-Bold", "bold");
+    doc.setFontSize(14);
+    doc.text('Detalle ' + plural, 50, startY + marginY);
+
+    var lastY = startY + marginY + 20;
+
+    data.forEach(element => {
+      doc.setFont("Roboto-Bold", "bold");
+      doc.setFontSize(13);
+      doc.text(singular + ' № ' + this.padNumber(ingresos ? element.nroingreso : element.nroegreso), 50, lastY + 10);
+
+      doc.setFont("Roboto-Regular", "normal");
+      doc.setFontSize(11);
+      doc.text(`Periodo: ${this.formatPeriodo(element.periodo)}`, 50, lastY + 35);
+      doc.text(`Fecha pago: ${this.formatFecha(element.fecha)}`, 50, lastY + 55);
+
+      autoTable(doc, {
+          startY: lastY + 75,
+          theme: 'grid',
+          columns: [
+            { dataKey: 'concepto', header: 'Concepto' },
+            { dataKey: 'valor', header: 'Valor' },
+          ],
+          body: element.conceptos,
+          styles: {
+            fillColor: false,
+            textColor: 'black',
+            lineColor: 'black',
+            lineWidth: 1,
+            cellWidth: 'wrap'
+          },
+          columnStyles: {
+            concepto: {
+              cellWidth: 'auto'
+            },
+            valor: {
+              halign: 'right'
+            }
+        }
+      });
+
+      lastY = doc.autoTable.previous.finalY + 20;
+      doc.text(`Forma de pago: ${element.formapago}`, 50, lastY + 10);
+      
+      var str = element.formapago == 'Cheque' ? `Documento: ${element.documento ? element.documento : ''}` : 
+                                                `Cuenta: ${element.cuenta ? element.cuenta : ''}`
+      
+      if(element.formapago != 'Efectivo')
+        doc.text(`${str} Banco: ${element.banco ? element.banco : ''}`, 50, lastY + 30);
+      
+        lastY = lastY + 50
+    });
+
+    return [doc, lastY - 50];
+  }
+
+  generateIngresoEgreso(data, propiedad, ingresos=true, copia=false){
+    if(!data || data.length == 0) return doc;
+
+    const plural = ingresos ? 'Ingresos' : 'Egresos';
+    const singular = ingresos ? 'Ingreso' : 'Egreso';
+    const marginY = 60;
+
     const options: jsPDFOptions = {format: 'letter', unit: 'px', hotfixes: ['px_scaling']}
-    var doc = new jsPDF(options);
+    var doc:any = new jsPDF(options);
 
     var pageSize = doc.internal.pageSize;
 
@@ -594,12 +680,81 @@ export class PdfWriterService {
     doc.setFontSize(18);
     doc.setTextColor('black');
     doc.setFont("Roboto-Bold", "bold");
+    
+    if(!copia){
+      const textWidth = doc.getTextWidth(`Comprobante de ${singular}`);
+      doc.text(`Comprobante de ${singular}`, pageSize.getWidth() - 50, 60, {align: 'right'});
+      doc.setDrawColor('black');
+      doc.setLineWidth(1);
+      doc.line(pageSize.getWidth() - 50 - textWidth, 63, pageSize.getWidth() - 50, 63);
+    }else{
+      const textWidth = doc.getTextWidth(`Copia de comprobante de ${singular}`);
+      doc.text(`Copia de comprobante de ${singular}`, pageSize.getWidth() - 50, 60, {align: 'right'});
+      doc.setDrawColor('black');
+      doc.setLineWidth(1);
+      doc.line(pageSize.getWidth() - 50 - textWidth, 63, pageSize.getWidth() - 50, 63);
+    }
 
-    const textWidth = doc.getTextWidth('Copia de comprobante de pago');
-    doc.text('Copia de comprobante de pago', pageSize.getWidth() - 50, 60, {align: 'right'});
+    var startY = 60;
+
+    doc.setFont("Roboto-Bold", "bold");
+    doc.setFontSize(14);
+
+    var lastY = startY + marginY + 20;
+
+    data.forEach(element => {
+      doc.setFont("Roboto-Bold", "bold");
+      doc.setFontSize(13);
+      doc.text(singular + ' № ' + this.padNumber(ingresos ? element.nroingreso : element.nroegreso), 50, lastY + 10);
+
+      doc.setFont("Roboto-Regular", "normal");
+      doc.setFontSize(11);
+      doc.text(`Propiedad: ${propiedad.uId} - ${propiedad.direccionStr}`, 50, lastY + 35);
+      doc.text(`Periodo: ${this.formatPeriodo(element.periodo)}`, 50, lastY + 55);
+      doc.text(`Fecha pago: ${this.formatFecha(element.fecha)}`, 50, lastY + 75);
+
+      autoTable(doc, {
+          startY: lastY + 95,
+          theme: 'grid',
+          columns: [
+            { dataKey: 'concepto', header: 'Concepto' },
+            { dataKey: 'valor', header: 'Valor' },
+          ],
+          body: element.conceptos,
+          styles: {
+            fillColor: false,
+            textColor: 'black',
+            lineColor: 'black',
+            lineWidth: 1,
+            cellWidth: 'wrap'
+          },
+          columnStyles: {
+            concepto: {
+              cellWidth: 'auto'
+            },
+            valor: {
+              halign: 'right'
+            }
+        }
+      });
+
+      lastY = doc.autoTable.previous.finalY + 20;
+      doc.text(`Forma de pago: ${element.formapago ? element.formapago : ''}`, 50, lastY + 10);
+      
+      var str = element.formapago == 'Cheque' ? `Documento: ${element.documento ? element.documento : ''}` : 
+                                                `Cuenta: ${element.cuenta ? element.cuenta : ''}`
+      
+      if(element.formapago != 'Efectivo')
+        doc.text(`${str} Banco: ${element.banco ? element.banco : ''}`, 50, lastY + 30);
+      
+      lastY = lastY + 80
+      doc.setFont("Roboto-Regular", "normal");
+      doc.setFontSize(13);
+      doc.text('RECIBI CONFORME', pageSize.getWidth() - 60, lastY, {align: "right"})
+
+    });
     
     return doc.output('blob');
-    //this.toastService.pdfWindow(doc.output('dataurl', {filename: 'egreso.pdf'}), ()=>{});
   }
 
   formatDate(date, sep='/') {
@@ -625,16 +780,17 @@ export class PdfWriterService {
   formatPeriodo(date, sep='/') {
     if(!date) return 'Presente';
 
-    var d = new Date(date),
-      month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
-      year = d.getFullYear();
+    return moment(date).locale('es').format('MMM YYYY')
+  }
 
-    if (month.length < 2)
-      month = '0' + month;
-    if (day.length < 2)
-      day = '0' + day;
+  formatFecha(date, sep='/') {
+    if(!date) return 'Presente';
 
-    return [month, year].join(sep);
+    return moment(date).locale('es').format('DD - MMMM - YYYY').toUpperCase().replace('-', 'de').replace('-', 'de')
+  }
+
+  padNumber(number){
+    if (number<=9999) { number = ("000"+number).slice(-4); }
+    return number;
   }
 }

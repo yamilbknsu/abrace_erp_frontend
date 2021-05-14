@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 import { ParametrosService } from 'src/app/parametros/parametros.service';
 import { PropiedadesService } from 'src/app/propiedades/propiedades.service';
+import { LoadingIconService } from 'src/app/services/loading-icon.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { AccionesService } from '../acciones.service';
 
@@ -31,7 +32,7 @@ export class CierremesComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private propiedadesService: PropiedadesService,
               private accionesService: AccionesService, private parametrosService: ParametrosService,
-              private toastService: ToastService) { }
+              private toastService: ToastService, private loadingIconService: LoadingIconService) { }
 
   ngOnInit(): void {
     this.fecha = moment().locale('es').startOf('month');
@@ -52,7 +53,7 @@ export class CierremesComponent implements OnInit {
     //this.reajustePreparado = false;
     if(!this.cargandoReajustes){
       this.cargandoReajustes = true;
-      console.log(this.fecha.toDate());
+      //console.log(this.fecha.toDate());
       this.accionesService.loadCierresMes({fecha: this.fecha.toDate()})
       .subscribe(data => {
         console.log(data);
@@ -121,6 +122,7 @@ export class CierremesComponent implements OnInit {
     this.accionesService.loadContratosCierre(this.fecha.endOf('month').toDate())
         .subscribe((data) => {
           if(data?.length > 0){
+            console.log(data)
             data.forEach(element => {
 
               // Calculos de recibo
@@ -218,6 +220,7 @@ export class CierremesComponent implements OnInit {
                           this.cierres = data_;
                           this.fechaChange();
                           this.toastService.success('Operación realizada con éxito');
+                          this.loadingIconService.checkCierresMes();
                         })
                 });
     }

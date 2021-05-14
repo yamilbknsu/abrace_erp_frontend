@@ -55,85 +55,112 @@
     </div>
 </div>
 
-<div class="flex-row" *ngIf='selectedPropiedadId$.value != ""' style='margin-top: 20px; flex: 1; overflow: hidden;'>
+<div [ngStyle]='{"display": showPdf ? "flex" : "none"}' style='flex:1;'>
+    <ng2-pdfjs-viewer style='flex:1; margin-top: 10px;' #pdfViewer></ng2-pdfjs-viewer>
+</div>
+
+<div class="flex-row" id='abonos-cargos' *ngIf='selectedPropiedadId$.value != "" && !showPdf' style='margin-top: 20px; flex: 1; overflow: hidden;'>
     <div class="flex-column scrolled-section" *ngIf='selectedLiquidacion.fecha' style='flex: 1; border-right: 1px solid #DDD; margin-right: 10px; padding-right: 15px;'>
         <p class="section-title">Abonos</p>
-        <div class='flex-row' *ngFor='let abono of selectedLiquidacion.abonos; index as i;'  style='margin-top: 10px; padding-bottom: 10px;'>
-            <div class="flex-column">
-                <p class="section-content">Concepto</p>
-                <input type="text" [(ngModel)]='abono.concepto' style='width: 158px;' [disabled]='liquidacionExists'>
+        <div class='flex-row' *ngFor='let abono of selectedLiquidacion.abonos; index as i; first as first;'  style=' padding-bottom: 5px;'>
+            <div class="flex-column" style='flex:1'>
+                <p class="section-subtitle" *ngIf='first'>Concepto</p>
+                <input type="text" [(ngModel)]='abono.concepto' style='width: 210px;' [disabled]='liquidacionExists'>
             </div>
-            <div class="flex-column" style='margin-left: 10px;'>
-                <p class="section-content">Valor</p>
-                <input type="text" [(ngModel)]='abono.valor' style='width: 150px; text-align: right; padding-right: 10px;' (ngModelChange)="updateTotales()" [disabled]='liquidacionExists'>
+            <div class="flex-column" style='margin-left: 10px; flex:1;'>
+                <p class="section-subtitle" *ngIf='first' >Valor</p>
+                <input type="text" [(ngModel)]='abono.valor' style='width: 190px; text-align: right; padding-right: 10px;' (ngModelChange)="updateTotales()" [disabled]='liquidacionExists'>
             </div>
         </div> 
         <div class="flex-row" style='justify-content: center; margin-top: 10px;' *ngIf='!liquidacionExists && selectedLiquidacion.fecha'>
-            <div class="grey-button" style='font-weight: 400; margin-right: 20px;' (click)='addAbono()'>
+            <div class="grey-button small" style='font-weight: 400; margin-right: 20px;' (click)='addAbono()'>
                 Agregar
             </div>
-    
-            <div class="red-button" *ngIf='selectedLiquidacion.abonos.length > 0' style='font-weight: 400;' (click)='removeAbono()'>
+            <div class="red-button small" *ngIf='selectedLiquidacion.abonos.length > 0' style='font-weight: 400;' (click)='removeAbono()'>
                 Eliminar
             </div>
         </div>
     </div>
     <div class="flex-column scrolled-section" *ngIf='selectedLiquidacion.fecha' style='flex: 1; border-right: 1px solid #DDD; margin-right: 10px; padding-right: 15px;'>
         <p class="section-title">Honorarios</p>
-        <div class="flex-row" style='margin-top: 10px; padding-bottom: 10px;'>
+        <div class="flex-row" style='padding-bottom: 10px;'>
             <div class="flex-column">
                 <p class="section-content">Tipo</p>
-                <ng-select [items]="tiposimpuestos" bindLabel="name" bindValue="name" style='width: 200px; ' [(ngModel)]='selectedLiquidacion.honorarios.tipo' [disabled]='liquidacionExists'>
+                <ng-select [items]="tiposimpuestos" bindLabel="name" bindValue="name" style='width: 225px; ' [(ngModel)]='selectedLiquidacion.honorarios.tipo' [disabled]='true'>
                 </ng-select>
 
                 <p class="section-content" style='margin-top: 5px;'>Detalle</p>
-                <input type="text" [(ngModel)]='selectedLiquidacion.honorarios.descripcion' style='width: 200px;' [disabled]='liquidacionExists'>
+                <input type="text" [(ngModel)]='selectedLiquidacion.honorarios.descripcion' style='width: 210px;' [disabled]='liquidacionExists'>
             </div>
             <div class="flex-column" style='margin-left: 10px;'>
                 <p class="section-content">Valor</p>
-                <input type="text" [(ngModel)]='selectedLiquidacion.honorarios.valor' style='width: 150px; text-align: right; padding-right: 10px;' [disabled]='liquidacionExists' (ngModelChange)="updateTotales()">
+                <input type="text" [(ngModel)]='selectedLiquidacion.honorarios.valor' style='width: 185px; text-align: right; padding-right: 10px;' [disabled]='liquidacionExists' (ngModelChange)="updateTotales()">
 
-                <p class="section-content" style='margin-top: 5px;'>Impuestos</p>
-                <input type="text" [(ngModel)]='selectedLiquidacion.honorarios.impuestos' style='width: 150px; text-align: right; padding-right: 10px;' [disabled]='liquidacionExists' (ngModelChange)="updateTotales()">                
+                <p class="section-content" style='margin-top: 17px;'>Impuestos</p>
+                <input type="text" [(ngModel)]='selectedLiquidacion.honorarios.impuestos' style='width: 185px; text-align: right; padding-right: 10px;' [disabled]='liquidacionExists' (ngModelChange)="updateTotales()">                
             </div>
         </div>
         <p class="section-title">Cargos</p>
-        <div class='flex-row' *ngFor='let cargo of selectedLiquidacion.cargos; index as i;'  style='margin-top: 10px;'>
+        <div class='flex-row' *ngFor='let cargo of selectedLiquidacion.cargos; index as i;' style='border-bottom: 1px solid #CCC; margin-bottom: 5px; padding-bottom: 5px;'>
             <div class="flex-column">
-                <p class="section-content">Concepto</p>
-                <input type="text" [(ngModel)]='cargo.concepto' style='width: 200px;' [disabled]='liquidacionExists'>
+                <!--<p class="section-content">Tipo</p>-->
+                <ng-select [items]="tiposCargo" bindLabel="name" [(ngModel)]='cargo.tipo' bindValue="name" style='width: 215px' [clearable]='false' (ngModelChange)='changeTipo(i)' [disabled]='liquidacionExists'></ng-select>
+                <!--<p class="section-content" style='margin-top: 2px;' *ngIf='cargo.tipo == "Instrucción Pago"'>Detalle</p>-->
+                <input type="text" *ngIf='cargo.tipo == "Instrucción Pago"' [(ngModel)]='cargo.detalle' style='width: 200px; margin-top: 5px;' (ngModelChange)="updateTotales()" [disabled]='liquidacionExists' placeholder="Detalle">
             </div>
             <div class="flex-column" style='margin-left: 10px;'>
-                <p class="section-content">Valor</p>
-                <input type="text" [(ngModel)]='cargo.valor' style='width: 150px; text-align: right; padding-right: 10px;' (ngModelChange)="updateTotales()" [disabled]='liquidacionExists'>
+                <!--<p class="section-content">Concepto</p>-->
+                <input type="text" [(ngModel)]='cargo.concepto' style='width: 200px;' *ngIf='cargo.tipo != "Instrucción Pago"' [disabled]='liquidacionExists'>
+                <ng-select [items]="instrucciones"  *ngIf='cargo.tipo == "Instrucción Pago"' bindLabel="nombre" [(ngModel)]='cargo.concepto' bindValue="nombre" style='width: 215px' [clearable]='false' (ngModelChange)='changeConcepto(i)'></ng-select>
+                <!--<p class="section-content" style='margin-top: 2px;'>Valor</p>-->
+                <input type="text" [(ngModel)]='cargo.valor' style='width: 192px; text-align: right; padding-right: 10px; margin-top: 5px; border: 1px solid #333' (ngModelChange)="updateTotales()" [disabled]='liquidacionExists'>
             </div>
         </div> 
-        <div class="flex-row" style='justify-content: center; margin-top: 10px;' *ngIf='!liquidacionExists && selectedLiquidacion.fecha'>
-            <div class="grey-button" style='font-weight: 400; margin-right: 20px;' (click)='addCargo()'>
+        <div class="flex-row" style='justify-content: center; margin-top: 5px;' *ngIf='!liquidacionExists && selectedLiquidacion.fecha'>
+            <div class="grey-button small" style='font-weight: 400; margin-right: 20px;' (click)='addCargo()'>
                 Agregar
             </div>
     
-            <div class="red-button" *ngIf='selectedLiquidacion.cargos.length > 0' style='font-weight: 400;' (click)='removeCargo()'>
+            <div class="red-button small" *ngIf='selectedLiquidacion.cargos.length > 0' style='font-weight: 400;' (click)='removeCargo()'>
                 Eliminar
             </div>
         </div>
     </div>
 </div>
 
-<div class="flex-column" *ngIf='selectedPropiedadId$.value != ""' style='margin-top: 10px; border-top: solid 1px black; padding-top: 10px'>
+<div class="flex-column" *ngIf='selectedPropiedadId$.value != "" && !showPdf' style='margin-top: 10px; border-top: solid 1px black; padding-top: 10px'>
     <div class="flex-row" style="justify-content: space-between; margin-bottom: 10px;">
 
         <div class="flex-column">
-            <p class='section-content'><b>Total Abonos: </b> {{selectedLiquidacion.totalAbonos}}</p>
+            <p class='section-content'><b>Total Abonos: </b> ${{numberWithPoints(selectedLiquidacion.totalAbonos)}}</p>
         </div>
 
         <div class="flex-column">
-            <p class='section-content'><b>Total Cargos: </b> {{selectedLiquidacion.totalCargos}}</p>
-            <p class='section-content'><b>Subtotal: </b> {{selectedLiquidacion.subtotal}}</p>
+            <p class='section-content'><b>Total Cargos: </b> ${{numberWithPoints(selectedLiquidacion.totalCargos)}}</p>
+            <p class='section-content'><b>Subtotal: </b> ${{numberWithPoints(selectedLiquidacion.subtotal)}}</p>
         </div>
 
     </div>
-    <div class="flex-row" style='justify-content: flex-end;'>
-        <div [ngClass]='{"green-button": !liquidacionExists && selectedLiquidacion.fecha, "grey-button": liquidacionExists || !selectedLiquidacion.fecha}' (click)='onGuardar()'>Aplicar</div>
+    <div class="flex-row space-between" id='liquidacion-bottom' *ngIf='selectedLiquidacion.fecha'>
+
+        <div class="flex-row">
+            <div class="flex-column" style='margin-right: 10px;'>
+                <p class="section-content">Fecha</p>
+                <dp-date-picker style='height: 30px;' [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='selectedLiquidacion.fechapago' [disabled]='liquidacionExists'></dp-date-picker>
+            </div>
+            <div class="flex-column" style='justify-content: center;' style='margin-right: 10px;'>
+                <p class="section-content">Nro. Liquidación</p>
+                <input type="text" [(ngModel)]='selectedLiquidacion.nroliquidacion' style='width: 100px;' [disabled]='true'>
+            </div>
+            <div class="flex-column" style='justify-content: center;'>
+                <p class="section-content">Observaciones</p>
+                <input type="text" [(ngModel)]='selectedLiquidacion.observaciones' style='width: 300px;' [disabled]='liquidacionExists'>
+            </div>
+        </div>
+
+        <div class="flex-column">
+            <div class='green-button' *ngIf='!liquidacionExists && selectedLiquidacion.fecha' (click)='onGuardar()'>Aplicar</div>
+            <div class='grey-button' *ngIf='liquidacionExists || !selectedLiquidacion.fecha' (click)='emitirInforme(true)'>Emitir copia</div>
+        </div>
     </div>
 </div>

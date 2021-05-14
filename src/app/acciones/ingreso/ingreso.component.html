@@ -118,7 +118,7 @@
 
     <div class="flex-row" *ngIf='selectedIngreso' style='margin-top: 10px; justify-content: space-between;'>
         <div class="green-button" *ngIf='!selectedIngreso._id' (click)='generarIngreso()'>Generar/Guardar</div>
-        <div class="grey-button" *ngIf='selectedIngreso._id'>Emitir copia</div>
-        <div class="red-button">Anular</div>
+        <div class="grey-button" *ngIf='selectedIngreso._id' (click)='emitirCopia()'>Emitir copia</div>
+        <div class="red-button" *ngIf='selectedIngreso._id' (click)='anularIngreso()'>Anular</div>
     </div>
 </div>

@@ -13,6 +13,8 @@ export class VerticalNavbarComponent implements OnInit {
 
   options = [];
   isLoading: BehaviorSubject<boolean>;
+  cierremes_warning: BehaviorSubject<any> = new BehaviorSubject<any>(undefined);
+  reajustes_warning: BehaviorSubject<any> = new BehaviorSubject<any>(undefined);
 
   constructor(private _location: Location, private loadingIconService: LoadingIconService) { }
 
@@ -27,6 +29,8 @@ export class VerticalNavbarComponent implements OnInit {
     ]
 
     this.isLoading = this.loadingIconService.getLoadingFlag();
+    this.cierremes_warning = this.loadingIconService.warning_cierremes;
+    this.reajustes_warning = this.loadingIconService.warning_reajustes;
   }
 
   onBackClicked(){

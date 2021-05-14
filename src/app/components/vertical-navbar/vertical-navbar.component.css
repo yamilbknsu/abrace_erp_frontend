@@ -58,3 +58,32 @@
     stroke: #91A8B0;
     stroke-width: 2px;
 }
+
+#batches{
+    margin-left: 14px;
+    margin-bottom: 15px;
+}
+
+.warning-batch{
+    border-radius: 10px;
+    border: 2px solid #D8D353;
+
+    display: flex;
+    flex-direction: row;
+
+    margin-right: 18px;
+    padding: 5px;
+
+    background-color: #fdfccc;
+
+    margin-bottom: 7px;
+}
+
+.warning-icon{
+    width: 20px;
+}
+
+.warning-batch p{
+    font-size: 14px;
+    color: #aaa628;
+}

@@ -3,8 +3,29 @@
         <div class="back-button" [inlineSVG]="'assets/icon/flecha.svg'" (click)='onBackClicked()'></div>
         <div class="lds-ring" *ngIf='isLoading.value'><div></div><div></div><div></div><div></div></div>
     </div>
-    <div class="navbar-option undecorated" routerLinkActive="selected" [routerLinkActiveOptions]="{exact: false}" [routerLink]='option.route'
-         *ngFor='let option of options'>
-        <div class="navbar-icon undecorated" [inlineSVG]='option.svgDir' [routerLink]='option.route'></div> <a class="undecorated" [routerLink]='option.route'>{{ option.displayName }}</a>
+    <div class="flex-column" style="flex: 1;">
+        <div class="navbar-option undecorated" routerLinkActive="selected" [routerLinkActiveOptions]="{exact: false}" [routerLink]='option.route'
+             *ngFor='let option of options'>
+            <div class="navbar-icon undecorated" [inlineSVG]='option.svgDir' [routerLink]='option.route'></div> <a class="undecorated" [routerLink]='option.route'>{{ option.displayName }}</a>
+        </div>
+    </div>
+    <div class="flex-column" id='batches'>
+        <div class="warning-batch" *ngIf='cierremes_warning.value'>
+            <div class="flex-column" style='margin-right: 10px; justify-content: center;'>
+                <div class='warning-icon' [inlineSVG]='"assets/icon/triangle-warning.svg"'></div>
+            </div>
+            <div class="flex-column">
+                <p>{{cierremes_warning.value.message}}</p>
+            </div>
+        </div>
+
+        <div class="warning-batch" *ngIf='reajustes_warning.value'>
+            <div class="flex-column" style='margin-right: 10px; justify-content: center;'>
+                <div class='warning-icon' [inlineSVG]='"assets/icon/triangle-warning.svg"'></div>
+            </div>
+            <div class="flex-column">
+                <p>{{reajustes_warning.value.message}}</p>
+            </div>
+        </div>
     </div>
 </div>

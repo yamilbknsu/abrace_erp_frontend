@@ -512,7 +512,19 @@ table{
 
 #cargos-descuentos .ng-select .ng-select-container{
     height: 25px;
-    font-size: 14px;
-    line-height: 15px;
+    font-size: 13px;
+    line-height: 25px;
     min-height: 15px;
 }
+
+#abonos-cargos .ng-select .ng-select-container{
+    height: 25px;
+    font-size: 13px;
+    line-height: 25px;
+    /*min-height: 25px;*/
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #999;
+    opacity: 1; /* Firefox */
+  }

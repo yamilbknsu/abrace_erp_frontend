@@ -16,6 +16,7 @@ export class ReajusteExtraordinarioComponent implements OnInit {
   selectedContrato: any = {};
 
   selectedReajuste: any = {};
+  fechasLiqPagoReaj:any = undefined;
 
   reajustes = [];
 
@@ -53,7 +54,7 @@ export class ReajusteExtraordinarioComponent implements OnInit {
       valorfinal: this.selectedContrato.contrato.canonactual,
       tipo: 'Porcentual',
       reajuste: 0,
-      fecha: moment().locale('es')
+      fecha: moment().startOf('month').locale('es')
     }
   }
 
@@ -79,11 +80,52 @@ export class ReajusteExtraordinarioComponent implements OnInit {
   }
 
   guardarReajuste(){
-    this.accionesService.writeReajustesExtraordinarios(this.selectedReajuste)
-        .subscribe(() => {
-          this.changePropiedad(this.selectedPropiedadId);
-          this.toastService.success('Operación realizada con éxito');
-        })
+    this.accionesService.loadFechasLiqPagos({propiedad: this.selectedPropiedadId})
+        .subscribe(data => {
+          this.fechasLiqPagoReaj = data
+          var found = false;
+          if(this.fechasLiqPagoReaj){
+            var periodo = moment(this.selectedReajuste.fecha).startOf('month');
+            this.fechasLiqPagoReaj.reajusterentas.forEach(element => {
+              if((new Date(element)).getMonth() == periodo.toDate().getMonth() && (new Date(element)).getFullYear() == periodo.toDate().getFullYear()){
+                this.toastService.error('Ya se aplicaron los reajustes para este mes');
+                found = true;
+                return;
+              }
+            });
+          }
+          if(found) return;
+          this.accionesService.writeReajustesExtraordinarios(this.selectedReajuste)
+              .subscribe(() => {
+                this.changePropiedad(this.selectedPropiedadId);
+                this.toastService.success('Operación realizada con éxito');
+              });
+        });
+  }
+
+  anularReajuste(){
+    this.accionesService.loadFechasLiqPagos({propiedad: this.selectedPropiedadId})
+    .subscribe(data => {
+      this.fechasLiqPagoReaj = data
+      var found = false;
+      if(this.fechasLiqPagoReaj){
+        var periodo = moment(this.selectedReajuste.fecha).startOf('month');
+        this.fechasLiqPagoReaj.reajusterentas.forEach(element => {
+          if((new Date(element)).getMonth() == periodo.toDate().getMonth() && (new Date(element)).getFullYear() == periodo.toDate().getFullYear()){
+            this.toastService.error('No se puede anular, ya se aplicaron los reajustes para este mes');
+            found = true;
+            return;
+          }
+        });
+      }
+      if(found) return;
+
+      this.accionesService.deleteReajustesExtraordinarios(this.selectedReajuste._id)
+          .subscribe(() => {
+            this.changePropiedad(this.selectedPropiedadId);
+            this.toastService.success('Operación realizada con éxito');
+          });
+    });
   }
 
   formatMonth(date) {

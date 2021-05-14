@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as moment from 'moment';
 import { ParametrosService } from 'src/app/parametros/parametros.service';
 import { PropiedadesService } from 'src/app/propiedades/propiedades.service';
+import { LoadingIconService } from 'src/app/services/loading-icon.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { AccionesService } from '../acciones.service';
 
@@ -32,7 +33,8 @@ export class ReajusteDeRentasComponent implements OnInit {
                      'Nov.', 'Dic.'];
 
   constructor(private accionesService: AccionesService, private toastService: ToastService,
-              private propiedadesService: PropiedadesService, private parametrosService: ParametrosService) { }
+              private propiedadesService: PropiedadesService, private parametrosService: ParametrosService,
+              private loadingIconService: LoadingIconService) { }
 
   ngOnInit(): void {
     this.periodoReajustar = moment().locale('es').startOf('month');
@@ -166,20 +168,8 @@ export class ReajusteDeRentasComponent implements OnInit {
       .subscribe((data) => {
         this.changePeriodo();
         this.toastService.success('Operación realizada con éxito');
-      } /*{
-          this.accionesService.loadCierresMes({fecha: this.fecha.toDate()})
-              .subscribe(data_ => {
-                data_.map(cierre => {
-                  if(cierre.boletas.length == 1 && !cierre.boletas[0]._id) cierre.boletas = [];
-                  if(cierre.reajustes.length == 1 && !cierre.reajustes[0]._id) cierre.reajustes = [];
-                  return cierre
-                });
-                
-                this.cierres = data_;
-                this.fechaChange();
-                this.toastService.success('Operación realizada con éxito');
-              })
-      }*/);
+        this.loadingIconService.checkReajustes();
+      });
     //}
   }
 

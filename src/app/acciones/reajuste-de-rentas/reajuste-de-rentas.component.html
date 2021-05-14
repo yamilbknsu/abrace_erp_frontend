@@ -54,7 +54,7 @@
                 <div class="flex-row" style='justify-content: center; align-items: center;'>
                     <p class="section-content">{{reajuste.valorinicial}}</p>
                     <div class="flex-column" style="align-items: center; justify-content: center; margin-left: 10px; margin-right: 10px;">
-                        <p class="section-content" style='color: #888;'>(+ {{formatDecimal(reajuste.valorfinal / reajuste.valorinicial)}} %)</p>
+                        <p class="section-content" style='color: #888;'>(+ {{formatDecimal(((reajuste.valorfinal / reajuste.valorinicial) - 1) * 100)}} %)</p>
                         <div class="persona-icon" [inlineSVG]="'assets/icon/arrow.svg'" style='width: 30px; height: 20px;'></div>
                     </div>
                     <p class="section-content">{{reajuste.valorfinal}}</p>

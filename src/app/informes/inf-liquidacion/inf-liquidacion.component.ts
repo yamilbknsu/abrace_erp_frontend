@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { AccionesService } from 'src/app/acciones/acciones.service';
 import { Propiedad } from 'src/app/models/Propiedad';
+import { PropiedadesService } from 'src/app/propiedades/propiedades.service';
 import { PdfWriterService } from 'src/app/services/pdf-writer.service';
 
 @Component({
@@ -28,7 +29,8 @@ export class InfLiquidacionComponent implements OnInit {
   selectedLiquidacion: any = {};
   selectedLiquidacionId: string = '';
 
-  constructor(private route:ActivatedRoute, private pdfWriterService: PdfWriterService, private accionesService: AccionesService) { }
+  constructor(private route:ActivatedRoute, private pdfWriterService: PdfWriterService, private accionesService: AccionesService,
+              private propiedadesService: PropiedadesService) { }
 
   ngOnInit(): void {
     this.date = moment();
@@ -64,13 +66,18 @@ export class InfLiquidacionComponent implements OnInit {
   }
 
   onGenerar(){
-    this.outputFileName = `ComprobanteLiquidacion_${this.selectedPropiedad.uId}_${this.formatDate(this.selectedLiquidacion.fecha, '')}.pdf`;
-
-    var blob = this.pdfWriterService.generateBlobPdfFromLiquidacion(this.date, this.selectedPropiedad, this.selectedLiquidacion);
-
-    this.pdfViewer.pdfSrc = blob;
-    this.pdfViewer.downloadFileName = this.outputFileName;
-    this.pdfViewer.refresh()
+    this.propiedadesService.loadIngresosEgresosPropiedad(this.selectedPropiedadId, new Date(this.selectedLiquidacion.fecha))
+                           .subscribe(data => {
+                              this.outputFileName = `ComprobanteLiquidacion_${this.selectedPropiedad.uId}_${this.formatDate(this.selectedLiquidacion.fecha, '')}.pdf`;
+                          
+                              var blob = this.pdfWriterService.generateBlobPdfFromLiquidacion(this.date, this.selectedPropiedad, this.selectedLiquidacion,
+                                {egresos: data.egresos?.filter(egreso => egreso.afectaliquidacion),
+                                 ingresos: data.ingresos?.filter(ingreso => ingreso.afectaliquidacion)});
+                          
+                              this.pdfViewer.pdfSrc = blob;
+                              this.pdfViewer.downloadFileName = this.outputFileName;
+                              this.pdfViewer.refresh();
+                           });
   }
 
   formatDate(date, sep='/') {

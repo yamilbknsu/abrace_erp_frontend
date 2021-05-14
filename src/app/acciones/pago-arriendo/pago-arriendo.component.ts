@@ -53,6 +53,9 @@ export class PagoArriendoComponent implements OnInit {
   depositadoen: string = '';
   bancoen: string = '';
 
+  observaciones = '';
+  nropago = 0;
+
   correspondeArriendo = true;
   cargandoPagos = false;
 
@@ -144,6 +147,10 @@ export class PagoArriendoComponent implements OnInit {
       this.totalDescuentos = 0;
       this.subtotal = 0;
 
+      this.observaciones = '';
+      this.nropago = 0;
+      this.datePago = moment();
+
       this.selectedPago = undefined;
 
       this.cargandoPagos = true;
@@ -167,6 +174,7 @@ export class PagoArriendoComponent implements OnInit {
 
               this.updateTotales();
               this.loadIngresosEgresos();
+              this.nropago = 1;
               return
             }
 
@@ -176,6 +184,8 @@ export class PagoArriendoComponent implements OnInit {
               if(fechapago.month() == this.date.month() && fechapago.year() == this.date.year()){
                 //this.toastService.error('Ya hay un pago registrado para este mes')
                 this.selectedPago = data[0]?.contratos[0]?.pagos[0];
+                this.cargos = this.selectedPago.cargos;
+                this.descuentos = this.selectedPago.descuentos;
 
 
                 this.datePago = moment(this.selectedPago.fechapago);
@@ -187,8 +197,10 @@ export class PagoArriendoComponent implements OnInit {
                 this.totalCargos = this.selectedPago.totalCargos;
                 this.totalDescuentos = this.selectedPago.totalDescuentos;
                 this.subtotal = this.selectedPago.subtotal;
+                this.observaciones = this.selectedPago.observaciones? this.selectedPago.observaciones : '';
+                this.nropago = this.selectedPago.nropago ? this.selectedPago.nropago : 1;
 
-                this.loadIngresosEgresos();
+                //this.loadIngresosEgresos();
                 return
               }
 
@@ -196,6 +208,9 @@ export class PagoArriendoComponent implements OnInit {
                 this.toastService.error('Ya se ha registrado un pago por ' + fechapago.toDate().toLocaleString('es', { month: 'long' }) + ' ' + fechapago.toDate().getUTCFullYear());
                 this.selectedPago = {cargos: [], descuentos: []}
                 this.loadIngresosEgresos();
+
+                this.observaciones = this.selectedPago.observaciones? this.selectedPago.observaciones : '';
+                this.nropago = this.selectedPago.nropago ? this.selectedPago.nropago + 1 : 1;
                 return;
               };
               
@@ -220,6 +235,10 @@ export class PagoArriendoComponent implements OnInit {
 
               this.updateTotales();
               this.loadIngresosEgresos();
+
+              const selectedPago = data[0]?.contratos[0]?.pagos[0];
+              this.observaciones = '';
+              this.nropago = selectedPago.nropago ? selectedPago.nropago + 1 : 1;
             }
           });
     }
@@ -289,6 +308,8 @@ export class PagoArriendoComponent implements OnInit {
       banco: this.banco,
       depositadoen: this.depositadoen,
       bancoen: this.bancoen,
+      observaciones: this.observaciones,
+      nropago: this.nropago
     }).subscribe(() => {
       this.changePropiedad(null);
       this.toastService.success('Operación realizada con éxito.');

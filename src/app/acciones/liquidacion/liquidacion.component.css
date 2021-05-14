@@ -10,3 +10,10 @@
     padding: 15px;
     margin-top: 0px;
 }
+
+#abonos-cargos input, #abonos-cargos .ng-select-container, #liquidacion-bottom input, #liquidacion-bottom .ng-select-container{
+    height: 20px;
+    font-size: 14px;
+    line-height: 15px;
+    min-height: 15px;
+}

@@ -7,6 +7,7 @@ import { QueryService } from 'src/app/services/query.service';
 import { Contrato } from '../models/Contrato';
 import { Propiedad } from '../models/Propiedad';
 import { ParametrosService } from '../parametros/parametros.service';
+import { LoadingIconService } from '../services/loading-icon.service';
 import { ToastService } from '../services/toast.service';
 
 @Injectable({
@@ -451,22 +452,12 @@ export class PropiedadesService {
   }
 
   calcularReajuste(fechainicial, n_meses, ipc){
-    //var ipc_acumulado = 1;
-
-    //for(let i = 0; i < n_meses; i++){
-    //  var fecha = moment(fechainicial).add(-(i+1), 'M');
-    //  ipc_acumulado *= 1 + Number.parseFloat(ipc.filter(e => e.code == fecha.year().toString())[0]?.attributes[fecha.month()])/100;
-    //}
-    //return ipc_acumulado ?  (ipc_acumulado - 1) * 100 : 0;
 
     var fecha = moment(fechainicial).add(-(n_meses+1), 'M');
-    //console.log("Inicial", fecha.month(), fecha.year());
     var ipc_inicial = Number.parseFloat(ipc.filter(e => e.code == fecha.year().toString())[0]?.attributes[fecha.month()])
 
     fecha = moment(fechainicial).add(-1, 'M');
     var ipc_final = Number.parseFloat(ipc.filter(e => e.code == fecha.year().toString())[0]?.attributes[fecha.month()])
-    //console.log(ipc_final, ipc_inicial, ipc_final / ipc_inicial)
-    //console.log("Final", fecha.month(), fecha.year());
     return ipc_inicial && ipc_final ?  (ipc_final / ipc_inicial - 1) * 100 : 0;
   }
 
@@ -489,6 +480,52 @@ export class PropiedadesService {
         return EMPTY;
       })
     );
+  }
+
+  deleteIngreso(id) {
+    // Get an Observable from the response of the backend
+    return this.queryService.executeDeleteQuery('delete', 'ingresos', {}, {
+      id
+    }).pipe(
+
+      // Catch a Forbidden acces error (return to login).
+      catchError(err => {
+        if (err.status == 403) {
+          this.toastService.error('No tienes permiso para realizar esta acción.')
+        } else {
+          console.log(err)
+          var message = err.status + ' ';
+          if (err.error)
+            message += (err.error.details ? err.error.details[0].message : err.error);
+          this.toastService.error('Error desconocido. ' + message)
+
+        }
+        return EMPTY;
+      })
+    )
+  }
+
+  deleteEgreso(id) {
+    // Get an Observable from the response of the backend
+    return this.queryService.executeDeleteQuery('delete', 'egresos', {}, {
+      id
+    }).pipe(
+
+      // Catch a Forbidden acces error (return to login).
+      catchError(err => {
+        if (err.status == 403) {
+          this.toastService.error('No tienes permiso para realizar esta acción.')
+        } else {
+          console.log(err)
+          var message = err.status + ' ';
+          if (err.error)
+            message += (err.error.details ? err.error.details[0].message : err.error);
+          this.toastService.error('Error desconocido. ' + message)
+
+        }
+        return EMPTY;
+      })
+    )
   }
 
 }
