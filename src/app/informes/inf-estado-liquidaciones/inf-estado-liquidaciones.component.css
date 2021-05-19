@@ -1,0 +1,20 @@
+:host{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    background-color: white;
+    border-left: 1px solid #AAAAAA;
+
+    padding: 15px;
+    margin-top: 0px;
+}
+
+dp-date-picker{
+    width: 100px;
+}
+
+dp-date-picker *{
+    max-width: 100px;
+}

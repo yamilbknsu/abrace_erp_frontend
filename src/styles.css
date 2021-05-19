@@ -524,6 +524,10 @@ table{
     /*min-height: 25px;*/
 }
 
+.small .dp-picker-input{
+    max-width: 100px;
+}
+
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: #999;
     opacity: 1; /* Firefox */

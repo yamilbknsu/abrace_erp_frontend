@@ -72,7 +72,7 @@ export class InfLiquidacionComponent implements OnInit {
                           
                               var blob = this.pdfWriterService.generateBlobPdfFromLiquidacion(this.date, this.selectedPropiedad, this.selectedLiquidacion,
                                 {egresos: data.egresos?.filter(egreso => egreso.afectaliquidacion),
-                                 ingresos: data.ingresos?.filter(ingreso => ingreso.afectaliquidacion)});
+                                 ingresos: data.ingresos?.filter(ingreso => ingreso.afectaliquidacion)}, true);
                           
                               this.pdfViewer.pdfSrc = blob;
                               this.pdfViewer.downloadFileName = this.outputFileName;

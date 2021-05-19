@@ -14,6 +14,9 @@ export class InformesComponent implements OnInit {
   informes: Array<object> = [
     {nombre: 'Informe de propiedades', path: 'propiedades'},
     {nombre: 'Informe de reajustes', path: 'reajustes'},
+    {nombre: 'Resumen Liquidaciones', path: 'resumenliquidaciones'},
+    {nombre: 'Resumen Arriendos', path: 'resumenarriendos'},
+    {nombre: 'Estado Pagos', path: 'resumenpagos'},
     {nombre: 'Copia de liquidación de arriendo', path: 'liquidaciones'},
     {nombre: 'Copia de comprobante de pago', path: 'pagos'},
   ];

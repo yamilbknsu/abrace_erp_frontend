@@ -1,0 +1,30 @@
+<p class='title'>Resumen de liquidaciones</p>
+<div class="flex-row" style='justify-content: space-between; margin-bottom: 15px;'>
+    <div class="flex-column">
+        <p class="secion-content">Propiedad</p>
+        <ng-select [items]="propiedades | async" bindLabel="uId" bindValue="_id" style='width: 335px'
+                            [(ngModel)]='selectedPropiedadId' [clearable]='false'>
+            <ng-template class='flex-column' ng-label-tmp let-item="item">
+                <p class="section-content">{{item.uId}} - {{item.direccionStr}}</p>
+            </ng-template>
+            <ng-template class='flex-column' ng-option-tmp let-item="item">
+                <p class="section-content">{{item.uId}}</p>
+                <p class="section-content">{{item.direccionStr}}</p>        
+            </ng-template>
+        </ng-select>
+    </div>
+    <div class="flex-column small">
+        <p class="secion-content">Desde</p>
+        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='dateStart' [mode]='"month"'></dp-date-picker>
+    </div>
+    <div class="flex-column small">
+        <p class="secion-content">Hasta</p>
+        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='dateEnd' [mode]='"month"'></dp-date-picker>
+    </div>
+    <div class="flex-column" style='justify-content: center;'>
+        <div [ngClass]="{'green-button': selectedPropiedadId != '', 'grey-button': selectedPropiedadId == ''}" (click)='onGenerar()'>
+            Generar
+          </div>
+    </div>
+</div>
+<ng2-pdfjs-viewer style='flex:1;' #pdfViewer></ng2-pdfjs-viewer>

@@ -1,5 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { InfEstadoArriendosComponent } from './inf-estado-arriendos/inf-estado-arriendos.component';
+import { InfEstadoLiquidacionesComponent } from './inf-estado-liquidaciones/inf-estado-liquidaciones.component';
+import { InfEstadoPagosComponent } from './inf-estado-pagos/inf-estado-pagos.component';
 import { InfLiquidacionComponent } from './inf-liquidacion/inf-liquidacion.component';
 import { LiquidacionInformeResolverService } from './inf-liquidacion/liquidacion-informe.resolver.service';
 import { InfPagosComponent } from './inf-pagos/inf-pagos.component';
@@ -30,6 +33,18 @@ const routes: Routes = [
         path: 'liquidaciones',
         component: InfLiquidacionComponent,
         resolve: {propiedades: LiquidacionInformeResolverService}
+      },
+      {
+        path: 'resumenliquidaciones',
+        component: InfEstadoLiquidacionesComponent
+      },
+      {
+        path: 'resumenpagos',
+        component: InfEstadoPagosComponent
+      },
+      {
+        path: 'resumenarriendos',
+        component: InfEstadoArriendosComponent,
       },
     ]
   }

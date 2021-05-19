@@ -11,9 +11,12 @@ import { GUIModule } from '../gui/gui.module';
 import { FormsModule } from '@angular/forms';
 import { InfPagosComponent } from './inf-pagos/inf-pagos.component';
 import { InfLiquidacionComponent } from './inf-liquidacion/inf-liquidacion.component';
+import { InfEstadoLiquidacionesComponent } from './inf-estado-liquidaciones/inf-estado-liquidaciones.component';
+import { InfEstadoArriendosComponent } from './inf-estado-arriendos/inf-estado-arriendos.component';
+import { InfEstadoPagosComponent } from './inf-estado-pagos/inf-estado-pagos.component';
 
 @NgModule({
-  declarations: [InformesComponent, InfPropiedadesComponent, InfReajustesComponent, InfPagosComponent, InfLiquidacionComponent],
+  declarations: [InformesComponent, InfPropiedadesComponent, InfReajustesComponent, InfPagosComponent, InfLiquidacionComponent, InfEstadoLiquidacionesComponent, InfEstadoArriendosComponent, InfEstadoPagosComponent],
   imports: [
     CommonModule,
     InformesRoutingModule,
