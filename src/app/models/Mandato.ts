@@ -9,6 +9,7 @@ export class Mandato{
     liquidacion;
     comisiones;
     instrucciones: Array<any>;
+    
     otrosdestinatarios;
 
     constructor(
