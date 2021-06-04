@@ -20,6 +20,7 @@ export class CierremesComponent implements OnInit {
 
   fecha;
   reajusteExists: boolean = false;
+  cierreListo = false;
   cargandoReajustes = false;
   //reajustePreparado = false;
   reajustes: any[] = [];
@@ -48,6 +49,7 @@ export class CierremesComponent implements OnInit {
     if(!this.fecha) this.fecha = moment().locale('es').startOf('month');
 
     this.reajusteExists = false;
+    this.cierreListo = false
     this.reajustes = [];
     this.boletasUpload = [];
     //this.reajustePreparado = false;
@@ -118,6 +120,7 @@ export class CierremesComponent implements OnInit {
     this.boletasUpload = [];
     this.reajustesUpload = [];
     this.reajustes = [];
+    this.cierreListo = false
 
     this.accionesService.loadContratosCierre(this.fecha.endOf('month').toDate())
         .subscribe((data) => {
@@ -201,12 +204,13 @@ export class CierremesComponent implements OnInit {
 
             this.reajustes = this.reajustes.filter(e => e.reajuste?.toString()).sort((a,b) => new Date(a.fecha) > new Date(b.fecha) ? 1 : -1)
                              .concat(this.reajustes.filter(e => !e.reajuste?.toString()).sort((a,b) => new Date(a.fecha) > new Date(b.fecha) ? 1 : -1));
+            this.cierreListo = true;
           }
         });
   }
 
   aplicar(){
-    if(this.boletasUpload.length > 0 || this.reajustesUpload.length > 0){
+    if(this.boletasUpload){
       this.propiedadesService.cerrarMes(this.fecha.toDate(), this.boletasUpload, this.reajustesUpload)
                 .subscribe((data) => {
                     this.accionesService.loadCierresMes({fecha: this.fecha.toDate()})

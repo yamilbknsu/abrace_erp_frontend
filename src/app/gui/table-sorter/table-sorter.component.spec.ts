@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InfEstadoPagosComponent } from './inf-estado-pagos.component';
+import { TableSorterComponent } from './table-sorter.component';
 
-describe('InfEstadoPagosComponent', () => {
-  let component: InfEstadoPagosComponent;
-  let fixture: ComponentFixture<InfEstadoPagosComponent>;
+describe('TableSorterComponent', () => {
+  let component: TableSorterComponent;
+  let fixture: ComponentFixture<TableSorterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ InfEstadoPagosComponent ]
+      declarations: [ TableSorterComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(InfEstadoPagosComponent);
+    fixture = TestBed.createComponent(TableSorterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Persona } from 'src/app/models/Persona';
 import { PersonasService } from 'src/app/services/personas.service';
 import { SearchBarService } from 'src/app/services/serach-bar.service';
@@ -12,7 +13,7 @@ import { SearchBarService } from 'src/app/services/serach-bar.service';
 })
 export class PersonasComponent implements OnInit, OnDestroy {
 
-  personas$: BehaviorSubject<Persona[]>;
+  personas$: BehaviorSubject<Persona[]> = new BehaviorSubject<Persona[]>([]);
   statusText: string;
 
   searchText: string = '';
@@ -38,7 +39,10 @@ export class PersonasComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.personaService.loadPersonasFromBackend();
-    this.personas$ = this.personaService.getPersonas();
+    this.personas$ =  this.personaService.getPersonas();
+    //this.personaService.getPersonas().pipe(
+    //  map(results => results.sort((a,b) => a.nombre < b.nombre ? -1 : 1))
+    //).subscribe(personas => this.personas$.next(personas));
 
     this.searchBarService.getSearchInput$().subscribe((text) => this.searchText = text);
   }

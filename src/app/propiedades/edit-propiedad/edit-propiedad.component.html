@@ -78,8 +78,8 @@
                 <div class="flex-row space-between">
                     <p class='section-title'>Mandante</p>
                     <!-- <p class='clickable-text' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: _propiedad.mandante}">Editar Persona</p> -->
-                    <p class='clickable-text' *ngIf='_propiedad.mandante != ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: _propiedad.mandante}">Editar persona</p>
-                    <p class='clickable-text' *ngIf='_propiedad.mandante == ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: 'new'}">Nueva persona</p>
+                    <p class='clickable-text' *ngIf='_propiedad.mandante != ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: _propiedad.mandante}">Editar entidad</p>
+                    <p class='clickable-text' *ngIf='_propiedad.mandante == ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: 'new'}">Nueva entidad</p>
                 </div>
                 
                 <ng-select [items]="personas$ | async" 
@@ -116,8 +116,8 @@
                     <p class='section-title'>Administrador</p>
                     <!-- <p class='clickable-text' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: _propiedad.administrador}">Editar Persona</p> -->
                     
-                    <p class='clickable-text' *ngIf='_propiedad.administrador != ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: _propiedad.administrador}">Editar persona</p>
-                    <p class='clickable-text' *ngIf='_propiedad.administrador == ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: 'new'}">Nueva persona</p>
+                    <p class='clickable-text' *ngIf='_propiedad.administrador != ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: _propiedad.administrador}">Editar entidad</p>
+                    <p class='clickable-text' *ngIf='_propiedad.administrador == ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: 'new'}">Nueva entidad</p>
                 </div>
     
                 <ng-select [items]="personas$ | async" 
@@ -220,7 +220,7 @@
                     <app-multi-item-box [items]='otrosnombres' (updateSelection)='changeOtroSelected($event)' (updateArray)='updateOtros($event)' style='width: 180px; height: 100px;'></app-multi-item-box>
                 </div>
                 <div class="flex-column" style='flex: 1;'>
-                    <div *ngIf='selectedOtro!= -1 && _propiedad.uId; else nodetalle' class="flex-column" style='flex: 1;'>
+                    <div *ngIf='selectedOtro != -1 && _propiedad.caracteristicas.otros; else nodetalle' class="flex-column" style='flex: 1;'>
                         <textarea style="resize: none;" [(ngModel)]='_propiedad.caracteristicas.otros[selectedOtro].detalle'></textarea>
                     </div>
 
@@ -233,17 +233,17 @@
     </div>
     <div id="bottom-row" style="margin-top: 20px;">
         <div style='flex: 1;'>
-            <div class='red-button'(click)='onEliminarClicked()'>
+            <div class='red-button' *ngIf='_propiedad._id' (click)='onEliminarClicked()'>
                 Eliminar propiedad
             </div>
         </div>
         <div class='flex-row' style='flex: 2; justify-content: space-around;'>
-            <div class='grey-button' [routerLink]='"../mandato"' [queryParams]="{id: _propiedad._id}">
+            <div class='grey-button' *ngIf='_propiedad._id' [routerLink]='"../mandato"' [queryParams]="{id: _propiedad._id}">
                 Ver mandato
             </div>
         </div>
         <div class='flex-row' style='flex: 1; justify-content: flex-end;'>
-            <div class='grey-button' (click)='onBackClicked()'>
+            <div class='grey-button'  (click)='onBackClicked()'>
                 Cancelar
             </div>
             <div class='green-button' style="margin-left: 12px;" (click)='onGuardarClicked()'>

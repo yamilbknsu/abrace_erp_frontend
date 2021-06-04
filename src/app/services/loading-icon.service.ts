@@ -23,6 +23,7 @@ export class LoadingIconService {
   checkCierresMes(){
     this.accionesService.loadCierresMes({fecha: moment().toDate()})
         .subscribe(data => {
+          if(data.length == 0) return this.warning_cierremes.next(undefined);
           if(moment(data[0].fecha).diff(moment(), 'months') <= -2){
             this.warning_cierremes.next({message: 'Falta aplicar el cierre de mes ' + 
                       moment().locale('es').startOf('month').add(-1, 'month').format('MMM YYYY')})
@@ -36,9 +37,10 @@ export class LoadingIconService {
   checkReajustes(){
     this.accionesService.loadReajusteRentas({fecha: moment().toDate()})
         .subscribe(data => {
+          if(data.length == 0) return this.warning_reajustes.next(undefined)
           if(moment(data[0].fecha).diff(moment(), 'months') <= -1){
             this.warning_reajustes.next({message: 'Falta aplicar los reajustes de ' + 
-                      moment().locale('es').startOf('month').add(-1, 'month').format('MMM YYYY')})
+                      moment().locale('es').startOf('month').add(0, 'month').format('MMM YYYY')})
             return;
           }
 

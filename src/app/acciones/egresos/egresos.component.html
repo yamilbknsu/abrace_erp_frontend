@@ -61,8 +61,8 @@
             <input type="text" [(ngModel)]='selectedEgreso.nroegreso' [disabled]='true' style="text-align: right; padding-right: 10px; width: 135px;">
         </div>
         <div class="flex-column" style='margin-left: 10px;'>
-            <p class="section-content" style='margin-top: 10px;'>Fecha</p>
-            <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='selectedEgreso.fecha' [disabled]='selectedEgreso._id'></dp-date-picker>
+            <p class="section-content" style='margin-top: 10px;'>Fecha emisión</p>
+            <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='selectedEgreso.fecha' [disabled]='true'></dp-date-picker>
         </div>
         <div class="flex-column" style='margin-left: 10px; justify-content: center; align-items: center;'>
             <p class="section-content" style='margin-top: 10px;'>Afecta Arriendo</p>

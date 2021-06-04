@@ -68,8 +68,8 @@ export class AccionesService {
     );
   }
 
-  loadPagosInforme(){
-    return this.queryService.executeGetQuery('read', 'infpago', {}, {}).pipe(  
+  loadPagosInforme(params={}){
+    return this.queryService.executeGetQuery('read', 'infpago', {}, params).pipe(  
         // Catch a Forbidden acces error (return to login).
         catchError(err => {
           if (err.status == 403){
@@ -272,6 +272,19 @@ export class AccionesService {
         return EMPTY;
       })
     )
+  }
+
+  loadEstadoPagos(params={}){
+    return this.queryService.executeGetQuery('read', 'estadopagos', {}, params).pipe(  
+        // Catch a Forbidden acces error (return to login).
+        catchError(err => {
+          if (err.status == 403){
+            console.log('Forbidden access');
+            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
+          };
+          return EMPTY;
+        })
+      );
   }
 
 }

@@ -19,6 +19,7 @@ export class LiquidacionComponent implements OnInit {
 
   propiedades: any[] = [];
   date: any;
+  datePago: any;
 
   instrucciones: any[] = [];
 
@@ -53,7 +54,8 @@ export class LiquidacionComponent implements OnInit {
               private pdfWriterService: PdfWriterService) { }
 
   ngOnInit(): void {
-    this.date = moment().locale('es').startOf('month');
+    this.date = moment().locale('es');
+    this.datePago = moment().locale('es')
 
     this.route.data.subscribe(data => {
       this.propiedades = data.propiedades;
@@ -73,11 +75,13 @@ export class LiquidacionComponent implements OnInit {
   changePropiedad(id){
     if(id) this.selectedPropiedadId$.next(id);
     else this.selectedPropiedadId$.next('');
+    this.date = moment().locale('es');
     this.changePeriodo();
   }
 
   changePeriodo(){
     if(this.cargandoLiquidacion) return;
+    this.selectedLiquidacion = {};
     this.showPdf = false;
 
     this.cargandoLiquidacion = true;
@@ -89,8 +93,9 @@ export class LiquidacionComponent implements OnInit {
             // Primera liquidacion
             const mandfecha = new Date(this.selectedPropiedad.mandato.fechaInicio)
             if(mandfecha.getMonth() != this.date.toDate().getMonth() || mandfecha.getFullYear() != this.date.toDate().getFullYear()){
-              this.toastService.error('Debe ingresar el primer mes del mandato! (' + mandfecha.toLocaleString('es', { month: 'long' }) + ' ' + mandfecha.getUTCFullYear() + ')')
-              this.date = moment(mandfecha);
+              //this.toastService.error('Debe ingresar el primer mes del mandato! (' + mandfecha.toLocaleString('es', { month: 'long' }) + ' ' + mandfecha.getUTCFullYear() + ')')
+              this.toastService.error('No se ha registrado ninguna liquidacion de este mandato! (Primer mes: ' + mandfecha.toLocaleString('es', { month: 'long' }) + ' ' + mandfecha.getUTCFullYear() + ')')
+              //this.date = moment(mandfecha);
               return
             }
             
@@ -186,14 +191,17 @@ export class LiquidacionComponent implements OnInit {
   preparar(){
     this.accionesService.loadPropiedadesPago({propiedad: this.selectedPropiedadId, periodo: this.date.toDate()})
         .subscribe(data => {
-          console.log(data)
           if(data.length == 0) {
             this.toastService.error('No se ha registrado ningún pago para esta propiedad!')
             this.selectedLiquidacion = {}
             return;
           }
 
-          if(data[0].contratos?.[0]?.pagos?.length == 0) return;
+          if(data[0].contratos?.[0]?.pagos?.length == 0){
+            this.toastService.error('No se ha registrado ningún pago para esta propiedad!')
+            this.selectedLiquidacion = {}
+            return
+          };
           
           var lastPago = data[0].contratos?.[0]?.pagos[0];
           var abonos = [];
@@ -225,7 +233,10 @@ export class LiquidacionComponent implements OnInit {
             lastPago.cargos.forEach(cargo => {
               if(cargo.tipo != 'Arriendo' && cargo.tipo != 'Mes garantía'){
                 abonos.push({concepto: cargo.concepto, valor: cargo.valor});
-                cargos.push({tipo: cargo.tipo, concepto: cargo.concepto, detalle: cargo.detalle, valor: cargo.valor})
+                if(!cargo.concepto.includes('Reajuste ('))
+                  cargos.push({tipo: 'Otro', concepto: cargo.concepto, detalle: cargo.detalle, valor: cargo.valor})
+                else
+                arriendo += cargo.valor;
               }else{
                 abonos.push({concepto: cargo.tipo, valor: cargo.valor});
                 if(cargo.tipo == 'Arriendo'){
@@ -237,14 +248,22 @@ export class LiquidacionComponent implements OnInit {
             });
           }
 
+
           if(primeraLiquidacion){
             var valor = comisiones.tipocontrato == "Porcentual" ?  +comisiones.valorcontrato * arriendo / 100 : +comisiones.valorcontrato;
             var incluyeContImpuesto = this.selectedPropiedad.mandato.comisiones.contratoimpuestoincluido == 'true' || this.selectedPropiedad.mandato.comisiones.contratoimpuestoincluido
             if(!incluyeContImpuesto){
               valor *= 1 + (+comisiones.impuestocontrato / 100)
+              valor = Math.round(valor);
             }
-            cargos.push({tipo: 'Otro', concepto: 'Comisión firma contrato ('+comisiones.impuestocontrato + '% ' + (incluyeContImpuesto ? "inc. impuestos" : "+ impuestos") + ')',
-                         detalle: '', valor: valor})
+
+            if(comisiones.tipocontrato == "Porcentual"){
+              cargos.push({tipo: 'Otro', concepto: 'Comisión firma contrato ('+comisiones.valorcontrato + '% ' + (incluyeContImpuesto ? "inc. impuestos" : "+ "+ +comisiones.impuestocontrato +"%impuestos") + ')',
+                           detalle: '', valor: valor})
+            }else{
+              cargos.push({tipo: 'Otro', concepto: 'Comisión firma contrato',
+                           detalle: '', valor: valor})
+            }
           }
           
           abonos.forEach(abono => totalAbonos += +abono.valor);
@@ -260,18 +279,19 @@ export class LiquidacionComponent implements OnInit {
             totalCargos += valor;
           });
 
-          var honorAdmin = !primeraLiquidacion || !incluyeAdm ? (comisiones.tipoadm == "Porcentual" ?
+          var honorAdmin = !primeraLiquidacion || incluyeAdm ? (comisiones.tipoadm == "Porcentual" ?
                                                                         +comisiones.valoradm * arriendo / 100 :
                                                                         +comisiones.valoradm) : 0
-          
+
           var honorarios = {tipo: comisiones.tipoadm,
-                            valor: honorAdmin,
-                            descripcion: (comisiones.tipoadm == "Porcentual" ?
+                            valor: Math.round(honorAdmin),
+                            descripcion: (!primeraLiquidacion || incluyeAdm) ? 
+                                      ((comisiones.tipoadm == "Porcentual" ?
                                         +comisiones.valoradm + "%" : 
                                         "$" + +comisiones.valoradm) + 
-                                        (comisiones.admimpuestoincluido ? " inc. impuestos" : " no inc. impuestos"),
+                                        (comisiones.admimpuestoincluido ? " inc. impuestos" : " no inc. impuestos")) : 'Primer contrato no incluye adm.',
                             impuestos: comisiones.admimpuestoincluido ? 0 :
-                                      (+comisiones.impuestoadm * honorAdmin / 100)
+                                      Math.round(+comisiones.impuestoadm * honorAdmin / 100)
                           };
           
           totalCargos += honorarios.valor + honorarios.impuestos;
@@ -279,7 +299,7 @@ export class LiquidacionComponent implements OnInit {
 
           this.selectedLiquidacion = {
             fecha: this.date.toDate(),
-            fechapago: this.date,
+            fechapago: this.datePago,
             abonos,
             cargos,
             totalAbonos,
@@ -322,7 +342,7 @@ export class LiquidacionComponent implements OnInit {
               .subscribe(data => {
                 this.showPdf = true;
                 this.outputFileName = `ComprobanteLiquidacion_${this.selectedPropiedad.uId}_${this.formatDate(this.selectedLiquidacion.fecha, '')}.pdf`;
-            
+                
                 var blob = this.pdfWriterService.generateBlobPdfFromLiquidacion(this.date, propiedades[0], this.selectedLiquidacion,
                   {egresos: data.egresos?.filter(egreso => egreso.afectaliquidacion),
                     ingresos: data.ingresos?.filter(ingreso => ingreso.afectaliquidacion)}, copia);

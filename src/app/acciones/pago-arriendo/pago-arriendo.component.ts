@@ -114,6 +114,7 @@ export class PagoArriendoComponent implements OnInit {
     else this.selectedPropiedadId$.next('');
 
     this.correspondeArriendo = true;
+    this.showPdf = false;
   }
 
   changeContrato(id){
@@ -143,6 +144,7 @@ export class PagoArriendoComponent implements OnInit {
   }
 
   changePeriodo(){
+    if(!this.date) this.date = moment().locale('es').startOf('month')
     this.showPdf = false;
     this.correspondeArriendo = this.isNextArriendo(this.selectedContrato, this.date);
     
@@ -245,6 +247,7 @@ export class PagoArriendoComponent implements OnInit {
               }
 
               this.updateTotales();
+              this.loadReajustes(data);
               this.loadIngresosEgresos();
 
               const selectedPago = data[0]?.contratos[0]?.pagos[0];
@@ -267,6 +270,18 @@ export class PagoArriendoComponent implements OnInit {
 
           this.updateTotales();
         })
+  }
+
+  loadReajustes(data){
+    if(data[0]?.reajustes?.length > 0){
+      for(let i=0;i<this.cargos.length; i++){
+        if(this.cargos[i].tipo == 'Arriendo'){
+          this.cargos[i].valor = data[0].reajustes[0].valorinicial;
+          this.cargos.push({tipo: 'Otro', concepto: `Reajuste (${Math.round(data[0].reajustes[0].reajuste * 100) / 100} %)`, detalle: '', valor: data[0].reajustes[0].valorfinal - data[0].reajustes[0].valorinicial})
+          break;
+        }
+      }
+    }
   }
 
   addDescuento(){
@@ -323,14 +338,14 @@ export class PagoArriendoComponent implements OnInit {
       nropago: this.nropago
     };
     this.accionesService.writePago(this.selectedPago).subscribe(() => {
-      this.changePeriodo();
       this.emitirInforme(false);
       this.toastService.success('Operación realizada con éxito.');
+      //this.changePeriodo();
     });
   }
 
   emitirInforme(copia=false){
-    this.accionesService.loadLiquidacionesInforme({propiedad: this.selectedPropiedadId}).pipe(
+    this.accionesService.loadPagosInforme({propiedad: this.selectedPropiedadId}).pipe(
       map(propiedades => this.propiedadesService.joinPropiedadData(propiedades)))
       .subscribe(
         propiedades => {
@@ -338,8 +353,9 @@ export class PagoArriendoComponent implements OnInit {
               .subscribe(data => {
                 console.log(data)
                 this.showPdf = true;
-                this.outputFileName = (copia ? 'Copia' : '') + 'ComprobantePago' + `_${this.selectedPropiedad.uId}_${this.formatDate(this.selectedPago.fechaemision, '')}.pdf`;
-            
+                this.outputFileName = (copia ? 'Copia' : '') + 'ReciboArriendo' + `_${this.selectedPropiedad.uId}_${this.formatDate(this.selectedPago.fechaemision, '')}.pdf`;
+                
+                console.log(propiedades)
                 var blob = this.pdfWriterService.generateBlobPdfFromPago(this.date, propiedades[0], this.selectedContrato, this.selectedPago,
                   {egresos: data.egresos?.filter(egreso => egreso.afectaarriendo),
                     ingresos: data.ingresos?.filter(ingreso => ingreso.afectaarriendo)}, copia);
@@ -374,7 +390,7 @@ export class PagoArriendoComponent implements OnInit {
     if (contrato.tiempoarriendo == "Anual") return date.month() == moment(contrato.fechacontrato).month();
     if (contrato.tiempoarriendo == "Semestral") return date.month() == moment(contrato.fechacontrato).month() || 
                                                        date.month() == moment(contrato.fechacontrato).add(6, 'months').month()
-    if (contrato.tiempoarriendo == "Semestral") return date.month() == moment(contrato.fechacontrato).month() || 
+    if (contrato.tiempoarriendo == "Trimestral") return date.month() == moment(contrato.fechacontrato).month() || 
                                                        date.month() == moment(contrato.fechacontrato).add(6, 'months').month() ||
                                                        date.month() == moment(contrato.fechacontrato).add(3, 'months').month() ||
                                                        date.month() == moment(contrato.fechacontrato).add(9, 'months').month()

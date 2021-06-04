@@ -13,7 +13,7 @@ export class AccionesComponent implements OnInit {
     {nombre: 'Reajuste de rentas', path: 'reajustes'},
     {nombre: 'Reajuste extraordinario', path: 'reajusteextraordinario'},
     {nombre: 'Liquidación de arriendo', path: 'liquidacion'},
-    {nombre: 'Pago de arriendo', path: 'pagoarriendo'},
+    {nombre: 'Recibo de arriendo', path: 'pagoarriendo'},
     {nombre: 'Ingresos', path: 'ingreso'},
     {nombre: 'Egresos', path: 'egreso'}
   ];

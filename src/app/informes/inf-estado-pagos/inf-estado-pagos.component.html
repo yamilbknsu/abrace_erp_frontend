@@ -2,12 +2,21 @@
 <div class="flex-row" style='justify-content: space-between; margin-bottom: 15px;'>
     <div class="column">
         <p class="secion-content">Periodo</p>
-        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='date' [mode]='"month"'></dp-date-picker>
+        <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='date' [mode]='"month"' (ngModelChange)='changeFecha()'></dp-date-picker>
     </div>
-    <div class="column" style='justify-content: center;'>
+    <div class="column" style='justify-content: center;' *ngIf='tableData.length > 0 && !showPdf'>
         <div class="green-button" (click)='onGenerar()'>
             Generar
           </div>
     </div>
+    
+    <div class="column" style='justify-content: center;' *ngIf='tableData.length == 0'>
+        <div class="grey-button" (click)='onPreparar()'>
+            Preparar
+          </div>
+    </div>
+</div>
+<div class='scrolled-section' *ngIf='!showPdf'>
+  <app-table-sorter [headers]='tableheaders' [data]='tableData' (sorted)='sortData($event)'></app-table-sorter>
 </div>
 <ng2-pdfjs-viewer style='flex:1;' #pdfViewer></ng2-pdfjs-viewer>

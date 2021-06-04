@@ -1,0 +1,30 @@
+:host{
+    display: flex;
+    border: 1px solid #EEE;
+}
+
+table{
+    width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+}
+
+th{
+    text-align: left;
+    font-size: 13px;
+    background-color: #DDD;
+}
+
+th:hover{
+    background-color: #EEE;
+    cursor: pointer;
+}
+
+td
+{
+    max-width: 0px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 15px;
+}

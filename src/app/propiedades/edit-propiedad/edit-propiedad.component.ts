@@ -63,9 +63,12 @@ export class EditPropiedadComponent implements OnInit {
 
       if(typeof this._propiedad?.caracteristicas?.otros === "string"){
         this._propiedad.caracteristicas.otros = [{nombre: this._propiedad.caracteristicas.otros, detalle: "Sin detalle"}];
+      }else{
+        this._propiedad.caracteristicas.otros = this._propiedad.caracteristicas.otros ? this._propiedad.caracteristicas.otros: []
       }
 
-      this.otrosnombres = this._propiedad.caracteristicas.otros.map(i => i.nombre);
+      this.otrosnombres = this._propiedad?.caracteristicas?.otros?.map(i => i.nombre);
+      this.otrosnombres = this.otrosnombres ? this.otrosnombres : [];
 
       this.mandanteId$ = new BehaviorSubject<string>(this._propiedad.mandante);
       this.administradorId$ = new BehaviorSubject<string>(this._propiedad.administrador ? this._propiedad.administrador : "");
@@ -142,6 +145,7 @@ export class EditPropiedadComponent implements OnInit {
   }
 
   changeOtroSelected(number){
+    console.log(number)
     this.selectedOtro = number;
   }
 
@@ -164,5 +168,8 @@ export class EditPropiedadComponent implements OnInit {
     if(this.selectedOtro >= this._propiedad.caracteristicas.otros.length){
       this.selectedOtro = this._propiedad.caracteristicas.otros.length - 1;
     }
+
+    console.log(this._propiedad.caracteristicas.otros)
+    console.log(this._propiedad.uId)
   }
 }

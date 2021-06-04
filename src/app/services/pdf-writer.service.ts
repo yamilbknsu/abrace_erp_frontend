@@ -11,12 +11,13 @@ export class PdfWriterService {
 
   constructor(private toastService: ToastService) { }
 
-  generateBlobPdfFromData(head, body, titulo, fecha, styles, columnStyles){
+  generateBlobPdfFromData(head, body, titulo, fecha, styles, columnStyles, headStyles={}, margin = {top: 150}, subtitle=undefined, didDrawCell=(data)=>{}){
     const options: jsPDFOptions = {format: 'letter', unit: 'px', hotfixes: ['px_scaling']}
     var doc = new jsPDF(options);
     autoTable(doc, {
               head,
               body,
+              headStyles,
               styles,
               columnStyles,
               didDrawPage: (data) => {
@@ -38,8 +39,15 @@ export class PdfWriterService {
                 doc.setFont("Roboto-Bold", "bold");
                 doc.text('Fecha: ' + fecha, pageSize.getWidth() - data.settings.margin.right, 50, {align: 'right'});
                 doc.text('Página: ' + doc.getNumberOfPages(), pageSize.getWidth() - data.settings.margin.right, 70, {align: 'right'});
+
+                if(subtitle){
+                  doc.setFontSize(12);
+                  doc.setFont("Roboto-Regular", "normal");
+                  doc.text(subtitle, data.settings.margin.left, 150, {align: 'left'})
+                }
               },
-              margin: { top: 150 },
+              didDrawCell,
+              margin,
               theme: 'plain'});
     return doc.output('blob');
   }
@@ -56,7 +64,7 @@ export class PdfWriterService {
     doc.setTextColor('black');
     doc.setFont("Roboto-Bold", "bold");
 
-    const titletext = (copia ? 'Copia de c' : 'C') + 'omprobante de pago'
+    const titletext = (copia ? 'Copia de r' : 'R') + 'ecibo de arriendo'
     const textWidth = doc.getTextWidth(titletext);
     doc.text(titletext, pageSize.getWidth() - 50, 60, {align: 'right'});
     doc.setDrawColor('black')
@@ -173,9 +181,15 @@ export class PdfWriterService {
     doc.text(pago.subtotal, pageSize.getWidth() - 60, 180 + nestedTableHeight + tableDelta + 35, {align: 'right'});
     
     doc.setFontSize(10);
-    doc.text(`Cancelado con ${pago.formapago} Nro ${pago.documento} del bco ${pago.banco}`, 50, 180 + nestedTableHeight + tableDelta + 55)
-    doc.text(`Depositado en cta ${pago.depositadoen} del bco ${pago.bancoen}`, 50, 180 + nestedTableHeight + tableDelta + 75)
-    doc.text(`Obs.: ${pago.observaciones ? pago.observaciones : ''}`, 50, 180 + nestedTableHeight + tableDelta + 95);
+    if(pago.formapago == 'Efectivo')
+      doc.text(`Cancelado con ${pago.formapago}`, 50, 180 + nestedTableHeight + tableDelta + 55)
+    else if(pago.formapago == 'Cheque')
+      doc.text(`Cancelado con ${pago.formapago} Nro ${pago.documento} del bco ${pago.banco}`, 50, 180 + nestedTableHeight + tableDelta + 55)
+    else{
+      doc.text(`Cancelado con ${pago.formapago} Nro ${pago.documento} del bco ${pago.banco}`, 50, 180 + nestedTableHeight + tableDelta + 55)
+      doc.text(`Depositado en cta ${pago.depositadoen} del bco ${pago.bancoen}`, 50, 180 + nestedTableHeight + tableDelta + 75)
+    }
+      doc.text(`Obs.: ${pago.observaciones ? pago.observaciones : ''}`, 50, 180 + nestedTableHeight + tableDelta + 95);
     
     doc.setFont("Roboto-Bold", "bold");
     doc.text(`${this.formatFecha(pago.fechapago)}`, 50, 180 + nestedTableHeight + tableDelta + 115)
@@ -305,8 +319,14 @@ export class PdfWriterService {
     doc.text(pago.subtotal, pageSize.getWidth() - 60, startY + 180 + nestedTableHeight + tableDelta + 35, {align: 'right'});
     
     doc.setFontSize(10);
-    doc.text(`Cancelado con ${pago.formapago} Nro ${pago.documento} del bco ${pago.banco}`, 50, startY + 180 + nestedTableHeight + tableDelta + 55)
-    doc.text(`Depositado en cta ${pago.depositadoen} del bco ${pago.bancoen}`, 50, startY + 180 + nestedTableHeight + tableDelta + 75)
+    if(pago.formapago == 'Efectivo')
+      doc.text(`Cancelado con ${pago.formapago}`, 50, startY + 180 + nestedTableHeight + tableDelta + 55)
+    else if(pago.formapago == 'Cheque')
+      doc.text(`Cancelado con ${pago.formapago} Nro ${pago.documento} del bco ${pago.banco}`, 50, startY + 180 + nestedTableHeight + tableDelta + 55)
+    else{
+      doc.text(`Cancelado con ${pago.formapago} Nro ${pago.documento} del bco ${pago.banco}`, 50, startY + 180 + nestedTableHeight + tableDelta + 55)
+      doc.text(`Depositado en cta ${pago.depositadoen} del bco ${pago.bancoen}`, 50, startY + 180 + nestedTableHeight + tableDelta + 75)
+    }
     doc.text(`Obs.: ${pago.observaciones ? pago.observaciones : ''}`, 50, startY + 180 + nestedTableHeight + tableDelta + 95);
     
     doc.setFont("Roboto-Bold", "bold");
@@ -465,7 +485,10 @@ export class PdfWriterService {
     doc.text(liquidacion.subtotal, pageSize.getWidth() - 60, 180 + nestedTableHeight + tableDelta + 35, {align: 'right'});
     
     doc.setFontSize(10);
-    doc.text(`Cancelado con ${liquidacion.formapago} Nro/Cta. ${liquidacion.documento} del bco ${liquidacion.banco}`, 50, 180 + nestedTableHeight + tableDelta + 55)
+    if(liquidacion.formapago == 'Efectivo')
+      doc.text(`Cancelado con ${liquidacion.formapago}`, 50, 180 + nestedTableHeight + tableDelta + 55)
+    else
+      doc.text(`Cancelado con ${liquidacion.formapago} Nro ${liquidacion.documento} del bco ${liquidacion.banco}`, 50, 180 + nestedTableHeight + tableDelta + 55)
     doc.text(`Obs.: ${liquidacion.observaciones ? liquidacion.observaciones : ''}`, 50, 180 + nestedTableHeight + tableDelta + 75);
 
     doc.setFont("Roboto-Bold", "bold");
@@ -594,8 +617,12 @@ export class PdfWriterService {
     doc.text(liquidacion.subtotal, pageSize.getWidth() - 60, startY + 180 + nestedTableHeight + tableDelta + 35, {align: 'right'});
     
     doc.setFontSize(10);
-    doc.text(`Cancelado con ${liquidacion.formapago} Nro/Cta. ${liquidacion.documento} del bco ${liquidacion.banco}`, 50, startY + 180 + nestedTableHeight + tableDelta + 55)
-    doc.text(`Obs.: ${liquidacion.observaciones ? liquidacion.observaciones : ''}`, 50, startY + 180 + nestedTableHeight + tableDelta + 75);
+    if(liquidacion.formapago == 'Efectivo')
+      doc.text(`Cancelado con ${liquidacion.formapago}`, 50, startY + 180 + nestedTableHeight + tableDelta + 55)
+    else
+      doc.text(`Cancelado con ${liquidacion.formapago} Nro ${liquidacion.documento} del bco ${liquidacion.banco}`, 50, startY +180 + nestedTableHeight + tableDelta + 55)
+    
+      doc.text(`Obs.: ${liquidacion.observaciones ? liquidacion.observaciones : ''}`, 50, startY + 180 + nestedTableHeight + tableDelta + 75);
       
     doc.setFont("Roboto-Bold", "bold");
     doc.text(`${this.formatFecha(liquidacion.fecha)}`, 50, startY + 180 + nestedTableHeight + tableDelta + 95)
@@ -646,7 +673,7 @@ export class PdfWriterService {
           theme: 'grid',
           columns: [
             { dataKey: 'concepto', header: 'Concepto' },
-            { dataKey: 'valor', header: 'Valor' },
+            { dataKey: 'valor', header: 'Monto' },
           ],
           body: element.conceptos,
           styles: {
@@ -736,7 +763,7 @@ export class PdfWriterService {
           theme: 'grid',
           columns: [
             { dataKey: 'concepto', header: 'Concepto' },
-            { dataKey: 'valor', header: 'Valor' },
+            { dataKey: 'valor', header: 'Monto' },
           ],
           body: element.conceptos,
           styles: {

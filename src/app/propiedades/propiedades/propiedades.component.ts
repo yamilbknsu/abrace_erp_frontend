@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { PropiedadesService } from '../propiedades.service';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { Propiedad } from 'src/app/models/Propiedad';
 import { SearchBarService } from 'src/app/services/serach-bar.service';
 import { ToastService } from 'src/app/services/toast.service';
@@ -28,6 +28,9 @@ export class PropiedadesComponent implements OnInit {
   // 0: Propiedad
   // 1: Mandato
   editingProperty: number;
+
+  sortingProperty = new BehaviorSubject<string>('uId');
+  ascending = true;
 
   constructor(private _eref: ElementRef, private router: Router,
     private route: ActivatedRoute, private propiedadService: PropiedadesService,
@@ -62,7 +65,7 @@ export class PropiedadesComponent implements OnInit {
 
   ngOnInit(): void {
     this.propiedadService.loadPropiedadesFromBackend();
-    this.propiedades$ = this.propiedadService.getPropiedades$()
+    //this.propiedades$ = this.propiedadService.getPropiedades$()
 
     this.route.queryParams.subscribe(params => {
       if (params.hasOwnProperty('id')) {
@@ -71,8 +74,26 @@ export class PropiedadesComponent implements OnInit {
     });
 
     this.searchBarService.getSearchInput$().subscribe((text) => this.searchText = text);
+
+    this.propiedades$ = combineLatest(this.propiedadService.getPropiedades$(), this.sortingProperty, 
+                              (propiedades, key) => {
+                                if(key == 'mandante')
+                                  return propiedades.sort(this.ascending ? ((a:any, b:any) => a.mandanteData.nombre > b.mandanteData.nombre ? 1 : -1) :
+                                                                            (a:any, b:any) => a.mandanteData.nombre < b.mandanteData.nombre ? 1 : -1);
+                                if(key == 'comuna')
+                                  return propiedades.sort(this.ascending ? ((a:any, b:any) => a.direccionData.comuna > b.direccionData.comuna ? 1 : -1) :
+                                                                            (a:any, b:any) => a.direccionData.comuna < b.direccionData.comuna ? 1 : -1);
+                                if(key == 'estado')
+                                  return propiedades.sort(this.ascending ? ((a:any, b:any) => a.estados[0] == 'Arrendada' ? -1 : 1) :
+                                                                            (a:any, b:any) =>  a.estados[0] == 'Arrendada' ? 1 : -1);
+                                return propiedades.sort(this.ascending ? ((a,b) => a[key] > b[key] ? 1 : -1) : (a,b) => a[key] > b[key] ? -1 : 1)
+                              })
   }
 
+  changeSortingProperty(key){
+    if(key == this.sortingProperty.value) this.ascending = !this.ascending;
+    this.sortingProperty.next(key);
+  }
 
   propiedadesClass(i: number) {
     if (this.idEditing == "0") {

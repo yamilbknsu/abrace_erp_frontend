@@ -1,0 +1,9 @@
+<table>
+    <tr>
+        <th *ngFor='let h of headers' (click)='clicked(h)'>{{h.content}}</th>
+    </tr>
+    <tr *ngFor='let d of data'>
+        <td *ngFor='let h of headers'>{{d[h.key]}}</td>
+    </tr>
+</table>
+

@@ -123,8 +123,8 @@ export class EditContratoComponent implements OnInit, OnDestroy {
             this.reajustePlaceholder = undefined;
           else {
             this.contratoSelected.proximoreajuste = new Date(this.contratoSelected.proximoreajuste);
-            this.reajustePlaceholder = moment(this.contratoSelected.proximoreajuste);
-            this.reajustePlaceholder = moment(this.contratoSelected.proximoreajuste);
+            this.reajustePlaceholder = moment(this.contratoSelected.proximoreajuste).locale('es');
+            //this.reajustePlaceholder = moment(this.contratoSelected.proximoreajuste).locale('es');
           }
 
           this.arrendatarioId$.next(this.contratoSelected.arrendatario);
@@ -159,8 +159,8 @@ export class EditContratoComponent implements OnInit, OnDestroy {
             this.reajustePlaceholder = '';
           else {
             this.contratoSelected.proximoreajuste = new Date(this.contratoSelected.proximoreajuste);
-            this.reajustePlaceholder = moment(this.contratoSelected.proximoreajuste);
-            this.reajustePlaceholder = moment(this.contratoSelected.proximoreajuste);
+            this.reajustePlaceholder = moment(this.contratoSelected.proximoreajuste).locale('es');
+            //this.reajustePlaceholder = moment(this.contratoSelected.proximoreajuste).locale('es');
           }
 
           this.arrendatarioId$.next(this.contratoSelected.arrendatario);

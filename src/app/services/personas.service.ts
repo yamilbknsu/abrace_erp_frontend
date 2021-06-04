@@ -89,7 +89,7 @@ export class PersonasService {
       })
     )
     // And subscribe to it
-    .subscribe(res => this.personas$.next(res));
+    .subscribe(res => this.personas$.next(res.sort((a,b) => a.nombre > b.nombre ? 1 : -1)));
   }
 
   deletePersona$(id){

@@ -18,7 +18,7 @@ export class InformesComponent implements OnInit {
     {nombre: 'Resumen Arriendos', path: 'resumenarriendos'},
     {nombre: 'Estado Pagos', path: 'resumenpagos'},
     {nombre: 'Copia de liquidación de arriendo', path: 'liquidaciones'},
-    {nombre: 'Copia de comprobante de pago', path: 'pagos'},
+    {nombre: 'Copia de recibo de arriendo', path: 'pagos'},
   ];
 
   constructor(private router: Router, private route: ActivatedRoute) {
