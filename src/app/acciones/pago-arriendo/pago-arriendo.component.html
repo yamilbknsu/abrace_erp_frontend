@@ -152,6 +152,7 @@
         <div class="flex-column" style="justify-content: space-between;">
             <div class="flex-row" style='justify-content: center;'>
                 <p class='section-content'><b>Total cargos: </b>${{numberWithPoints(totalCargos)}}</p>
+                <p class='section-content' style='margin-left: 20px;'><b>Total Descuentos: </b>${{numberWithPoints(totalDescuentos)}}</p>
             </div>
             
             <div class="flex-row">
@@ -167,10 +168,22 @@
         </div>
 
         <div class="flex-column">
-            <p class='section-content'><b>Total Descuentos: </b>${{numberWithPoints(totalDescuentos)}}</p>
             <p class='section-content'><b>Subtotal: </b>${{numberWithPoints(subtotal)}}</p>
+            <p class='section-content'><b>Saldo anterior: </b>${{numberWithPoints(saldoanterior)}}</p>
+            <div *ngIf='selectedPago'>
+                <p class='section-content'><b>Pagado: </b>${{numberWithPoints(pagado)}}</p>
+            </div>
+
+            <div class='flex-row cargos-descuentos' *ngIf='!selectedPago' style='justify-content: center;'>
+                <p class='section-content'><b>Pagado: </b></p>
+                <input type="text" [(ngModel)]='pagado' style='width: 80px; text-align: right; margin-left: 10px;'>
+
+            </div>
+
+            <p class='section-content'><b>Saldo final: </b>${{numberWithPoints(saldoanterior + subtotal - pagado)}}</p>
+
             <div class="flex-row" style='justify-content: flex-end; margin-top: 5px;' *ngIf='!selectedPago'>
-                <div class="green-button" (click)='onGuardar()'>Guardar</div>
+                <div class="green-button small" (click)='onGuardar()'>Guardar</div>
             </div>
             <div class="flex-row" style='justify-content: flex-end; margin-top: 5px;' *ngIf='selectedPago'>
                 <div class="grey-button" (click)='emitirInforme(true)'>Emitir copia</div>

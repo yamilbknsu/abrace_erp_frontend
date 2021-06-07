@@ -17,6 +17,7 @@ export class InformesComponent implements OnInit {
     {nombre: 'Resumen Liquidaciones', path: 'resumenliquidaciones'},
     {nombre: 'Resumen Arriendos', path: 'resumenarriendos'},
     {nombre: 'Estado Pagos', path: 'resumenpagos'},
+    {nombre: 'Informe Instrucciones de pago', path: 'contribuciones'},
     {nombre: 'Copia de liquidación de arriendo', path: 'liquidaciones'},
     {nombre: 'Copia de recibo de arriendo', path: 'pagos'},
   ];

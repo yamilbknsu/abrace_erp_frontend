@@ -75,6 +75,13 @@ export class EditMandatoComponent implements OnInit {
         this.mandatoSelected.comisiones.admimpuestoincluido = this.mandatoSelected.comisiones.admimpuestoincluido === 'true' || this.mandatoSelected.comisiones.admimpuestoincluido === true;
         this.mandatoSelected.comisiones.contratoimpuestoincluido = this.mandatoSelected.comisiones.contratoimpuestoincluido === 'true' || this.mandatoSelected.comisiones.contratoimpuestoincluido === true;
 
+        if(!this.mandatoSelected.contribuciones) this.mandatoSelected.contribuciones = false;
+        if(!this.mandatoSelected.contribucionesdesc) this.mandatoSelected.contribucionesdesc = '';
+        if(!this.mandatoSelected.aseo) this.mandatoSelected.aseo = false;
+        if(!this.mandatoSelected.aseodesc) this.mandatoSelected.aseodesc = '';
+        if(!this.mandatoSelected.otro) this.mandatoSelected.otro = false;
+        if(!this.mandatoSelected.otrodesc) this.mandatoSelected.otrodesc = '';
+
         //if (this.mandatoSelected.instrucciones.length > 0) this.selectedInstruccion = 0;
         //else this.selectedInstruccion = -1;
         this.selectedInstruccion = -1;

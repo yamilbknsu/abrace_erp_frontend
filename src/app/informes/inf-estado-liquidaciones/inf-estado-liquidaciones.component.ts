@@ -48,7 +48,7 @@ export class InfEstadoLiquidacionesComponent implements OnInit {
         .subscribe(data => {
           const data_inf = data[0]?.liquidaciones?.length > 0 ?  data[0]?.liquidaciones.map(liq => {
             return liq.abonos.map(abono => { abono.abono = true; return abono}).concat(liq.cargos)
-                      .map((con, idx) => ({periodo: idx == 0 ? this.formatDate(liq.fecha) : '', concepto: con.concepto, abonos: con.abono ? this.numberWithPoints(con.valor) : '',
+                      .map((con, idx) => ({periodo: idx == 0 ? this.formatDate(liq.fecha, '/', false) : '', concepto: con.concepto, abonos: con.abono ? this.numberWithPoints(con.valor) : '',
                       cargos: con.abono ? '' : this.numberWithPoints(con.valor), saldoliq:'', fechapago:''}))
                     .concat({periodo: '', concepto: 'Honorarios', abonos: '', cargos: this.numberWithPoints(liq.honorarios.valor), saldoliq: '', fechapago: ''})
                     .concat({periodo: '', concepto: 'Impuestos', abonos: '', cargos: this.numberWithPoints(liq.honorarios.impuestos), saldoliq: '', fechapago: ''})
@@ -76,7 +76,7 @@ export class InfEstadoLiquidacionesComponent implements OnInit {
         });
   }
 
-  formatDate(date, separator='/') {
+  formatDate(date, separator='/', showDay=true) {
     var d = new Date(date),
       month = '' + (d.getMonth() + 1),
       day = '' + d.getDate(),
@@ -87,7 +87,9 @@ export class InfEstadoLiquidacionesComponent implements OnInit {
     if (day.length < 2)
       day = '0' + day;
 
-    return [day, month, year].join(separator);
+    if (showDay)
+      return [day, month, year].join(separator);
+    return [month, year].join(separator);
   }
 
   numberWithPoints(x) {

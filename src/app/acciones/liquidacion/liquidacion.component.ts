@@ -323,10 +323,10 @@ export class LiquidacionComponent implements OnInit {
     this.propiedadesService.loadIngresosEgresosPropiedad(this.selectedPropiedadId, this.date.toDate())
         .subscribe(data => {
           data.ingresos.filter(ingreso => ingreso.afectaliquidacion).forEach(ingreso => {
-            this.selectedLiquidacion.abonos.push({concepto: 'Detalle Ingreso ' + this.padNumber(ingreso.nroingreso), valor: this.sumIngresosEgresos(ingreso.conceptos)})
+            this.selectedLiquidacion.cargos.push({tipo: 'Otro', detalle:'', concepto: 'Detalle Egreso ' + this.padNumber(ingreso.nroegreso), valor: this.sumIngresosEgresos(ingreso.conceptos)})
           });
           data.egresos.filter(egreso => egreso.afectaliquidacion).forEach(egreso => {
-            this.selectedLiquidacion.cargos.push({tipo: 'Otro', detalle:'', concepto: 'Detalle Egreso ' + this.padNumber(egreso.nroegreso), valor: this.sumIngresosEgresos(egreso.conceptos)})
+            this.selectedLiquidacion.abonos.push({concepto: 'Detalle Ingreso ' + this.padNumber(egreso.nroingreso), valor: this.sumIngresosEgresos(egreso.conceptos)})
           });
 
           this.updateTotales();

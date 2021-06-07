@@ -1,0 +1,12 @@
+<p class='title'>Informe Instrucciones de pago</p>
+<div class="flex-row" style='justify-content: center; margin-bottom: 15px;'>
+    <div class="green-button" (click)='onGenerar()' *ngIf='tableData.length > 0'>
+      Generar
+    </div>
+  </div>
+
+  <div class='scrolled-section' *ngIf='!showPdf'>
+    <app-table-sorter [headers]='tableheaders' [data]='tableData' (sorted)='sortData($event)'></app-table-sorter>
+  </div>
+
+  <ng2-pdfjs-viewer style='flex:1;' #pdfViewer></ng2-pdfjs-viewer>

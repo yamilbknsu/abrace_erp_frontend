@@ -9,7 +9,12 @@ export class Mandato{
     liquidacion;
     comisiones;
     instrucciones: Array<any>;
-    
+    contribuciones: boolean;
+    contribucionesdesc: string;
+    aseo: boolean;
+    aseodesc: string;
+    otro: boolean;
+    otrodesc: string;
     otrosdestinatarios;
 
     constructor(

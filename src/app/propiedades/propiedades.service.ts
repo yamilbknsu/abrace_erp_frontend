@@ -482,6 +482,20 @@ export class PropiedadesService {
     );
   }
 
+  loadSaldoAnteriorPago(propiedad){
+    return this.queryService.executeGetQuery('read', 'saldoanteriorpago', {}, {propiedad}).pipe(  
+      // Catch a Forbidden acces error (return to login).
+      catchError(err => {
+        if (err.status == 403){
+          console.log('Forbidden access');
+          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
+        };
+        return EMPTY;
+      })
+    );
+  }
+
+
   deleteIngreso(id) {
     // Get an Observable from the response of the backend
     return this.queryService.executeDeleteQuery('delete', 'ingresos', {}, {

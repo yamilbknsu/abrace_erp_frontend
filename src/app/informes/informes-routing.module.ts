@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { InfContribucionesComponent } from './inf-contribuciones/inf-contribuciones.component';
 import { InfEstadoArriendosComponent } from './inf-estado-arriendos/inf-estado-arriendos.component';
 import { InfEstadoLiquidacionesComponent } from './inf-estado-liquidaciones/inf-estado-liquidaciones.component';
 import { InfEstadoPagosComponent } from './inf-estado-pagos/inf-estado-pagos.component';
@@ -45,6 +46,10 @@ const routes: Routes = [
       {
         path: 'resumenarriendos',
         component: InfEstadoArriendosComponent,
+      },
+      {
+        path: 'contribuciones',
+        component: InfContribucionesComponent,
       },
     ]
   }

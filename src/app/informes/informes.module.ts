@@ -14,9 +14,11 @@ import { InfLiquidacionComponent } from './inf-liquidacion/inf-liquidacion.compo
 import { InfEstadoLiquidacionesComponent } from './inf-estado-liquidaciones/inf-estado-liquidaciones.component';
 import { InfEstadoArriendosComponent } from './inf-estado-arriendos/inf-estado-arriendos.component';
 import { InfEstadoPagosComponent } from './inf-estado-pagos/inf-estado-pagos.component';
+import { InfContribucionesComponent } from './inf-contribuciones/inf-contribuciones.component';
+import { InfCanonComponent } from './inf-canon/inf-canon.component';
 
 @NgModule({
-  declarations: [InformesComponent, InfPropiedadesComponent, InfReajustesComponent, InfPagosComponent, InfLiquidacionComponent, InfEstadoLiquidacionesComponent, InfEstadoArriendosComponent, InfEstadoPagosComponent],
+  declarations: [InformesComponent, InfPropiedadesComponent, InfReajustesComponent, InfPagosComponent, InfLiquidacionComponent, InfEstadoLiquidacionesComponent, InfEstadoArriendosComponent, InfEstadoPagosComponent, InfContribucionesComponent, InfCanonComponent],
   imports: [
     CommonModule,
     InformesRoutingModule,

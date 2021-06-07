@@ -54,6 +54,9 @@ export class PagoArriendoComponent implements OnInit {
   depositadoen: string = '';
   bancoen: string = '';
 
+  saldoanterior = 0;
+  pagado = 0;
+
   observaciones = '';
   nropago = 0;
 
@@ -160,6 +163,9 @@ export class PagoArriendoComponent implements OnInit {
       this.totalDescuentos = 0;
       this.subtotal = 0;
 
+      this.saldoanterior = 0;
+      this.pagado = 0;
+
       this.observaciones = '';
       this.nropago = 0;
       this.datePago = moment();
@@ -183,7 +189,10 @@ export class PagoArriendoComponent implements OnInit {
               }
               
               this.cargos.push({tipo: 'Arriendo', concepto: '', detalle: 'Primer mes de arriendo', valor: data[0]?.contratos[0]?.canoninicial});
-              this.cargos.push({tipo: 'Mes garantía', concepto: '', detalle: '', valor: data[0]?.contratos[0]?.canoninicial});
+
+              if(+data[0]?.contratos[0].mesgarantia){
+                this.cargos.push({tipo: 'Mes garantía', concepto: '', detalle: '', valor: +data[0]?.contratos[0].mesgarantia * +data[0]?.contratos[0]?.canoninicial});
+              }
 
               this.updateTotales();
               this.loadIngresosEgresos();
@@ -212,6 +221,12 @@ export class PagoArriendoComponent implements OnInit {
                 this.subtotal = this.selectedPago.subtotal;
                 this.observaciones = this.selectedPago.observaciones? this.selectedPago.observaciones : '';
                 this.nropago = this.selectedPago.nropago ? this.selectedPago.nropago : 1;
+
+                if(!this.selectedPago.saldoanterior) this.saldoanterior = 0
+                else this.saldoanterior = this.selectedPago.saldoanterior
+
+                if(!this.selectedPago.pagado) this.pagado = this.selectedPago.subtotal
+                else this.pagado = this.selectedPago.pagado
 
                 //this.loadIngresosEgresos();
                 return
@@ -249,6 +264,7 @@ export class PagoArriendoComponent implements OnInit {
               this.updateTotales();
               this.loadReajustes(data);
               this.loadIngresosEgresos();
+              this.loadSaldoAnterior();
 
               const selectedPago = data[0]?.contratos[0]?.pagos[0];
               this.observaciones = '';
@@ -270,6 +286,15 @@ export class PagoArriendoComponent implements OnInit {
 
           this.updateTotales();
         })
+  }
+
+  loadSaldoAnterior(){
+    this.propiedadesService.loadSaldoAnteriorPago(this.selectedPropiedadId)
+        .subscribe(
+          data => {
+            console.log(data)
+            this.saldoanterior = data[0];}
+        )
   }
 
   loadReajustes(data){
@@ -335,7 +360,9 @@ export class PagoArriendoComponent implements OnInit {
       depositadoen: this.depositadoen,
       bancoen: this.bancoen,
       observaciones: this.observaciones,
-      nropago: this.nropago
+      nropago: this.nropago,
+      saldoanterior: this.saldoanterior,
+      pagado: this.pagado
     };
     this.accionesService.writePago(this.selectedPago).subscribe(() => {
       this.emitirInforme(false);

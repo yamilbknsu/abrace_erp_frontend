@@ -47,16 +47,24 @@ export class InfEstadoArriendosComponent implements OnInit {
                                                    fechaend: this.dateEnd.endOf('month').toDate()})
         .subscribe(data => {
           const data_inf = data[0]?.pagos?.length > 0 ?  data[0]?.pagos.map(pago => {
-            return pago.cargos.map(cargo => { cargo.cargo = true; return cargo}).concat(pago.descuentos)
-                      .map((con, idx) => ({periodo: idx == 0 ? this.formatDate(pago.fechaemision) : '',
+            if(pago.pagado == undefined) pago.pagado = pago.subtotal
+            if(pago.saldoanterior == undefined) pago.saldoanterior = 0
+
+            var out = pago.cargos.map(cargo => { cargo.cargo = true; return cargo}).concat(pago.descuentos)
+                      .map((con, idx) => ({periodo: idx == 0 ? this.formatDate(moment(pago.fechaemision), '/', false) : '',
                                            concepto: (con.concepto && con.concepto != '') ? con.concepto : ((con.tipo == 'Arriendo' || con.tipo == 'Mes garantía') ? con.tipo : con.detalle),
                                            cargos: con.cargo ? this.numberWithPoints(con.valor) : '',
                                            descuentos: con.cargo ? '' : this.numberWithPoints(con.valor), saldoliq:'', fechapago:''}))
                     
                       .concat({periodo: '', concepto: 'TOTALES', cargos: this.numberWithPoints(pago.totalCargos), descuentos: this.numberWithPoints(pago.totalDescuentos),
-                                saldoliq: this.numberWithPoints(pago.subtotal), fechapago: this.formatDate(pago.fechapago)})
-                    
-                                .concat({periodo: '', concepto: '', cargos:'', descuentos:'', saldoliq: '', fechapago: ''})
+                                saldoliq: this.numberWithPoints(pago.subtotal), fechapago: ''})
+            if(pago.saldoanterior != 0)
+              out = out.concat({periodo: '', concepto: 'SALDO ANTERIOR', cargos: '', descuentos: '',
+              saldoliq: this.numberWithPoints(pago.saldoanterior), fechapago: ''})             
+            
+            return out.concat({periodo: '', concepto: 'VALOR PAGADO', cargos: '', descuentos: '',
+                          saldoliq: this.numberWithPoints(pago.pagado), fechapago: this.formatDate(pago.fechapago)})
+                      .concat({perioliodo: '', concepto: '', cargos:'', descuentos:'', saldoliq: '', fechapago: ''})
           }).flat() : [];
 
           this.outputFileName = `ResumenArriendos_${selectedPropiedad.uId}_${this.formatDate(this.dateStart, '')}_${this.formatDate(this.dateEnd, '')}.pdf`;
@@ -78,7 +86,7 @@ export class InfEstadoArriendosComponent implements OnInit {
         });    
   }
 
-  formatDate(date, separator='/') {
+  formatDate(date, separator='/', showDay=true) {
     var d = new Date(date),
       month = '' + (d.getMonth() + 1),
       day = '' + d.getDate(),
@@ -89,7 +97,9 @@ export class InfEstadoArriendosComponent implements OnInit {
     if (day.length < 2)
       day = '0' + day;
 
-    return [day, month, year].join(separator);
+    if (showDay)
+      return [day, month, year].join(separator);
+    return [month, year].join(separator);
   }
 
   numberWithPoints(x) {

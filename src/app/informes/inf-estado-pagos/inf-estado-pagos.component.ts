@@ -57,7 +57,6 @@ export class InfEstadoPagosComponent implements OnInit {
     this.accionesService.loadEstadoPagos({periodo: this.date.toDate()})
         .subscribe(data => {
           this.tableData = this.propiedadesService.joinPropiedadData(data).map(prop => {
-            console.log(prop, prop.contratos[0]?.boletas)
             var canon = this.filterBoletas(prop.contratos[0]?.boletas)?.length > 0 ? this.filterBoletas(prop.contratos[0]?.boletas)[0].valorfinal : (prop.contratos[0]?.canonactual ? prop.contratos[0]?.canonactual : '-');
             var pago = prop.contratos[0]?.pagos?.length > 0 ? prop.contratos[0]?.pagos[0] : {};
             var liq = prop.liquidaciones?.length > 0 ? prop.liquidaciones[0] : {}

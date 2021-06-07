@@ -378,6 +378,13 @@ a.undecorated{
     background-color: #48f035;
 }
 
+.green-button.small{
+    line-height: 30px;
+    font-weight: 400;
+    box-shadow: none;
+    border: 1px solid #1FDE0A;
+}
+
 .orange-button{
     background-color: #E6AF19;
     /*border-radius: 10px;*/
