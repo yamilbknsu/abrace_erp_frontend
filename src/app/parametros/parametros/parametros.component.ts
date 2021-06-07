@@ -12,6 +12,7 @@ export class ParametrosComponent implements OnInit {
 
   parametros: Array<object> = [
     {nombre: 'Regiones', path: 'regiones'},
+    {nombre: 'Comunas', path: 'comunas'},
     {nombre: 'Bancos', path: 'bancos'}
   ];
 

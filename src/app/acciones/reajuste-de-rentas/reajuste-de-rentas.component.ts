@@ -113,7 +113,7 @@ export class ReajusteDeRentasComponent implements OnInit {
             var valor_reajuste = Math.round(this.propiedadesService.calcularReajuste(this.periodoReajustar, reajuste_interval, this.ipc) * 1000000) / 1000000
             var valor_final_reajuste = 0;
 
-            if(reajuste_diff == 0){
+            if(reajuste_diff == 0 && element.contrato.moneda == 'CLP'){
               valor_final_reajuste = Math.round(element.contrato.canonactual * (1 + valor_reajuste / 100));
 
               this.reajustesUpload.push({

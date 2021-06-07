@@ -32,7 +32,11 @@
                     </div>
 
                     <p class='section-subtitle'>Comuna</p>
-                    <input type="text" [(ngModel)]='_direccion.comuna' class='medium-margin-bottom'>
+                    <ng-select [items]="comunas$ | async"
+                               bindLabel='name'
+                               bindValue='name'
+                               [(ngModel)]="_direccion.comuna" class='medium-margin-bottom'>
+                    </ng-select>
 
                     <p class='section-subtitle'>Ciudad</p>
                     <input type="text" [(ngModel)]='_direccion.ciudad' class='medium-margin-bottom'>

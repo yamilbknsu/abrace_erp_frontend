@@ -2,7 +2,7 @@
     <div id="top-panel">
         <div id="title-panel">
             <h2><span>Propiedades </span> <span style='color:#848484;'>{{statusText}}</span></h2>
-            <div *ngIf="idEditing=='0'" id="new-propiedad-button" [routerLink]='"./edit"' [queryParams]="{id: 'new'}"><div class="button-icon" [inlineSVG]="'assets/icon/lapiz.svg'"></div> Nueva Propiedad</div>
+            <div *ngIf="idEditing=='0'" id="new-propiedad-button" [routerLink]='"./edit"' [queryParams]="{id: 'new'}" (click)='newPropiedad()'><div class="button-icon" [inlineSVG]="'assets/icon/lapiz.svg'"></div> Nueva Propiedad</div>
         </div>
         <div id="table-titles">
             <p style='flex:1; margin-right: 7px;' (click)='changeSortingProperty("uId")'>Código</p>

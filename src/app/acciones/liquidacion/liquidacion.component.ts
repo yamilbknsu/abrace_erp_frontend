@@ -38,7 +38,9 @@ export class LiquidacionComponent implements OnInit {
 
   tiposCargo: any[] = [{name: 'Instrucción Pago'}, {name: 'Otro'}];
 
-  ultimonro = 1;
+  ultimonro = 0;
+
+  uf = [];
   
   showPdf = false;
   outputFileName: string = 'document.pdf';
@@ -56,6 +58,9 @@ export class LiquidacionComponent implements OnInit {
   ngOnInit(): void {
     this.date = moment().locale('es');
     this.datePago = moment().locale('es')
+
+    this.parametrosService.loadUFFromBackend()
+        .subscribe(uf => {console.log(uf[0].values); this.uf = uf[0].values});
 
     this.route.data.subscribe(data => {
       this.propiedades = data.propiedades;
@@ -94,7 +99,7 @@ export class LiquidacionComponent implements OnInit {
             const mandfecha = new Date(this.selectedPropiedad.mandato.fechaInicio)
             if(mandfecha.getMonth() != this.date.toDate().getMonth() || mandfecha.getFullYear() != this.date.toDate().getFullYear()){
               //this.toastService.error('Debe ingresar el primer mes del mandato! (' + mandfecha.toLocaleString('es', { month: 'long' }) + ' ' + mandfecha.getUTCFullYear() + ')')
-              this.toastService.error('No se ha registrado ninguna liquidacion de este mandato! (Primer mes: ' + mandfecha.toLocaleString('es', { month: 'long' }) + ' ' + mandfecha.getUTCFullYear() + ')')
+              this.toastService.error('No se ha registrado ninguna liquidacion de este mandato! (Primer mes mandato: ' + mandfecha.toLocaleString('es', { month: 'long' }) + ' ' + mandfecha.getUTCFullYear() + ')')
               //this.date = moment(mandfecha);
               return
             }
@@ -188,6 +193,12 @@ export class LiquidacionComponent implements OnInit {
     }
   }
 
+  UFtoCLP(valor, uf){
+    const uf_valor = Number.parseFloat(uf.filter(e => ((new Date(e.code)).getMonth() == this.datePago.month()) &&
+                                     ((new Date(e.code)).getFullYear() == this.datePago.year()))[0]?.attributes[this.datePago.toDate().getDate()-1])
+    return Math.round(valor * uf_valor)
+  }
+
   preparar(){
     this.accionesService.loadPropiedadesPago({propiedad: this.selectedPropiedadId, periodo: this.date.toDate()})
         .subscribe(data => {
@@ -219,15 +230,18 @@ export class LiquidacionComponent implements OnInit {
             if(data[0].contratos?.[0]?.boletas.length > 0){
               const lastBoleta = data[0].contratos?.[0]?.boletas[0];
               if((new Date(lastBoleta.fecha)).getMonth() == this.date.toDate().getMonth() || (new Date(lastBoleta.fecha)).getFullYear() == this.date.toDate().getFullYear()){
-                abonos.push({concepto: 'Arriendo', valor: +lastBoleta.valorfinal})
-                arriendo = +lastBoleta.valorfinal;
+                var valorfinal =  data[0]?.contratos[0]?.moneda == 'CLP' ? +lastBoleta.valorfinal : this.UFtoCLP(+lastBoleta.valorfinal, this.uf)
+                abonos.push({concepto: 'Arriendo', valor: valorfinal})
+                arriendo = valorfinal;
               }else{
-                abonos.push({concepto: 'Arriendo', valor:data[0].contratos[0].canonactual})
-                arriendo = data[0].contratos[0].canonactual;
+                var canonactual =  data[0]?.contratos[0]?.moneda == 'CLP' ? +data[0].contratos[0].canonactual : this.UFtoCLP(+data[0].contratos[0].canonactual, this.uf)
+                abonos.push({concepto: 'Arriendo', valor:canonactual})
+                arriendo = canonactual;
               }
             }else{
-              abonos.push({concepto: 'Arriendo', valor:data[0].contratos[0].canonactual})
-              arriendo = data[0].contratos[0].canonactual;
+              var canonactual =  data[0]?.contratos[0]?.moneda == 'CLP' ? +data[0].contratos[0].canonactual : this.UFtoCLP(+data[0].contratos[0].canonactual, this.uf)
+              abonos.push({concepto: 'Arriendo', valor:canonactual})
+              arriendo = canonactual;
             }
           }else{
             lastPago.cargos.forEach(cargo => {

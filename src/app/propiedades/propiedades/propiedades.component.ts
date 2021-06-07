@@ -132,4 +132,8 @@ export class PropiedadesComponent implements OnInit {
       'blue': estado == 'Libre', 'purple': estado == 'En mora'
     }
   }
+
+  newPropiedad(){
+    this.propiedadService.newPropiedadModel = undefined
+  }
 }

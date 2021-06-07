@@ -21,7 +21,10 @@ export class PropiedadesIdResolverService implements Resolve<Propiedad> {
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Propiedad> {
     const id = route.queryParams['id'];
     
-    if (id == 'new') return of(new Propiedad());
+    if (id == 'new') {
+      if(this.propiedadesService.newPropiedadModel) return of(this.propiedadesService.newPropiedadModel)
+      return of(new Propiedad());
+    }
 
     return this.propiedadesService.getPropiedad(id).pipe(
       take(1),

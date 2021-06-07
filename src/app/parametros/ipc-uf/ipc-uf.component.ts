@@ -63,7 +63,7 @@ export class IpcUfComponent implements OnInit {
     if(!this.ipcData) return;
 
     this.ipcArray = this.ipcArray.map(v => {
-      var number = Number.parseFloat((v + '').replace(',', '.'));
+      var number = Number.parseFloat((v + '').trim().replaceAll(',', '.'));
       return !number ? 0 : number
     });
     
@@ -81,7 +81,7 @@ export class IpcUfComponent implements OnInit {
     if(!this.ufData) return;
 
     this.ufArray = this.ufArray.map(v => {
-      var number = Number.parseFloat((v + '').replace(',', '.'));
+      var number:any = Number.parseFloat((v + '').trim().replaceAll(',', '.'));
       return !number ? 0 : number
     });
 

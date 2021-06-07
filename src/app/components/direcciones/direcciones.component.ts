@@ -25,6 +25,7 @@ export class DireccionesComponent implements OnInit {
   direccionId$: BehaviorSubject<string>;
 
   regiones$;
+  comunas$;
 
   statusText = '';
 
@@ -45,6 +46,11 @@ export class DireccionesComponent implements OnInit {
     this.parametrosService.loadRegionesFromBackend();
     this.regiones$ = this.parametrosService.regiones$.pipe(
       map(regiones => regiones.map((reg) => { return {name: reg}}))
+    );
+
+    this.parametrosService.loadComunasFromBackend();
+    this.comunas$ = this.parametrosService.comunas$.pipe(
+      map(comunas => comunas.map((com) => { return {name: com}}))
     );
 
     this.routerSubscription = this.route.data.subscribe((data: {direccionId: string}) => {

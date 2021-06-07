@@ -16,10 +16,18 @@
             </div>
             <div class="flex-column" id='column-2'  style='flex: 1; margin-left: 15px;'>
                 <div class="flex-row" style='justify-content: space-between;'>
-                    <div class="flex-column">
+                    <div class="flex-column"  *ngIf='contratoSelected.moneda =="CLP"; else ContratoUF'>
                         <p class='section-subtitle-disabled'>Próximo reajuste</p>
                         <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='reajustePlaceholder' [disabled]='true' [mode]='"month"'></dp-date-picker>
                     </div>
+
+                    <ng-template #ContratoUF>
+                        <!--
+                        <div class="flex-column" style='margin-left: 15px;'>
+                            <p class='section-subtitle-disabled'>Próximo reajuste</p>
+                            <input type='text' [disabled]='true' style='width: 120px;' placeholder='Contrato en UF'/>
+                        </div>-->
+                    </ng-template>
                     <div class="flex-column">
                         <p class='section-content'>Estado</p>
                         <ng-select [items]="estadoContrato$ | async" 
@@ -45,7 +53,7 @@
             </div>
         </div>
         <div class="flex-row" style='justify-content: space-between;'>
-            <div class="flex-column" id='column-1' style='flex: 1; margin-right: 15px;'>
+            <div class="flex-column" id='column-1' style='flex: 1; margin-right: 15px; justify-content: space-evenly;'>
                 <div class="flex-column" style='margin-top: 15px;'>
                     <div class="flex-column" style='border-bottom: solid 1px #DDD; padding-bottom: 15px; margin-bottom: 15px;'>
                         <p class="section-subtitle">Arrendatario</p>
@@ -142,7 +150,7 @@
                                     style='margin-right: 5px; width: 135px'>
                         </ng-select>
                     </div>
-                    <div class="flex-column">
+                    <div class="flex-column" *ngIf='contratoSelected.moneda == "CLP"'>
                         <p class="section-content">Reajuste</p>
                         <ng-select [items]="plazos$ | async" 
                                     bindLabel="name" 

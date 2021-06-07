@@ -51,12 +51,13 @@ export class EditPropiedadComponent implements OnInit {
     this.direcciones$ = this.direccionesService.getDirecciones$();
 
     this.route.data.subscribe((data: {propiedad: Propiedad}) => {
-      if (!data.propiedad._id || data.propiedad._id == ''){
-        this.newPropiedad = true;
-      }
-
       this.propiedad = data.propiedad;
       this._propiedad = {...this.propiedad};
+
+      if (!data.propiedad._id || data.propiedad._id == ''){
+        this.newPropiedad = true;
+        this.propiedadService.newPropiedadModel = this._propiedad;
+      }
 
       if(!this._propiedad.caracteristicas) this._propiedad.caracteristicas = {};
       if(!this._propiedad.telefonos) this._propiedad.telefonos = [];

@@ -63,6 +63,8 @@ export class PagoArriendoComponent implements OnInit {
   correspondeArriendo = true;
   cargandoPagos = false;
 
+  uf = [];
+
   showPdf = false;
   outputFileName: string = 'document.pdf';
   @ViewChild('pdfViewer') public pdfViewer;
@@ -74,6 +76,9 @@ export class PagoArriendoComponent implements OnInit {
   ngOnInit(): void {
     this.date = moment().startOf('month').locale('es');
     this.datePago = moment();
+
+    this.parametrosService.loadUFFromBackend()
+        .subscribe(uf => {console.log(uf[0].values); this.uf = uf[0].values});
 
     this.route.data.subscribe(data => {
       this.propiedades = data.propiedades;
@@ -187,11 +192,11 @@ export class PagoArriendoComponent implements OnInit {
                 this.date = moment(contfecha);
                 return
               }
-              
-              this.cargos.push({tipo: 'Arriendo', concepto: '', detalle: 'Primer mes de arriendo', valor: data[0]?.contratos[0]?.canoninicial});
+              var canoninicial =  data[0]?.contratos[0]?.moneda == 'CLP' ? +data[0]?.contratos[0]?.canoninicial : this.UFtoCLP(+data[0]?.contratos[0]?.canoninicial, this.uf)
+              this.cargos.push({tipo: 'Arriendo', concepto: '', detalle: 'Primer mes de arriendo', valor: canoninicial});
 
               if(+data[0]?.contratos[0].mesgarantia){
-                this.cargos.push({tipo: 'Mes garantía', concepto: '', detalle: '', valor: +data[0]?.contratos[0].mesgarantia * +data[0]?.contratos[0]?.canoninicial});
+                this.cargos.push({tipo: 'Mes garantía', concepto: '', detalle: '', valor: +data[0]?.contratos[0].mesgarantia * canoninicial});
               }
 
               this.updateTotales();
@@ -256,9 +261,11 @@ export class PagoArriendoComponent implements OnInit {
 
               // Si llego hasta aqui, hay que preparar el pago
               if(data[0]?.contratos[0]?.boletas.length > 0){
-                this.cargos.push({tipo: 'Arriendo', concepto: '', detalle: '', valor: data[0]?.contratos[0]?.boletas[0]?.valorfinal});
+                var valorboleta =  data[0]?.contratos[0]?.moneda == 'CLP' ? +data[0]?.contratos[0]?.boletas[0]?.valorfinal : this.UFtoCLP(+data[0]?.contratos[0]?.boletas[0]?.valorfinal, this.uf)
+                this.cargos.push({tipo: 'Arriendo', concepto: '', detalle: '', valor: valorboleta});
               }else{
-                this.cargos.push({tipo: 'Arriendo', concepto: '', detalle: '', valor: data[0]?.contratos[0]?.canonactual});
+                var valoractual =  data[0]?.contratos[0]?.moneda == 'CLP' ? +data[0]?.contratos[0]?.canonactual : this.UFtoCLP(+data[0]?.contratos[0]?.canonactual, this.uf)
+                this.cargos.push({tipo: 'Arriendo', concepto: '', detalle: '', valor: valoractual});
               }
 
               this.updateTotales();
@@ -307,6 +314,12 @@ export class PagoArriendoComponent implements OnInit {
         }
       }
     }
+  }
+
+  UFtoCLP(valor, uf){
+    const uf_valor = Number.parseFloat(uf.filter(e => ((new Date(e.code)).getMonth() == this.datePago.month()) &&
+                                     ((new Date(e.code)).getFullYear() == this.datePago.year()))[0]?.attributes[this.datePago.toDate().getDate()-1])
+    return Math.round(valor * uf_valor)
   }
 
   addDescuento(){

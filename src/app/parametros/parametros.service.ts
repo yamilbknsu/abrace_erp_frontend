@@ -15,6 +15,9 @@ export class ParametrosService {
   regiones$: BehaviorSubject<Array<string>> = new BehaviorSubject<Array<string>>([]);
   regionesObject$: BehaviorSubject<Parametro> = new BehaviorSubject<Parametro>(new Parametro());
 
+  comunas$: BehaviorSubject<Array<string>> = new BehaviorSubject<Array<string>>([]);
+  comunasObject$: BehaviorSubject<Parametro> = new BehaviorSubject<Parametro>(new Parametro());
+
   bancos$: BehaviorSubject<Array<string>> = new BehaviorSubject<Array<string>>([]);
   bancosObject$: BehaviorSubject<Parametro> = new BehaviorSubject<Parametro>(new Parametro());
 
@@ -83,6 +86,13 @@ export class ParametrosService {
     this.loadParametroFromBackend("regiones").subscribe(res => {
       this.regionesObject$.next(res[0]);
       this.regiones$.next(res[0].values[0].attributes.sort())
+    });
+  }
+
+  loadComunasFromBackend(){
+    this.loadParametroFromBackend("comunas").subscribe(res => {
+      this.comunasObject$.next(res[0]);
+      this.comunas$.next(res[0].values[0].attributes.sort())
     });
   }
 
@@ -156,6 +166,30 @@ export class ParametrosService {
 
     // Get an Observable from the response of the backend
     return this.queryService.executePostQuery('update', 'parametros', regionesObjectCopy, {concept: 'regiones'}).pipe(
+    
+      // Catch a Forbidden acces error (return to login).
+      catchError(err => {
+        if (err.status == 403){
+          this.toastService.error('No tienes permiso para realizar esta acción.')
+        }else{
+          console.log(err)
+          var message = err.status + ' ';
+          if (err.error)
+             message += (err.error.details ? err.error.details[0].message: err.error);
+          this.toastService.error('Error desconocido. ' + message)
+        
+        }
+        return EMPTY;
+      })
+    )
+  }
+
+  updateComunas$(comunas: Array<string>){//: Observable<any>{
+    var comunasObjectCopy = {... this.comunasObject$.value};
+    comunasObjectCopy.values[0].attributes = comunas;
+
+    // Get an Observable from the response of the backend
+    return this.queryService.executePostQuery('update', 'parametros', comunasObjectCopy, {concept: 'comunas'}).pipe(
     
       // Catch a Forbidden acces error (return to login).
       catchError(err => {

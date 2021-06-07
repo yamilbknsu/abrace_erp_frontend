@@ -9,10 +9,11 @@ import { ParametrosComponent } from './parametros/parametros.component';
 import { RegionesComponent } from './regiones/regiones.component';
 import { BancosComponent } from './bancos/bancos.component';
 import { IpcUfComponent } from './ipc-uf/ipc-uf.component';
+import { ComunasComponent } from './comunas/comunas.component';
 
 
 @NgModule({
-  declarations: [ParametrosComponent, RegionesComponent, BancosComponent, IpcUfComponent],
+  declarations: [ParametrosComponent, RegionesComponent, BancosComponent, IpcUfComponent, ComunasComponent],
   imports: [
     CommonModule,
     ParametrosRoutingModule,

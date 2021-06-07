@@ -72,7 +72,12 @@
 
 <div class="flex-row cargos-descuentos" *ngIf='(selectedContratoId$.value != "" && correspondeArriendo) && !showPdf' style='margin-top: 20px; flex: 1; overflow: hidden;'>
     <div class="flex-column scrolled-section" style='flex: 1; border-right: 1px solid #DDD; margin-right: 10px; padding-right: 15px;'>
-        <p class="section-title">Cargos</p>
+        <div class="flex-row" style='align-items: center;'>
+            <p class="section-title">Cargos</p>
+            <div *ngIf='selectedContrato.moneda=="UF"'>
+                <p class="section-subtitle-disabled" style='margin-left: 5px;'>Expresado en CLP</p>
+            </div>
+        </div>
         <div class='flex-row' *ngFor='let cargo of cargos; index as i;'  style='margin-top: 10px; padding-bottom: 10px; border-bottom: 1px solid #BBB;'>
             
             <div class="flex-column" style='margin-left: 8px;  flex:1;'>
@@ -177,7 +182,6 @@
             <div class='flex-row cargos-descuentos' *ngIf='!selectedPago' style='justify-content: center;'>
                 <p class='section-content'><b>Pagado: </b></p>
                 <input type="text" [(ngModel)]='pagado' style='width: 80px; text-align: right; margin-left: 10px;'>
-
             </div>
 
             <p class='section-content'><b>Saldo final: </b>${{numberWithPoints(saldoanterior + subtotal - pagado)}}</p>

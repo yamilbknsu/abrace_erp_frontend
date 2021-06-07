@@ -26,6 +26,8 @@
             <dp-date-picker [config]='datePickerConfig' [theme]='"dp-material"' [(ngModel)]='fechaUF' [mode]='"month"' (ngModelChange)='fechaUFChange()'></dp-date-picker>
             <div class="green-button" (click)='guardarUF()'>Guardar</div>
         </div>
+        
+        <p class="section-subtitle-disabled">Incluir sin separador de miles (ej: 29639,96)</p>
         <div class="flex-row" style='flex-wrap: wrap; margin-top: 5px;'>
             <div class="flex-row" *ngFor='let dia of dias; index as i' style='align-items: center; margin-bottom: 10px;'>
                 <p class="section-content" style='margin-right: 5px;'>{{padDay(dia)}}</p>

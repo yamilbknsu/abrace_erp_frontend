@@ -16,7 +16,8 @@ import { ToastService } from '../services/toast.service';
 export class PropiedadesService {
 
   propiedades$: BehaviorSubject < Propiedad[] > = new BehaviorSubject < Propiedad[] > ([]);
-  contratos$: BehaviorSubject < Contrato[] > = new BehaviorSubject < Contrato[] > ([]);;
+  contratos$: BehaviorSubject < Contrato[] > = new BehaviorSubject < Contrato[] > ([]);
+  newPropiedadModel = undefined;
 
   constructor(private queryService: QueryService, private router: Router, private toastService: ToastService) {}
 
