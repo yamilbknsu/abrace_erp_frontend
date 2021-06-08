@@ -488,7 +488,7 @@ export class PdfWriterService {
     if(liquidacion.formapago == 'Efectivo')
       doc.text(`Cancelado con ${liquidacion.formapago}`, 50, 180 + nestedTableHeight + tableDelta + 55)
     else
-      doc.text(`Cancelado con ${liquidacion.formapago} Nro ${liquidacion.documento} del bco ${liquidacion.banco}`, 50, 180 + nestedTableHeight + tableDelta + 55)
+      doc.text(`Cancelado con ${liquidacion.formapago} Nro/Cta ${liquidacion.documento} ${liquidacion.tipocuenta?.length > 0 ? '(' + liquidacion.tipocuenta + ')' : ''} del bco ${liquidacion.banco}`, 50, 180 + nestedTableHeight + tableDelta + 55)
     doc.text(`Obs.: ${liquidacion.observaciones ? liquidacion.observaciones : ''}`, 50, 180 + nestedTableHeight + tableDelta + 75);
 
     doc.setFont("Roboto-Bold", "bold");
@@ -620,7 +620,7 @@ export class PdfWriterService {
     if(liquidacion.formapago == 'Efectivo')
       doc.text(`Cancelado con ${liquidacion.formapago}`, 50, startY + 180 + nestedTableHeight + tableDelta + 55)
     else
-      doc.text(`Cancelado con ${liquidacion.formapago} Nro ${liquidacion.documento} del bco ${liquidacion.banco}`, 50, startY +180 + nestedTableHeight + tableDelta + 55)
+    doc.text(`Cancelado con ${liquidacion.formapago} Nro/Cta ${liquidacion.documento} ${liquidacion.tipocuenta?.length > 0 ? '(' + liquidacion.tipocuenta + ')' : ''} del bco ${liquidacion.banco}`, 50, startY +  180 + nestedTableHeight + tableDelta + 55)
     
       doc.text(`Obs.: ${liquidacion.observaciones ? liquidacion.observaciones : ''}`, 50, startY + 180 + nestedTableHeight + tableDelta + 75);
       

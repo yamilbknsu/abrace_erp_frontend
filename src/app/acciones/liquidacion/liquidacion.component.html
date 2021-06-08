@@ -41,13 +41,19 @@
                 </ng-select>
             </div>
             <div class="flex-column" style='margin-left: 10px; flex:1;'>
-                <p class="section-content">Banco</p>
-                <ng-select [items]="bancos$ | async" bindLabel="name" bindValue="name" style='width: 140px; margin-right: 10px;' [(ngModel)]='selectedLiquidacion.banco' [disabled]='liquidacionExists'>
+                
+                <p class="section-content">Tipo Cuenta</p>
+                <ng-select [items]="tiposCuenta" bindLabel="name" bindValue="name" style='width: 170px; height: 25px;' [(ngModel)]='selectedLiquidacion.tipocuenta' [disabled]='liquidacionExists'>
                 </ng-select>
             </div>
         </div>
         <div class="flex-row" style='margin-top: 10px'>
             <div class="flex-column">
+                <p class="section-content">Banco</p>
+                <ng-select [items]="bancos$ | async" bindLabel="name" bindValue="name" style='width: 170px; margin-right: 10px;' [(ngModel)]='selectedLiquidacion.banco' [disabled]='liquidacionExists'>
+                </ng-select>
+            </div>
+            <div class="flex-column" style='margin-left: 10px; flex:1;'>
                 <p class="section-content">Cta. / Documento</p>
                 <input type="text" style='width: 145px; text-align: right; padding-right: 10px;' [(ngModel)]='selectedLiquidacion.documento' [disabled]='liquidacionExists'>
             </div>
@@ -101,19 +107,23 @@
             </div>
         </div>
         <p class="section-title">Cargos</p>
+        <div class="flex-row" *ngIf='selectedLiquidacion.cargos.length > 0'>
+            <p class="section-content">Concepto</p>            
+        </div>
         <div class='flex-row' *ngFor='let cargo of selectedLiquidacion.cargos; index as i;' style='border-bottom: 1px solid #CCC; margin-bottom: 5px; padding-bottom: 5px;'>
             <div class="flex-column">
+                <input type="text" [(ngModel)]='cargo.concepto' style='width: 200px;' *ngIf='cargo.tipo != "Instrucción Pago"' [disabled]='liquidacionExists'>
                 <!--<p class="section-content">Tipo</p>-->
-                <ng-select [items]="tiposCargo" bindLabel="name" [(ngModel)]='cargo.tipo' bindValue="name" style='width: 215px' [clearable]='false' (ngModelChange)='changeTipo(i)' [disabled]='liquidacionExists'></ng-select>
+                <!--<ng-select [items]="tiposCargo" bindLabel="name" [(ngModel)]='cargo.tipo' bindValue="name" style='width: 215px' [clearable]='false' (ngModelChange)='changeTipo(i)' [disabled]='liquidacionExists'></ng-select>-->
                 <!--<p class="section-content" style='margin-top: 2px;' *ngIf='cargo.tipo == "Instrucción Pago"'>Detalle</p>-->
-                <input type="text" *ngIf='cargo.tipo == "Instrucción Pago"' [(ngModel)]='cargo.detalle' style='width: 200px; margin-top: 5px;' (ngModelChange)="updateTotales()" [disabled]='liquidacionExists' placeholder="Detalle">
+                <!--<input type="text" *ngIf='cargo.tipo == "Instrucción Pago"' [(ngModel)]='cargo.detalle' style='width: 200px; margin-top: 5px;' (ngModelChange)="updateTotales()" [disabled]='liquidacionExists' placeholder="Detalle">-->
             </div>
             <div class="flex-column" style='margin-left: 10px;'>
                 <!--<p class="section-content">Concepto</p>-->
-                <input type="text" [(ngModel)]='cargo.concepto' style='width: 200px;' *ngIf='cargo.tipo != "Instrucción Pago"' [disabled]='liquidacionExists'>
+                <!--<input type="text" [(ngModel)]='cargo.concepto' style='width: 200px;' *ngIf='cargo.tipo != "Instrucción Pago"' [disabled]='liquidacionExists'>-->
                 <ng-select [items]="instrucciones"  *ngIf='cargo.tipo == "Instrucción Pago"' bindLabel="nombre" [(ngModel)]='cargo.concepto' bindValue="nombre" style='width: 215px' [clearable]='false' (ngModelChange)='changeConcepto(i)'></ng-select>
                 <!--<p class="section-content" style='margin-top: 2px;'>Valor</p>-->
-                <input type="text" [(ngModel)]='cargo.valor' style='width: 192px; text-align: right; padding-right: 10px; margin-top: 5px; border: 1px solid #333' (ngModelChange)="updateTotales()" [disabled]='liquidacionExists'>
+                <input type="text" [(ngModel)]='cargo.valor' style='width: 192px; text-align: right; padding-right: 10px; border: 1px solid #333' (ngModelChange)="updateTotales()" [disabled]='liquidacionExists'>
             </div>
         </div> 
         <div class="flex-row" style='justify-content: center; margin-top: 5px;' *ngIf='!liquidacionExists && selectedLiquidacion.fecha'>

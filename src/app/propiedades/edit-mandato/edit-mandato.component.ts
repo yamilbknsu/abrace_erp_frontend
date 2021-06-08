@@ -30,6 +30,7 @@ export class EditMandatoComponent implements OnInit {
   formasPago$;
   funcionComision$;
   bancos$;
+  tiposCuenta = [{name:'Corriente'}, {name:'Vista'}, {name:'RUT'}];
 
   datePickerConfig = {
     locale: 'es'
@@ -74,6 +75,8 @@ export class EditMandatoComponent implements OnInit {
         
         this.mandatoSelected.comisiones.admimpuestoincluido = this.mandatoSelected.comisiones.admimpuestoincluido === 'true' || this.mandatoSelected.comisiones.admimpuestoincluido === true;
         this.mandatoSelected.comisiones.contratoimpuestoincluido = this.mandatoSelected.comisiones.contratoimpuestoincluido === 'true' || this.mandatoSelected.comisiones.contratoimpuestoincluido === true;
+
+        if(!this.mandatoSelected.liquidacion.tipocuenta) this.mandatoSelected.liquidacion.tipocuenta = '';
 
         if(!this.mandatoSelected.contribuciones) this.mandatoSelected.contribuciones = false;
         if(!this.mandatoSelected.contribucionesdesc) this.mandatoSelected.contribucionesdesc = '';

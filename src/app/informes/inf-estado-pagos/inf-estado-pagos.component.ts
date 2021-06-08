@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import * as moment from 'moment';
 import { AccionesService } from 'src/app/acciones/acciones.service';
+import { ParametrosService } from 'src/app/parametros/parametros.service';
 import { PropiedadesService } from 'src/app/propiedades/propiedades.service';
 import { PdfWriterService } from 'src/app/services/pdf-writer.service';
 
@@ -17,6 +18,7 @@ export class InfEstadoPagosComponent implements OnInit {
   showPdf = false;
   tableheaders = [];
   tableData = [];
+  uf = [];
 
   sortingProperty = 'codigo';
   ascending = true;
@@ -28,7 +30,7 @@ export class InfEstadoPagosComponent implements OnInit {
   @ViewChild('pdfViewer') public pdfViewer;
 
   constructor(private accionesService: AccionesService, private propiedadesService: PropiedadesService,
-              private pdfWriterService: PdfWriterService) { }
+              private pdfWriterService: PdfWriterService, private parametrosService: ParametrosService) { }
 
   ngOnInit(): void {
     this.date = moment().locale('es').startOf('month');
@@ -42,6 +44,8 @@ export class InfEstadoPagosComponent implements OnInit {
                          {key: 'liqcargos', content: 'CARGOS'},
                          {key: 'honorarios', content: 'HONOR.'},
                          {key: 'liq', content: 'LIQ.'}];
+    this.parametrosService.loadUFFromBackend()
+        .subscribe(uf => {console.log(uf[0].values); this.uf = uf[0].values});
   }
 
   changeFecha(){
@@ -59,12 +63,18 @@ export class InfEstadoPagosComponent implements OnInit {
           this.tableData = this.propiedadesService.joinPropiedadData(data).map(prop => {
             var canon = this.filterBoletas(prop.contratos[0]?.boletas)?.length > 0 ? this.filterBoletas(prop.contratos[0]?.boletas)[0].valorfinal : (prop.contratos[0]?.canonactual ? prop.contratos[0]?.canonactual : '-');
             var pago = prop.contratos[0]?.pagos?.length > 0 ? prop.contratos[0]?.pagos[0] : {};
+            if(!pago.pagado) pago.pagado = pago.subtotal
+            console.log(prop.contratos[0])
+            if(prop.contratos[0]?.moneda == 'UF'){
+              canon = this.UFtoCLP(canon, this.uf, moment(pago.fechapago))
+            }
+
             var liq = prop.liquidaciones?.length > 0 ? prop.liquidaciones[0] : {}
             var honorarios = liq.honorarios ? liq.honorarios.valor + liq.honorarios.impuestos : 0;
             return {codigo: prop.uId, direccion: prop.direccionStr, canon: this.numberWithPoints(canon),
                     arrcargos: pago.totalCargos ? this.numberWithPoints(this.eliminarCanonArriendo(pago, pago.totalCargos)) : '',
                     arrdsct: pago.totalDescuentos ? this.numberWithPoints(pago.totalDescuentos) : '',
-                    pagado: pago.subtotal ? this.numberWithPoints(pago.subtotal) : '',
+                    pagado: pago.subtotal ? this.numberWithPoints(pago.pagado) : '',
                     abonos: liq.totalAbonos ? this.numberWithPoints(this.eliminarCanonLiq(liq, liq.totalAbonos)):'',
                     liqcargos: liq.totalCargos ? this.numberWithPoints(liq.totalCargos - honorarios): '',
                     honorarios: this.numberWithPoints(honorarios),
@@ -178,6 +188,12 @@ export class InfEstadoPagosComponent implements OnInit {
     var sum = 0;
     liq.abonos?.forEach(c => {if(c.concepto == 'Arriendo' || c.concepto.includes('Reajuste (')) sum += +c.valor})
     return total - sum;
+  }
+
+  UFtoCLP(valor, uf, date){
+    const uf_valor = Number.parseFloat(uf.filter(e => ((new Date(e.code)).getMonth() == date.month()) &&
+                                     ((new Date(e.code)).getFullYear() == date.year()))[0]?.attributes[date.toDate().getDate()-1])
+    return Math.round(valor * uf_valor)
   }
 
   sortData(key){

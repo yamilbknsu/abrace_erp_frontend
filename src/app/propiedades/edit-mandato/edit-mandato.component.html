@@ -119,9 +119,21 @@
                             <!--<input type="text" [(ngModel)]='mandatoSelected.liquidacion.banco' style='max-width:140px;  height: 32px;'>-->
                         </div>             
                     </div>
-                    <div class="flex-row" style='height: 35px; align-items: center; margin-top: 8px; justify-content: space-between;'>
-                        <p class="section-subtitle-small" style='margin-top: 5px;'>Efectuar pago a </p>
-                        <input type="text" [(ngModel)]='mandatoSelected.liquidacion.pagoa' style='max-width:440px;  height: 32px;'>
+                    <div class="flex-row" style='height: 35px; align-items: center; margin-top: 10px; justify-content: space-between;'>
+                        <div class="flex-column">
+                            <p class="section-subtitle-small" style='margin-top: 5px;'>Tipo Cuenta </p>
+                            <ng-select [items]="tiposCuenta" 
+                                    bindLabel="name" 
+                                    bindValue="name"
+                                    [(ngModel)]="mandatoSelected.liquidacion.tipocuenta"
+                                    [clearable]='false'
+                                    style='height: 25px; width:140px;'>
+                            </ng-select>
+                        </div>
+                        <div class="flex-column">
+                            <p class="section-subtitle-small" style='margin-top: 5px;'>Efectuar pago a </p>
+                            <input type="text" [(ngModel)]='mandatoSelected.liquidacion.pagoa' style='max-width:440px;  height: 25px; margin-right: 5px;'>                            
+                        </div>
                     </div>
                 </div>
     

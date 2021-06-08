@@ -33,6 +33,8 @@ export class LiquidacionComponent implements OnInit {
   formaspago: any[] = [{name: 'Transferencia'}, {name: 'Cheque'}, {name: 'Efectivo'}, {name: 'Depósito'}];
   tiposimpuestos: any[] = [{name: 'Porcentual'}, {name: 'Absoluto'}];
   bancos$;
+  
+  tiposCuenta = [{name:'Corriente'}, {name:'Vista'}, {name:'RUT'}];
 
   cargandoLiquidacion = false;
 
@@ -323,6 +325,7 @@ export class LiquidacionComponent implements OnInit {
             formapago: this.selectedPropiedad.mandato.liquidacion.formapago,
             documento:this.selectedPropiedad.mandato.liquidacion.cuenta,
             banco: this.selectedPropiedad.mandato.liquidacion.banco,
+            tipocuenta: this.selectedPropiedad.mandato.liquidacion.tipocuenta,
             userid: this.selectedPropiedad.userid,
             propiedad: this.selectedPropiedadId,
             nroliquidacion: this.ultimonro + 1,
