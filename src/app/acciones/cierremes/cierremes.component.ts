@@ -177,7 +177,7 @@ export class CierremesComponent implements OnInit {
               else if(element.contrato.tiempoarriendo == 'Semestral') arriendo_interval = 6;
               else if(element.contrato.tiempoarriendo == 'Anual') arriendo_interval = 12;
 
-              if(arriendo_diff >= arriendo_interval){
+              if(arriendo_diff >= arriendo_interval && element.contrato.moneda == 'CLP'){
                 this.boletasUpload.push({
                   contrato: element.contrato._id,
                   userid: element.contrato.userid,

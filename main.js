@@ -24,19 +24,19 @@ function createWindow () {
   });
 
   // Load the Angular html
-  //mainWindow.loadURL(
-  //  url.format({
-  //    pathname: path.join(__dirname, '/dist/index.html'),
-  //    protocol: "file:",
-  //    slashes: true
-  //  })
-  //);
- mainWindow.loadURL('http://localhost:4200');
+  mainWindow.loadURL(
+    url.format({
+      pathname: path.join(__dirname, '/dist/index.html'),
+      protocol: "file:",
+      slashes: true
+    })
+  );
+  //mainWindow.loadURL('http://localhost:4200');
 
   // Open the DevTools.
   //mainWindow.webContents.openDevTools()
 
-  //mainWindow.setMenu(null);
+  mainWindow.setMenu(null);
 
   mainWindow.on('closed', function () {
     mainWindow = null

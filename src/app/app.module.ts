@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -16,6 +16,8 @@ import { TopBarComponent } from './components/top-bar/top-bar.component';
 import { GUIModule } from './gui/gui.module';
 import { DireccionesComponent } from './components/direcciones/direcciones.component';
 import { direccionSearchPipe } from './components/direcciones/direccion-search-filter.service';
+import { GlobalErrorHandler } from './services/global-error-handler.service';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 
 @NgModule({
@@ -43,7 +45,12 @@ import { direccionSearchPipe } from './components/direcciones/direccion-search-f
       provide: HTTP_INTERCEPTORS,
       useClass: AuthTokenIntercerptorService,
       multi: true
+    },
+    {
+      provide: LocationStrategy,
+      useClass: HashLocationStrategy
     }
+    //{provide: ErrorHandler, useClass: GlobalErrorHandler}
   ],
   bootstrap: [AppComponent]
 })

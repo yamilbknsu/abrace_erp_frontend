@@ -20,7 +20,7 @@ export class VerticalNavbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.options = [
-      {displayName: 'Propiedades', svgDir: 'assets/icon/casa.svg', route: './propiedades'},
+      {displayName: 'Propiedades', svgDir: './assets/icon/casa.svg', route: './propiedades'},
       {displayName: 'Mandantes y Arrendatarios', svgDir: 'assets/icon/carpeta.svg', route: './personas'},
       {displayName: 'Direcciones', svgDir: 'assets/icon/map.svg', route: './direccion'},
       {displayName: 'Acciones', svgDir: 'assets/icon/mediation.svg', route: './acciones'},
