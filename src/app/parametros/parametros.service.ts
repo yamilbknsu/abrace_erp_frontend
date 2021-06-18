@@ -85,7 +85,10 @@ export class ParametrosService {
   loadRegionesFromBackend(){
     this.loadParametroFromBackend("regiones").subscribe(res => {
       this.regionesObject$.next(res[0]);
-      this.regiones$.next(res[0].values[0].attributes.sort())
+      this.regiones$.next(res[0].values[0].attributes
+                                .map(value => ({name:value, num: this.romanToNum(value.split(' ')[0])}))
+                                .sort((a,b) => a.num-b.num)
+                                .map(value => value.name))
     });
   }
 
@@ -233,4 +236,16 @@ export class ParametrosService {
   }
 
 
+  
+  romanToNum(roman) {
+    if (roman === "" || roman === 'RM')           return 0;
+    if (roman.startsWith("L"))  return 50 + this.romanToNum(roman.substr(1));
+    if (roman.startsWith("XL")) return 40 + this.romanToNum(roman.substr(2));
+    if (roman.startsWith("X"))  return 10 + this.romanToNum(roman.substr(1));
+    if (roman.startsWith("IX")) return 9  + this.romanToNum(roman.substr(2));
+    if (roman.startsWith("V"))  return 5  + this.romanToNum(roman.substr(1));
+    if (roman.startsWith("IV")) return 4  + this.romanToNum(roman.substr(2));
+    if (roman.startsWith("I"))  return 1  + this.romanToNum(roman.substr(1));
+    return 0;
+  }
 }

@@ -21,7 +21,8 @@ export class EditPropiedadComponent implements OnInit {
   propiedad: Propiedad;
   _propiedad: Propiedad;
 
-  personas$: BehaviorSubject<Persona[]>;
+  mandantes$: BehaviorSubject<Persona[]> = new BehaviorSubject<Persona[]>([]);
+  arrendatarios$: BehaviorSubject<Persona[]>;
   direcciones$: BehaviorSubject<Direccion[]>;
 
   //mandanteId: string;
@@ -45,7 +46,14 @@ export class EditPropiedadComponent implements OnInit {
 
   ngOnInit(): void {
     this.personasService.loadPersonasFromBackend();
-    this.personas$ = this.personasService.getPersonas();
+    this.personasService.getPersonas().pipe(
+      map(personas => personas.filter(p => p.ismandante == true))
+      ).subscribe(personas => this.mandantes$.next(personas));
+    
+    //this.personasService.getPersonas().pipe(
+    //  map(personas => personas.filter(p => p.ismandante == false))
+    //  ).subscribe(personas => this.arrendatarios$.next(personas));
+    //this.mandantes$ = this.personasService.getPersonas();
 
     this.direccionesService.loadDireccionesFromBackend();
     this.direcciones$ = this.direccionesService.getDirecciones$();
@@ -76,7 +84,7 @@ export class EditPropiedadComponent implements OnInit {
       this.direccionId$ = new BehaviorSubject<string>(this._propiedad.direccion);
     });
 
-    combineLatest(this.mandanteId$, this.personas$).pipe(
+    combineLatest(this.mandanteId$, this.mandantes$).pipe(
       map(([mandanteId, personas]) => personas.filter(per => per._id == mandanteId))
     ).subscribe(x => {
       if (x[0] != undefined){
@@ -86,7 +94,7 @@ export class EditPropiedadComponent implements OnInit {
       }
     });
 
-    combineLatest(this.administradorId$, this.personas$).pipe(
+    combineLatest(this.administradorId$, this.mandantes$).pipe(
       map(([administradorId, personas]) => personas.filter(per => per._id == administradorId))
     ).subscribe(x => {
       if (x[0] != undefined){
@@ -130,12 +138,11 @@ export class EditPropiedadComponent implements OnInit {
   }
 
   print(){
-    console.log(this._propiedad)
   }
 
   onEliminarClicked(){
     this.toastService.confirmation('Vas a eliminar propiedad', (event, response) => {
-      if (response == 0) {
+      if (response == 1) {
         this.propiedadService.deletePropiedad$(this._propiedad._id).subscribe(() => {
           this.propiedadService.loadPropiedadesFromBackend();
           this.onBackClicked();

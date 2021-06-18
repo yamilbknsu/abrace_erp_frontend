@@ -117,7 +117,7 @@ export class PropiedadesComponent implements OnInit {
   deletePropiedad(id: number) {
     this.indexSelected = -1;
     this.toastService.confirmation('Vas a eliminar propiedad', (event, response) => {
-      if (response == 0) {
+      if (response == 1) {
         this.propiedadService.deletePropiedad$(id).subscribe(() => {
           window.location.reload();
           this.toastService.success('Operación realizada con éxito')

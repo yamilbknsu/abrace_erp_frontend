@@ -1,0 +1,30 @@
+:host{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#wrapper{
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 1;
+}
+
+#top-panel{
+    display: flex;
+    flex-direction: column;
+
+    background-color: #EFF5F7;
+    padding-left: 40px;
+    padding-right: 45px;
+    border-bottom: 1px rgba(16, 67, 93, .1) solid;
+}
+
+#title-panel{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}

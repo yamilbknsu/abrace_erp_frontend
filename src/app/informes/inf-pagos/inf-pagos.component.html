@@ -27,7 +27,7 @@
             
                 <div class="flex-column" style='justify-content: flex-end; margin-left: 20px;'>
                     <div *ngIf='selectedContratoId$.value != ""' style='margin-top: 10px;'>
-                        <p class="section-content">Pago</p>
+                        <p class="section-content">Recibo</p>
                         <ng-select [items]="selectedContrato.pagos" bindLabel="formatedFecha" bindValue="_id" [(ngModel)]='selectedPagoId'
                                (ngModelChange)='changePago()' style='width: 210px'>
                             <ng-template class='flex-column' ng-option-tmp let-item="item">
@@ -47,4 +47,4 @@
 </div>
 
 
-<ng2-pdfjs-viewer style='flex:1; margin-top: 10px;' #pdfViewer></ng2-pdfjs-viewer>
+<ng2-pdfjs-viewer locale='es-ES' [openFile]='false' [viewBookmark]='false' style='flex:1; margin-top: 10px;' #pdfViewer></ng2-pdfjs-viewer>

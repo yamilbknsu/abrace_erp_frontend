@@ -149,6 +149,8 @@ export class PropiedadesService {
       if (prop.lastcontrato && Object.keys(prop.lastcontrato).length !== 0 &&
         (prop.lastcontrato.fechatermino == undefined || moment(prop.lastcontrato.fechatermino).toDate() > new Date())) {
         prop.arrendatario = prop.lastcontrato.arrendatarioData.nombre
+        prop.arrendatario_rut = prop.lastcontrato.arrendatarioData.rut
+        prop.arrendatario_dv = prop.lastcontrato.arrendatarioData.dv
         prop.estados = ['Arrendada'];
       } else {
         prop.arrendatario = '-';

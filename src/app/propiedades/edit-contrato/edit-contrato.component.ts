@@ -27,7 +27,7 @@ export class EditContratoComponent implements OnInit, OnDestroy {
 
   propiedad$: BehaviorSubject<Propiedad> = new BehaviorSubject<Propiedad>(new Propiedad());
 
-  personas$: BehaviorSubject<Persona[]> = new BehaviorSubject<Persona[]>([]);
+  arrendatarios$: BehaviorSubject<Persona[]> = new BehaviorSubject<Persona[]>([]);
   arrendatarioData = {};
   arrendatarioId$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   avalData = {};
@@ -81,7 +81,9 @@ export class EditContratoComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.personas$ = this.personasService.personas$;
+    this.personasService.getPersonas().pipe(
+      map(personas => personas.filter(p => p.ismandante == false))
+      ).subscribe(personas => this.arrendatarios$.next(personas));
     this.personasService.loadPersonasFromBackend();
 
     this.inicioPlaceholder = moment();
@@ -175,7 +177,7 @@ export class EditContratoComponent implements OnInit, OnDestroy {
         }
       });
 
-    combineLatest(this.arrendatarioId$, this.personas$).pipe(
+    combineLatest(this.arrendatarioId$, this.arrendatarios$).pipe(
       map(([arrendatarioId, personas]) => personas.filter(per => per._id == arrendatarioId))
     ).subscribe(x => {
       if (x[0] != undefined) {
@@ -185,7 +187,7 @@ export class EditContratoComponent implements OnInit, OnDestroy {
       }
     });
 
-    combineLatest(this.avalId$, this.personas$).pipe(
+    combineLatest(this.avalId$, this.arrendatarios$).pipe(
       map(([avalId, personas]) => personas.filter(per => per._id == avalId))
     ).subscribe(x => {
       if (x[0] != undefined) {
@@ -250,7 +252,7 @@ export class EditContratoComponent implements OnInit, OnDestroy {
   deleteContrato(id) {
     console.log(id)
     this.toastService.confirmation('¿Deseas eliminar este contrato?', (event, response) => {
-      if (response == 0) {
+      if (response == 1) {
         this.propiedadesService.deleteContrato(id).subscribe(() => {
           this.propiedadesService.deleteBoletas(id)
             .subscribe(() => {
@@ -339,7 +341,7 @@ export class EditContratoComponent implements OnInit, OnDestroy {
     else {
       // Calcular primer reajuste
       this.toastService.confirmation('Se va a cerrar el contrato anterior y crear uno nuevo, ¿Deseas continuar?', (event, response) => {
-        if (response == 0) {
+        if (response == 1) {
           this.contratoSelected.canonactual = this.contratoSelected.canoninicial;
           switch (this.contratoSelected.tiemporeajuste) {
             case 'Anual':
@@ -437,7 +439,7 @@ export class EditContratoComponent implements OnInit, OnDestroy {
 
   terminarContrato() {
     this.toastService.confirmation('Se va a marcar el contrato como cerrado, ¿Deseas continuar?', (event, response) => {
-      if (response == 0) {
+      if (response == 1) {
         this.propiedadesService.closeContrato(this.contratoSelected._id, moment().toDate())
           .subscribe(() => {
             this.toastService.success('Operación realizada con éxito');

@@ -19,6 +19,7 @@ import { personaSearchPipe } from './persona-search-filter.pipe';
     InlineSVGModule,
     GUIModule,
     FormsModule
-  ]
+  ],
+  exports: [PersonasComponent]
 })
 export class PersonasModule { }

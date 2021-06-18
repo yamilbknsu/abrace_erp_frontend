@@ -27,6 +27,9 @@ export class UsersService {
 
     // Setting visible values
     localStorage.setItem('logged_as', authResult.displayname);
+    localStorage.setItem('permissions', authResult.permissions);
+    localStorage.setItem('inflinea1', authResult.inflinea1);
+    localStorage.setItem('inflinea2', authResult.inflinea2);
   }
   
   public clearSession(){
@@ -49,6 +52,14 @@ export class UsersService {
 
   public getDisplayName(){
     return localStorage.getItem('logged_as');
+  }
+
+  public getPermissions(){
+    return localStorage.getItem('permissions');
+  }
+
+  public getLineasInf(){
+    return [localStorage.getItem('inflinea1'), localStorage.getItem('inflinea2')];
   }
 
   isLoggedOut() {

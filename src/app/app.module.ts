@@ -18,6 +18,8 @@ import { DireccionesComponent } from './components/direcciones/direcciones.compo
 import { direccionSearchPipe } from './components/direcciones/direccion-search-filter.service';
 import { GlobalErrorHandler } from './services/global-error-handler.service';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { EditSelfUserComponent } from './components/edit-self-user/edit-self-user.component';
+import { UsuariosModule } from './usuarios/usuarios.module';
 
 
 @NgModule({
@@ -29,7 +31,8 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
     VerticalNavbarComponent,
     TopBarComponent,
     DireccionesComponent,
-    direccionSearchPipe
+    direccionSearchPipe,
+    EditSelfUserComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +41,8 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
     FormsModule,
     BrowserAnimationsModule,
     InlineSVGModule,
-    GUIModule
+    GUIModule,
+    UsuariosModule
   ],
   providers: [
     {

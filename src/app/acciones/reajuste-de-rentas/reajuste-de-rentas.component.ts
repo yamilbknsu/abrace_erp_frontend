@@ -40,7 +40,7 @@ export class ReajusteDeRentasComponent implements OnInit {
     this.periodoReajustar = moment().locale('es').startOf('month');
 
     this.parametrosService.loadIPCFromBackend()
-        .subscribe(ipc => {console.log(ipc); this.ipc = ipc[0].values});
+        .subscribe(ipc => {if(ipc[0].values.length == 0) this.toastService.error('No hay valores de IPC cargados!'); this.ipc = ipc[0].values});
   }
 
   changePeriodo(){
@@ -59,7 +59,7 @@ export class ReajusteDeRentasComponent implements OnInit {
 
       this.accionesService.loadReajusteRentas({fecha: this.periodoReajustar.toDate()})
           .subscribe(data => {
-            //console.log(data);
+            console.log(data);
             //console.log(moment(data[0].fecha).startOf('month').diff([2021, 1, 1], 'months'))
             this.cargandoReajustes = false;
 

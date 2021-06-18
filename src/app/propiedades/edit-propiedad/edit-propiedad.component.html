@@ -82,7 +82,7 @@
                     <p class='clickable-text' *ngIf='_propiedad.mandante == ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: 'new'}">Nueva entidad</p>
                 </div>
                 
-                <ng-select [items]="personas$ | async" 
+                <ng-select [items]="mandantes$ | async" 
                         bindLabel="nombre" 
                         bindValue="_id"
                         [(ngModel)]="_propiedad.mandante"
@@ -120,7 +120,7 @@
                     <p class='clickable-text' *ngIf='_propiedad.administrador == ""' [routerLink]='"/main-view/personas/edit"' [queryParams]="{id: 'new'}">Nueva entidad</p>
                 </div>
     
-                <ng-select [items]="personas$ | async" 
+                <ng-select [items]="mandantes$ | async" 
                         bindLabel="nombre" 
                         bindValue="_id"
                         [(ngModel)]="_propiedad.administrador"

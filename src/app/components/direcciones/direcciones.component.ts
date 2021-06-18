@@ -116,7 +116,7 @@ export class DireccionesComponent implements OnInit {
   onDeleteClicked(){
     if(this.direccionId$.value != 'new' && this.direccionId$.value != ''){
       this.toastService.confirmation('Vas a eliminar la dirección', (event, response) => {
-        if(response == 0){
+        if(response == 1){
           this.direccionesService.deleteDireccion$(this.direccionId$.value).subscribe(()=>{
             window.location.reload();
             this.toastService.success('Operación realizada con éxito')

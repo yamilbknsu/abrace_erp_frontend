@@ -1,0 +1,20 @@
+<div id="wrapper">
+    <div id="top-panel">
+        <div id="title-panel">
+            <h2><span>Usuarios </span></h2>
+            <div id="new-usuario-button" (click)='newUsuario()'><div class="button-icon" [inlineSVG]="'assets/icon/lapiz.svg'"></div> Nuevo Usuario</div>
+        </div>
+    </div>
+    <div class="flex-row" style='flex: 1; overflow: hidden;'>
+        <div id="usuarios-list" class='scrolled-section'>
+            <div class='usuarios-item' *ngFor="let usuario of usuarios | async; index as i" (click)='selectUser(usuario._id)'>
+                {{ usuario.displayname }}
+            </div>
+        </div>
+        <div *ngIf='noSelected' id='values-placeholder'>
+            <p>Haz click en un usuario para editar</p>
+        </div>
+        <!--<router-outlet></router-outlet>-->
+        <app-edit-usuario *ngIf='!noSelected' [_usuario]='_usuario' [nuevo]='new'></app-edit-usuario>
+    </div>
+</div>

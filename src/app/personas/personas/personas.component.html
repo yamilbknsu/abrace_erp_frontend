@@ -1,8 +1,13 @@
 <div id="wrapper" >
     <div id="top-panel">
         <div id="title-panel">
-            <h2><span>Mandantes y Arrendatarios </span> <span style='color:#848484;'>{{statusText}}</span></h2>
-            <div *ngIf='statusText == ""' id="new-propiedad-button" [routerLink]='"./edit"' [queryParams]="{id: 'new'}"><div class="button-icon" [inlineSVG]="'assets/icon/lapiz.svg'"></div> Nueva Entidad</div>
+            <div *ngIf='isArrendatarios'>
+                <h2><span>Arrendatarios y Aval </span> <span style='color:#848484;'>{{statusText}}</span></h2>
+            </div>
+            <div *ngIf='!isArrendatarios'>
+                <h2><span>Mandantes </span> <span style='color:#848484;'>{{statusText}}</span></h2>
+            </div>
+            <div *ngIf='statusText == ""' id="new-propiedad-button" [routerLink]='"./edit"' [queryParams]="{id: 'new', ismandante: !isArrendatarios}"><div class="button-icon" [inlineSVG]="'assets/icon/lapiz.svg'"></div> Nueva Entidad</div>
         </div>
     </div>
     <div style="position: relative; flex: 1; display: flex; flex-direction: row; overflow: hidden;">
@@ -13,7 +18,7 @@
                 <div class="flex-column content-column">
                     <div class="flex-row space-between" style='align-items: center;'>
                         <p class='card-title'>{{persona.nombre}}</p>
-                        <div [routerLink]='"./edit"' [queryParams]="{id: persona._id}" style='width: 20px; height: 20px; cursor: pointer;' [inlineSVG]="'assets/icon/lapiz_color.svg'"></div>
+                        <div [routerLink]='"./edit"' [queryParams]="{id: persona._id, ismandante: !isArrendatarios}" style='width: 20px; height: 20px; cursor: pointer;' [inlineSVG]="'assets/icon/lapiz_color.svg'"></div>
                     </div>
                     <p class='card-rut'>{{persona.rut}}-{{persona.dv}}</p>
                     <div style='margin-top: 8px;'>

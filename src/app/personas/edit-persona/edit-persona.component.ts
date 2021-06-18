@@ -51,6 +51,7 @@ export class EditPersonaComponent implements OnInit {
       if (data.persona._id == ''){
         this.TitleText = 'Nueva';
         this.newPerson = true;
+        console.log(data.persona)
       }
 
       this._persona = {...data.persona};
@@ -141,11 +142,11 @@ export class EditPersonaComponent implements OnInit {
 
   onDeleteClicked(){
     this.toastService.confirmation('Vas a eliminar la información de esta persona', (event, response) => {
-      if(response == 0){
+      if(response == 1){
         this.personasService.deletePersona$(this._persona._id).subscribe(()=>{
           this.toastService.success('Operación realizada con éxito');
           this.personasService.loadPersonasFromBackend();
-          window.location.reload();
+          this.onBackClicked();
         });
       }
     });

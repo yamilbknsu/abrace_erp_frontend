@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DireccionIdResolverService } from './components/direcciones/direccion-resolver.service';
 import { DireccionesComponent } from './components/direcciones/direcciones.component';
+import { EditSelfUserComponent } from './components/edit-self-user/edit-self-user.component';
 import { LogInScreenComponent } from './components/log-in-screen/log-in-screen.component';
 import { MainViewComponent } from './components/main-view/main-view.component';
 
@@ -16,6 +17,10 @@ const routes: Routes = [
      {
       path: 'personas',
       loadChildren: () => import('./personas/personas.module').then(m => m.PersonasModule)
+     },
+     {
+      path: 'arrendatarios',
+      loadChildren: () => import('./arrendatarios/arrendatarios.module').then(m => m.ArrendatariosModule)
      },
      {
        path: 'direccion',
@@ -36,6 +41,14 @@ const routes: Routes = [
       path: 'acciones',
       loadChildren: () => import('./acciones/acciones.module').then(m => m.AccionesModule)
      },
+     {
+      path: 'usuarios',
+      loadChildren: () => import('./usuarios/usuarios.module').then(m => m.UsuariosModule)
+     },
+     {
+      path: 'changepassword',
+      component: EditSelfUserComponent,
+     }
    ]},
   { path: '',   redirectTo: '/login', pathMatch: 'full'}
 ];

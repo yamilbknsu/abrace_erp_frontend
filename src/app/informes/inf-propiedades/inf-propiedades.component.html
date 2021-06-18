@@ -7,4 +7,4 @@
 <div class='scrolled-section' *ngIf='!showPdf'>
   <app-table-sorter [headers]='tableheaders' [data]='tableData' (sorted)='sortData($event)'></app-table-sorter>
 </div>
-<ng2-pdfjs-viewer style='flex:1;' #pdfViewer></ng2-pdfjs-viewer>
+<ng2-pdfjs-viewer locale='es-ES' [openFile]='false' [viewBookmark]='false' style='flex:1;' #pdfViewer></ng2-pdfjs-viewer>

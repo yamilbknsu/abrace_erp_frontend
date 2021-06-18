@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -13,12 +13,15 @@ import { SearchBarService } from 'src/app/services/serach-bar.service';
 })
 export class PersonasComponent implements OnInit, OnDestroy {
 
+  @Input() isArrendatarios = false;
+
   personas$: BehaviorSubject<Persona[]> = new BehaviorSubject<Persona[]>([]);
   statusText: string;
 
   searchText: string = '';
 
   routerSubscription;
+  querySubscription;
 
   constructor(private personaService: PersonasService,private router: Router,
     private route: ActivatedRoute, private searchBarService: SearchBarService) {
@@ -35,11 +38,19 @@ export class PersonasComponent implements OnInit, OnDestroy {
           }
         }
       });
+
+      this.querySubscription = this.route.queryParams.subscribe(params => {
+        if (params['ismandante']){
+          this.isArrendatarios = params['ismandante'] == 'false'
+        }
+      });
     }
 
   ngOnInit(): void {
     this.personaService.loadPersonasFromBackend();
-    this.personas$ =  this.personaService.getPersonas();
+    this.personaService.getPersonas().pipe(
+      map(personas => personas.filter(p => p.ismandante == !this.isArrendatarios))
+      ).subscribe(personas => this.personas$.next(personas));
     //this.personaService.getPersonas().pipe(
     //  map(results => results.sort((a,b) => a.nombre < b.nombre ? -1 : 1))
     //).subscribe(personas => this.personas$.next(personas));

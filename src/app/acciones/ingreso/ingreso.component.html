@@ -26,7 +26,7 @@
 </div>
 
 <div [ngStyle]='{"display": showPdf ? "flex" : "none"}' style='flex:1;'>
-    <ng2-pdfjs-viewer style='flex:1; margin-top: 10px;' #pdfViewer></ng2-pdfjs-viewer>
+    <ng2-pdfjs-viewer locale='es-ES' [openFile]='false' [viewBookmark]='false' style='flex:1; margin-top: 10px;' #pdfViewer></ng2-pdfjs-viewer>
 </div>
 
 <div class="flex-column" style='flex: 1;' *ngIf='!showPdf'>

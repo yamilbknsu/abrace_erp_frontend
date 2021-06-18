@@ -405,6 +405,26 @@ a.undecorated{
     background-color: #ca9a14;
 }
 
+.blue-button{
+    background-color: #196be6;
+    /*border-radius: 10px;*/
+    font-weight: 500;
+    color: white;
+    padding-left: 12px;
+    padding-right: 12px;
+
+    line-height: 35px;
+    display: inline-block;
+    padding-right: 22px;
+    padding-left: 22px;
+
+    cursor: pointer;
+}
+
+.blue-button:hover{
+    background-color: #4989e9;
+}
+
 #informe-container{
     display: flex;
     flex-direction: column;

@@ -1,6 +1,11 @@
 {
   "name": "erpbase",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Sistema de gestión para corredores de propiedades",
+  "author": {
+    "name": "Yamil Essus",
+    "email": "yam13es@gmail.com"
+  },
   "main": "main.js",
   "scripts": {
     "ng": "ng",
@@ -10,7 +15,10 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "electron": "electron .",
-    "start:electron": "ng build --base-href ./ && electron ."
+    "start:electron": "ng build --base-href ./ && electron .",
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder -m",
+    "dist:32": "electron-builder --ia32"
   },
   "private": true,
   "dependencies": {
@@ -43,6 +51,7 @@
     "@types/node": "~14.11.2",
     "codelyzer": "^6.0.0",
     "electron": "^10.4.0",
+    "electron-builder": "^22.10.5",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~5.2.2",
@@ -54,5 +63,30 @@
     "ts-node": "~9.0.0",
     "tslint": "~6.1.2",
     "typescript": "~4.0.3"
+  },
+  "build": {
+    "appId": "com.electron.ye.erpabrace",
+    "productName": "Abrace Sistema de gestion",
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "directories": {
+      "output": "output-builder"
+    }
   }
 }

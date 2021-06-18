@@ -40,9 +40,9 @@ export class CierremesComponent implements OnInit {
 
     //this.route.data.subscribe(data => {
     //});
-
-    this.parametrosService.loadIPCFromBackend()
-        .subscribe(ipc => this.ipc = ipc[0].values);
+    this.ipc = [{}]
+    //this.parametrosService.loadIPCFromBackend()
+    //    .subscribe(ipc => {if(ipc.values.length == 0) this.ipc = ipc[0].values});
   }
 
   fechaChange(){
@@ -58,7 +58,7 @@ export class CierremesComponent implements OnInit {
       //console.log(this.fecha.toDate());
       this.accionesService.loadCierresMes({fecha: this.fecha.toDate()})
       .subscribe(data => {
-        console.log(data);
+        //console.log(data);
         this.cargandoReajustes = false;
 
         data.map(cierre => {
@@ -142,7 +142,7 @@ export class CierremesComponent implements OnInit {
               else if(element.contrato.tiemporeajuste == 'Semestral') reajuste_interval = 6;
               else if(element.contrato.tiemporeajuste == 'Anual') reajuste_interval = 12;
 
-              var valor_reajuste = Math.round(this.propiedadesService.calcularReajuste(this.fecha, reajuste_interval, this.ipc) * 1000000) / 1000000
+              //var valor_reajuste = Math.round(this.propiedadesService.calcularReajuste(this.fecha, reajuste_interval, this.ipc) * 1000000) / 1000000
               var valor_final_reajuste = 0;
 
               //if(reajuste_diff >= 0){

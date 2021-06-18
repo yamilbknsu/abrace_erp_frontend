@@ -1,0 +1,78 @@
+<div class="flex-row" style='justify-content: space-between;'>
+    <div class="flex-column">
+        <p class='section-content'>Nombre</p>
+        <input type="text" [(ngModel)]='_usuario.displayname' style='width:220px;'>
+    
+        <p class='section-content' style='margin-top: 15px;'>Nombre de usuario</p>
+        <input type="text" [(ngModel)]='_usuario.username' style='width:220px;'>
+    
+        <p class='section-content' style='margin-top: 15px;'>Encabezado informes linea 1</p>
+        <input type="text" [(ngModel)]='_usuario.inflinea1' style='width:320px;'>
+        <p class='section-content' style='margin-top: 15px;'>Encabezado informes linea 2</p>
+        <input type="text" [(ngModel)]='_usuario.inflinea2' style='width:320px;'>
+    </div>
+    
+    <div class="flex-column">
+        <p class='section-content'>Email</p>
+        <input type="text" [(ngModel)]='_usuario.email' style='width:220px;'>
+    
+        <p *ngIf='!nuevo' class='section-content' style='margin-top: 25px;'>Creado el</p>
+        <p *ngIf='!nuevo' class='section-content'>{{formatDate(_usuario.creationDate)}}</p>
+
+        
+
+        <div class="flex-column" *ngIf='nuevo' style='margin-top: 15px;'>
+            <p class='section-content'>Contraseña</p>
+            <input type="password" [(ngModel)]='new_pass' style='width:220px;'>
+            <p class='section-content' style='margin-top: 10px;'>Repetir Contraseña</p>
+            <input type="password" [(ngModel)]='new_pass_repeat' style='width:220px;'>
+
+            <div class="flex-row" style='justify-content: flex-end; margin-top: 50px;'>
+                <div class="green-button" (click)='onCreateUser()'>
+                    Guardar
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex-column" style='justify-content: space-between;'>
+        <div class="flex-column" *ngIf='!self && !nuevo'>
+            <div class="flex-row" style='justify-content: flex-end; margin-top: 10px;'>
+                <div class="red-button" (click)='onDeleteuser()'>
+                    Eliminar
+                </div>
+            </div>
+        
+            <div class="flex-row" style='justify-content: flex-end; margin-top: 25px;'>
+                <div class="blue-button" (click)='reiniciarContrasena()'>
+                    Reiniciar contraseña
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-column" *ngIf='self && !nuevo'>
+            <p class='section-title' style='margin-top: 15px;'>Cambiar contraseña</p>
+            <p class='section-content'>Nueva contraseña</p>
+            <input type="password" [(ngModel)]='new_pass' style='width:320px;'>
+            <p class='section-content' style='margin-top: 10px;'>Repetir nueva contraseña</p>
+            <input type="password" [(ngModel)]='new_pass_repeat' style='width:320px;'>
+        
+            <div class="flex-row" style='justify-content: flex-end; margin-top: 25px; margin-bottom: 10px;'>
+                <div class="blue-button" (click)='cambiarContrasena()'>
+                    Cambiar contraseña
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-row" style='justify-content: flex-end;' *ngIf='!nuevo'>
+            <div class="green-button" (click)='onGuardar()'>
+                Guardar
+            </div>
+        </div>
+        <div class="flex-row" style='justify-content: flex-end; margin-top: 50px;' *ngIf='self'>
+            <div class="blue-button" (click)='logout()'>
+                Cerrar Sesion
+            </div>
+        </div>
+    </div>
+</div>

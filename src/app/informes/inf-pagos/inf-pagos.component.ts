@@ -59,7 +59,7 @@ export class InfPagosComponent implements OnInit {
       if(this.selectedContrato){
         this.selectedContrato.pagos = this.selectedContrato.pagos.sort(this.sortDateReverse);
         this.selectedContrato.pagos = this.selectedContrato.pagos.map(pago => {
-          pago.formatedFecha = this.formatDate(pago.fechaemision);
+          pago.formatedFecha = this.formatDate(pago.fechapago);
           return pago
         });
         //this.instrucciones = this.selectedContrato.instrucciones;

@@ -205,7 +205,7 @@ export class EditMandatoComponent implements OnInit {
   onNewClicked(){
     if(this.mandatos$.value[0] && !this.mandatos$.value[0].fechaTermino){
        this.toastService.confirmation('¿Deseas establecer la fecha de termino del último mandato al dia de hoy?', (event, response) => {
-          if(response == 0){
+          if(response == 1){
             var mandatoAux = {...this.mandatos$.value[0]};
             mandatoAux.fechaTermino = new Date();
             this.propiedadService.updateMandato$(mandatoAux).subscribe(() => {
@@ -296,7 +296,7 @@ export class EditMandatoComponent implements OnInit {
 
   deleteMandato(id){
     this.toastService.confirmation('Deseas eliminar este mandato?', (event, response) => {
-      if(response == 0){
+      if(response == 1){
         this.queryService.executeDeleteQuery('delete', 'mandatos', {}, {id})
             .pipe(
               // Catch a Forbidden acces error (return to login).

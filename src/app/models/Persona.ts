@@ -11,6 +11,11 @@ export class Persona{
     dirComercial: string = '';
     telefonos: Array<string> = [];
     emails: Array<string> = [];
+    ismandante: Boolean;
     personalidad: string = 'Natural';
     representante: any = {};
+
+    constructor(ismandante=true){
+        this.ismandante = ismandante;
+    }
 }

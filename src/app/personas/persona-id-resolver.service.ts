@@ -17,8 +17,9 @@ export class PersonaIdResolverService implements Resolve<Persona> {
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Persona> {
     const id = route.queryParams['id'];
+    const isMandante = route.queryParams['ismandante'] ? (route.queryParams['ismandante'] == "true") : true;
 
-    if (id == 'new') return of(new Persona());
+    if (id == 'new') return of(new Persona(isMandante));
 
     return this.personasService.getPersona(id).pipe(
       take(1),

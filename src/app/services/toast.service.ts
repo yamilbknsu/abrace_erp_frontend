@@ -36,7 +36,7 @@ export class ToastService {
   }
 
   confirmation(message: string, callback){
-    this.ipc.send('confirmation-message', {title: '¿Estás seguro?', buttons:['Si', 'Cancelar',], type: "question", message});
+    this.ipc.send('confirmation-message', {title: '¿Estás seguro?', buttons:['Cancelar','Si'], type: "question", message});
     this.ipc.once('confirmation-response', callback);
   }
 

@@ -64,7 +64,7 @@ export class LogInComponent implements OnInit {
     this.error = '';
 
     this.route.queryParams.subscribe(params => {
-      this.error = params['expired'] ? 'Sesion expirada' : '';
+      this.error = params['expired'] == true ? 'Sesion expirada' : '';
     });
 
     this.propiedadesService.propiedades$ = new BehaviorSubject<Propiedad[]>([]);
@@ -72,7 +72,7 @@ export class LogInComponent implements OnInit {
   }
 
   onClickLogin(){
-    console.log('Attempting log in with crentials', this.username, this.password);
+    //console.log('Attempting log in with crentials', this.username, this.password);
     this.userService.attemptLogin(this.username, this.password)
         .subscribe(
           res => {
