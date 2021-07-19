@@ -35,68 +35,19 @@ export class PropiedadesService {
     // Get an Observable from the response of the backend
     return this.queryService.executePostQuery('update', 'propiedades', this.cleanPropiedad(propiedad), {
       id: propiedad._id
-    }).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403) {
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        } else {
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-            message += (err.error.details ? err.error.details[0].message : err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    })
   }
 
   createPropiedad$(propiedad: Propiedad): Observable < any > {
     // Get an Observable from the response of the backend
-    return this.queryService.executePostQuery('write', 'propiedades', this.cleanPropiedad(propiedad), {}).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403) {
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        } else {
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-            message += (err.error.details ? err.error.details[0].message : err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    return this.queryService.executePostQuery('write', 'propiedades', this.cleanPropiedad(propiedad), {})
   }
 
   loadPropiedadesFromBackend() {
     // Get an Observable from the response of the backend
     this.queryService.executeGetQuery('read', 'propiedades', {}, {}).pipe(
         // Add DireccionStr
-        map(data => this.joinPropiedadData(data)),
-
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403) {
-            console.log('Forbidden access');
-            this.router.navigate([{
-              outlets: {
-                primary: 'login'
-              }
-            }], {
-              queryParams: {
-                expired: true
-              }
-            });
-          };
-          return EMPTY;
-        })
+        map(data => this.joinPropiedadData(data).sort((a,b) => a.uId > b.uId ? 1 : -1))
       )
       // And subscribe to it
       .subscribe(res => this.propiedades$.next(res));
@@ -106,23 +57,7 @@ export class PropiedadesService {
     // Get an Observable from the response of the backend
     return this.queryService.executeDeleteQuery('delete', 'propiedades', {}, {
       id
-    }).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403) {
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        } else {
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-            message += (err.error.details ? err.error.details[0].message : err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    })
   }
 
 
@@ -175,23 +110,7 @@ export class PropiedadesService {
     // Get an Observable from the response of the backend
     return this.queryService.executePostQuery('update', 'mandatos', this.cleanMandato(mandato), {
       id: mandato._id
-    }).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403) {
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        } else {
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-            message += (err.error.details ? err.error.details[0].message : err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    })
   }
 
   cleanMandato(mandato) {
@@ -202,30 +121,7 @@ export class PropiedadesService {
     // Get an Observable from the response of the backend
     return this.queryService.executeGetQuery('read', 'contratos', {}, {
       propiedad: propiedadID
-    }).pipe(
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403) {
-          console.log('Forbidden access');
-          this.router.navigate([{
-            outlets: {
-              primary: 'login'
-            }
-          }], {
-            queryParams: {
-              expired: true
-            }
-          });
-        };
-        return EMPTY;
-      })
-    )
-    // And subscribe to it
-    //.subscribe(res => {
-    //  if(res && res?.length){
-    //    this.contratos$.next(res.sort((a,b) => (new Date(a.fechacontrato) > new Date(b.fechacontrato)) ? -1 : 1))
-    //  }
-    //});
+    })
   }
 
   getContrato(id) {
@@ -238,24 +134,7 @@ export class PropiedadesService {
     // Get an Observable from the response of the backend
     return this.queryService.executeGetQuery('read', 'boletas', {}, {
       contrato: contratoID
-    }).pipe(
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403) {
-          console.log('Forbidden access');
-          this.router.navigate([{
-            outlets: {
-              primary: 'login'
-            }
-          }], {
-            queryParams: {
-              expired: true
-            }
-          });
-        };
-        return EMPTY;
-      })
-    )
+    })
   }
 
   computeNextBoleta(contrato, lastBoleta) {
@@ -276,91 +155,23 @@ export class PropiedadesService {
   }
 
   writeBoleta(boleta) {
-    return this.queryService.executePostQuery('write', 'boletas', boleta, {})
-      .pipe(
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403) {
-            console.log('Forbidden access');
-            this.router.navigate([{
-              outlets: {
-                primary: 'login'
-              }
-            }], {
-              queryParams: {
-                expired: true
-              }
-            });
-          };
-          return EMPTY;
-        })
-      );
+    return this.queryService.executePostQuery('write', 'boletas', boleta, {});
   }
 
   updateBoleta(boleta) {
     return this.queryService.executePostQuery('update', 'boletas', boleta, {id: boleta._id})
-      .pipe(
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403) {
-            console.log('Forbidden access');
-            this.router.navigate([{
-              outlets: {
-                primary: 'login'
-              }
-            }], {
-              queryParams: {
-                expired: true
-              }
-            });
-          };
-          return EMPTY;
-        })
-      );
   }
 
   updateContrato(contrato): Observable < any > {
     // Get an Observable from the response of the backend
     return this.queryService.executePostQuery('update', 'contratos', this.cleanContrato(contrato), {
       id: contrato._id
-    }).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403) {
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        } else {
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-            message += (err.error.details ? err.error.details[0].message : err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    })
   }
 
   createContrato(contrato): Observable < any > {
     // Get an Observable from the response of the backend
-    return this.queryService.executePostQuery('write', 'contratos', this.cleanContrato(contrato), {}).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403) {
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        } else {
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-            message += (err.error.details ? err.error.details[0].message : err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    return this.queryService.executePostQuery('write', 'contratos', this.cleanContrato(contrato), {})
   }
 
   closeContrato(id, fecha) {
@@ -368,23 +179,7 @@ export class PropiedadesService {
     return this.queryService.executePostQuery('update', 'closecontrato', {}, {
       id,
       fechatermino: fecha
-    }).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403) {
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        } else {
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-            message += (err.error.details ? err.error.details[0].message : err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    })
   }
 
   cleanContrato(contrato) {
@@ -397,44 +192,12 @@ export class PropiedadesService {
     return this.queryService.executeDeleteQuery('delete', 'contratos', {}, {
         id
       })
-      .pipe(
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403) {
-            this.toastService.error('No tienes permiso para realizar esta acción.')
-          } else {
-            console.log(err)
-            var message = err.status + ' ';
-            if (err.error)
-              message += (err.error.details ? err.error.details[0].message : err.error);
-            this.toastService.error('Error desconocido. ' + message)
-
-          }
-          return EMPTY;
-        })
-      )
   }
 
   deleteBoletas(contratoid) {
     return this.queryService.executeDeleteQuery('delete', 'boletas', {}, {
         contratoid
       })
-      .pipe(
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403) {
-            this.toastService.error('No tienes permiso para realizar esta acción.')
-          } else {
-            console.log(err)
-            var message = err.status + ' ';
-            if (err.error)
-              message += (err.error.details ? err.error.details[0].message : err.error);
-            this.toastService.error('Error desconocido. ' + message)
-
-          }
-          return EMPTY;
-        })
-      )
   }
 
   writeDireccionStr(prop) {
@@ -473,29 +236,11 @@ export class PropiedadesService {
   }
 
   loadIngresosEgresosPropiedad(propiedad, fecha){
-    return this.queryService.executeGetQuery('read', 'ingresosegresospropiedad', {}, {propiedad, fecha}).pipe(  
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    );
+    return this.queryService.executeGetQuery('read', 'ingresosegresospropiedad', {}, {propiedad, fecha});
   }
 
   loadSaldoAnteriorPago(propiedad){
-    return this.queryService.executeGetQuery('read', 'saldoanteriorpago', {}, {propiedad}).pipe(  
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    );
+    return this.queryService.executeGetQuery('read', 'saldoanteriorpago', {}, {propiedad});
   }
 
 
@@ -503,46 +248,14 @@ export class PropiedadesService {
     // Get an Observable from the response of the backend
     return this.queryService.executeDeleteQuery('delete', 'ingresos', {}, {
       id
-    }).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403) {
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        } else {
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-            message += (err.error.details ? err.error.details[0].message : err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    })
   }
 
   deleteEgreso(id) {
     // Get an Observable from the response of the backend
     return this.queryService.executeDeleteQuery('delete', 'egresos', {}, {
       id
-    }).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403) {
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        } else {
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-            message += (err.error.details ? err.error.details[0].message : err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    })
   }
 
 }

@@ -33,16 +33,7 @@ export class ParametrosService {
 
   loadParametroFromBackend(concept){
     // Get an Observable from the response of the backend and subscribe to it
-    return this.queryService.executeGetQuery('read', 'parametros', {}, {concept}).pipe(
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    )
+    return this.queryService.executeGetQuery('read', 'parametros', {}, {concept})
     
   }
 
@@ -108,58 +99,22 @@ export class ParametrosService {
 
   loadIPCFromBackend(){
     // Get an Observable from the response of the backend and subscribe to it
-    return this.queryService.executeGetQuery('read', 'userparam', {}, {concept: 'ipc'}).pipe(
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    )
+    return this.queryService.executeGetQuery('read', 'userparam', {}, {concept: 'ipc'})
   }
 
   saveIPCToBackend(ipc){
     // Get an Observable from the response of the backend and subscribe to it
-    return this.queryService.executePostQuery('update', 'userparam', ipc, {id: ipc._id}).pipe(
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    )
+    return this.queryService.executePostQuery('update', 'userparam', ipc, {id: ipc._id})
   }
 
   loadUFFromBackend(){
     // Get an Observable from the response of the backend and subscribe to it
-    return this.queryService.executeGetQuery('read', 'userparam', {}, {concept: 'uf'}).pipe(
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    )
+    return this.queryService.executeGetQuery('read', 'userparam', {}, {concept: 'uf'})
   }
 
   saveUFToBackend(uf){
     // Get an Observable from the response of the backend and subscribe to it
-    return this.queryService.executePostQuery('update', 'userparam', uf, {id: uf._id}).pipe(
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    )
+    return this.queryService.executePostQuery('update', 'userparam', uf, {id: uf._id})
   }
 
 
@@ -168,23 +123,7 @@ export class ParametrosService {
     regionesObjectCopy.values[0].attributes = regiones;
 
     // Get an Observable from the response of the backend
-    return this.queryService.executePostQuery('update', 'parametros', regionesObjectCopy, {concept: 'regiones'}).pipe(
-    
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        }else{
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-             message += (err.error.details ? err.error.details[0].message: err.error);
-          this.toastService.error('Error desconocido. ' + message)
-        
-        }
-        return EMPTY;
-      })
-    )
+    return this.queryService.executePostQuery('update', 'parametros', regionesObjectCopy, {concept: 'regiones'})
   }
 
   updateComunas$(comunas: Array<string>){//: Observable<any>{
@@ -192,23 +131,7 @@ export class ParametrosService {
     comunasObjectCopy.values[0].attributes = comunas;
 
     // Get an Observable from the response of the backend
-    return this.queryService.executePostQuery('update', 'parametros', comunasObjectCopy, {concept: 'comunas'}).pipe(
-    
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        }else{
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-             message += (err.error.details ? err.error.details[0].message: err.error);
-          this.toastService.error('Error desconocido. ' + message)
-        
-        }
-        return EMPTY;
-      })
-    )
+    return this.queryService.executePostQuery('update', 'parametros', comunasObjectCopy, {concept: 'comunas'})
   }
 
   updateBancos$(bancos: Array<string>){//: Observable<any>{
@@ -216,23 +139,7 @@ export class ParametrosService {
     bancosObjectCopy.values[0].attributes = bancos;
 
     // Get an Observable from the response of the backend
-    return this.queryService.executePostQuery('update', 'parametros', bancosObjectCopy, {concept: 'bancos'}).pipe(
-    
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        }else{
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-             message += (err.error.details ? err.error.details[0].message: err.error);
-          this.toastService.error('Error desconocido. ' + message)
-        
-        }
-        return EMPTY;
-      })
-    )
+    return this.queryService.executePostQuery('update', 'parametros', bancosObjectCopy, {concept: 'bancos'})
   }
 
 

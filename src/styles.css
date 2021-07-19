@@ -72,6 +72,11 @@ p{
 }
 
 /* General elements */
+
+dp-date-picker.dp-material .dp-picker-input{
+    font-size: 15px;
+}
+
 .component-card{
     max-height: 90%;
     margin:32px;
@@ -150,7 +155,7 @@ ng-select{
 
 .section-title{
     font-family: 'Segoe UI', sans-serif;
-    font-size: 17px;
+    font-size: 19px;
     font-weight: 700;
     color: #585858;
 
@@ -159,7 +164,7 @@ ng-select{
 
 .section-subtitle{
     font-family: 'Segoe UI', sans-serif;
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 700;
     color: #585858;
     
@@ -169,14 +174,14 @@ ng-select{
 
 .section-subtitle-disabled{
     font-family: 'Segoe UI', sans-serif;
-    font-size: 13px;
+    font-size: 16px;
     color: #B5B5B5;
     margin-bottom: 5px;
 }
 
 .section-subtitle-small{
     font-family: 'Segoe UI', sans-serif;
-    font-size: 13px;
+    font-size: 16px;
     color: #585858;
     margin-bottom: 5px;
 }
@@ -185,7 +190,7 @@ ng-select{
     margin: 0;
     padding: 0;
 
-    font-size: 14px;
+    font-size: 17px;
     font-weight: 400;
 }
 
@@ -223,7 +228,7 @@ ng-select{
 /************************/
 
 input[type=text]:not(.input-text-login){
-    font-size: 16px;
+    font-size: 18px;
     border:none;
     border: solid #CECECE 1px;
     line-height: 28px;
@@ -553,6 +558,10 @@ table{
 
 .small .dp-picker-input{
     max-width: 100px;
+}
+
+.dp-picker-input{
+    font-size: 15px !important;
 }
 
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */

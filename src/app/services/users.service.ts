@@ -5,6 +5,7 @@ import { AppSettings }from '../appSettings';
 import * as moment from "moment";
 
 import { User } from '../models/User';
+import { QueryService } from './query.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,16 +13,22 @@ import { User } from '../models/User';
 export class UsersService {
 
   backendUrl: string = AppSettings.API_ENDPOINT + 'auth/';
+  //users = [];
 
-  constructor(private http:HttpClient) { }
+  constructor(private http:HttpClient, private queryService: QueryService) { }
 
   attemptLogin(username: string, pwd: string):Observable<any>{
     return this.http.post<any>(`${this.backendUrl}login`, {"username":username, "password":pwd})
   }
 
+  loadUsers(){
+    return this.queryService.executeGetQuery('auth', 'users', {}, {})
+        //.subscribe(users => {console.log(users); this.users = users})
+  }
+
   public setSession(authResult) {
     const expiresAt = moment().add(authResult.expiresIn,'second');
-
+    
     localStorage.setItem('id_token', authResult.token);
     localStorage.setItem("expires_at", JSON.stringify(expiresAt.valueOf()));
 
@@ -30,6 +37,10 @@ export class UsersService {
     localStorage.setItem('permissions', authResult.permissions);
     localStorage.setItem('inflinea1', authResult.inflinea1);
     localStorage.setItem('inflinea2', authResult.inflinea2);
+
+    // Set variables related to authentication
+    localStorage.setItem('real_id', authResult.userid);
+    localStorage.setItem('current_userid', authResult.userid);
   }
   
   public clearSession(){

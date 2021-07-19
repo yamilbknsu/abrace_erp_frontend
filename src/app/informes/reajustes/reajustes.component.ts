@@ -31,12 +31,6 @@ export class InfReajustesComponent implements OnInit {
     this.date = moment().locale('es').startOf('month');
     
     this.queryService.executeGetQuery('read', 'infreajustes', {}, {})
-                    .pipe(  
-                      catchError(err => {
-                        if (err.status == 403){
-                          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-                        };
-                        return EMPTY;}))
         .subscribe(data => {
           this.reajustes = data.map(e =>{
             e.propiedad = this.propiedadService.writeDireccionStr(e.propiedad);

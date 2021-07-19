@@ -211,21 +211,7 @@ export class EditMandatoComponent implements OnInit {
             this.propiedadService.updateMandato$(mandatoAux).subscribe(() => {
 
               this.queryService.executePostQuery('write', 'mandatos', this.newMandato(), {})
-                  .pipe(
-                    catchError(err => {
-                      if (err.status == 403){
-                        this.toastService.error('No tienes permiso para realizar esta acción.')
-                      }else{
-                        console.log(err)
-                        var message = err.status + ' ';
-                        if (err.error)
-                           message += (err.error.details ? err.error.details[0].message: err.error);
-                        this.toastService.error('Error desconocido. ' + message)
-              
-                      }
-                      return EMPTY;
-                    })
-                  ).subscribe(() => {
+                  .subscribe(() => {
                     this.toastService.success('Mandato creado con éxito');
                     this.loadMandatos();
                   });
@@ -234,21 +220,7 @@ export class EditMandatoComponent implements OnInit {
        });
     }else{
       this.queryService.executePostQuery('write', 'mandatos', this.newMandato(), {})
-                  .pipe(
-                    catchError(err => {
-                      if (err.status == 403){
-                        this.toastService.error('No tienes permiso para realizar esta acción.')
-                      }else{
-                        console.log(err)
-                        var message = err.status + ' ';
-                        if (err.error)
-                           message += (err.error.details ? err.error.details[0].message: err.error);
-                        this.toastService.error('Error desconocido. ' + message)
-              
-                      }
-                      return EMPTY;
-                    })
-                  ).subscribe(() => {
+                  .subscribe(() => {
                     this.toastService.success('Mandato creado con éxito');
                     this.loadMandatos();
                   });
@@ -298,22 +270,7 @@ export class EditMandatoComponent implements OnInit {
     this.toastService.confirmation('Deseas eliminar este mandato?', (event, response) => {
       if(response == 1){
         this.queryService.executeDeleteQuery('delete', 'mandatos', {}, {id})
-            .pipe(
-              // Catch a Forbidden acces error (return to login).
-              catchError(err => {
-                if (err.status == 403){
-                  this.toastService.error('No tienes permiso para realizar esta acción.')
-                }else{
-                  console.log(err)
-                  var message = err.status + ' ';
-                  if (err.error)
-                    message += (err.error.details ? err.error.details[0].message: err.error);
-                  this.toastService.error('Error desconocido. ' + message)
-
-                }
-                return EMPTY;
-              })
-            ).subscribe(() => {
+            .subscribe(() => {
               this.toastService.success('Operación realizada con éxito');
               this.loadMandatos();
             });

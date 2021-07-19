@@ -65,7 +65,7 @@ export class LiquidacionComponent implements OnInit {
         .subscribe(uf => {console.log(uf[0].values); this.uf = uf[0].values});
 
     this.route.data.subscribe(data => {
-      this.propiedades = data.propiedades;
+      this.propiedades = data.propiedades.sort((a,b) => a.uId > b.uId ? 1 : -1);
     });
 
     this.selectedPropiedadId$.subscribe(id => {

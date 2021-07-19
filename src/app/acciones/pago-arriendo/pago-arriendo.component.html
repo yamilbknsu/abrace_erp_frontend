@@ -114,7 +114,7 @@
             </ng-template>
         </div> 
         <div class="flex-row" style='justify-content: center; margin-top: 10px;' *ngIf='!selectedPago'>
-            <div class="grey-button small" style='font-weight: 400; margin-right: 20px;' (click)='addCargo()'>
+            <div class="grey-button small" *ngIf='cargos.length < 6' style='font-weight: 400; margin-right: 20px;' (click)='addCargo()'>
                 Agregar
             </div>
 
@@ -136,7 +136,7 @@
             </div>            
         </div> 
         <div class="flex-row" style='justify-content: center; margin-top: 10px;' *ngIf='!selectedPago'>
-            <div class="grey-button small" style='font-weight: 400; margin-right: 20px;' (click)='addDescuento()'>
+            <div class="grey-button small" *ngIf="descuentos.length < 6" style='font-weight: 400; margin-right: 20px;' (click)='addDescuento()'>
                 Agregar
             </div>
 

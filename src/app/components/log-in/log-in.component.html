@@ -16,5 +16,5 @@
         </div>
     </form>    
 
-    <div @onErrorAnimation id="error" *ngIf="error.length > 0"><p>{{ error }}</p></div>
+    <div @onErrorAnimation id="error" *ngIf="error && error.length > 0"><p>{{ error }}</p></div>
 </div>

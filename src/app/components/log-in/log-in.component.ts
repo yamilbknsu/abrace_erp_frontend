@@ -64,7 +64,7 @@ export class LogInComponent implements OnInit {
     this.error = '';
 
     this.route.queryParams.subscribe(params => {
-      this.error = params['expired'] == true ? 'Sesion expirada' : '';
+      this.error = params['expired'] === 'true' ? 'Sesion expirada' : '';
     });
 
     this.propiedadesService.propiedades$ = new BehaviorSubject<Propiedad[]>([]);

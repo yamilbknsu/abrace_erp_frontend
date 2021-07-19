@@ -79,7 +79,7 @@
             </div>
         </div> 
         <div class="flex-row" style='justify-content: center; margin-top: 10px;' *ngIf='!liquidacionExists && selectedLiquidacion.fecha'>
-            <div class="grey-button small" style='font-weight: 400; margin-right: 20px;' (click)='addAbono()'>
+            <div class="grey-button small" *ngIf='selectedLiquidacion.abonos.length < 6' style='font-weight: 400; margin-right: 20px;' (click)='addAbono()'>
                 Agregar
             </div>
             <div class="red-button small" *ngIf='selectedLiquidacion.abonos.length > 0' style='font-weight: 400;' (click)='removeAbono()'>
@@ -127,7 +127,7 @@
             </div>
         </div> 
         <div class="flex-row" style='justify-content: center; margin-top: 5px;' *ngIf='!liquidacionExists && selectedLiquidacion.fecha'>
-            <div class="grey-button small" style='font-weight: 400; margin-right: 20px;' (click)='addCargo()'>
+            <div class="grey-button small" *ngIf='selectedLiquidacion.cargos.length < 6' style='font-weight: 400; margin-right: 20px;' (click)='addCargo()'>
                 Agregar
             </div>
     

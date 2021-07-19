@@ -35,16 +35,7 @@ export class DireccionesService {
     // Get an Observable from the response of the backend
     this.queryService.executeGetQuery('read', 'direcciones', {}, {}).pipe(
       // Add DireccionStr
-      map(data => data.map(direccion => ({...direccion, direccionStr: this.getDireccionStr(direccion)}))),
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
+      map(data => data.map(direccion => ({...direccion, direccionStr: this.getDireccionStr(direccion)})))
     )
     // And subscribe to it
     .subscribe(res => {this.direcciones$.next(res)});
@@ -53,66 +44,18 @@ export class DireccionesService {
   updateDireccion$(direccion: Direccion): Observable<any>{
     console.log(direccion)
     // Get an Observable from the response of the backend
-    return this.queryService.executePostQuery('update', 'direcciones', this.cleanDireccion(direccion), {id: direccion._id}).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        }else{
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-             message += (err.error.details ? err.error.details[0].message: err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    return this.queryService.executePostQuery('update', 'direcciones', this.cleanDireccion(direccion), {id: direccion._id})
   }
 
   createDireccion$(direccion: Direccion): Observable<any>{
     console.log(direccion)
     // Get an Observable from the response of the backend
-    return this.queryService.executePostQuery('write', 'direcciones', this.cleanDireccion(direccion), {id: direccion._id}).pipe(
-      
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        }else{
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-             message += (err.error.details ? err.error.details[0].message: err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    return this.queryService.executePostQuery('write', 'direcciones', this.cleanDireccion(direccion), {id: direccion._id})
   }
 
   deleteDireccion$(id){
     // Get an Observable from the response of the backend
-    return this.queryService.executeDeleteQuery('delete', 'direcciones', {}, {id}).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        }else{
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-             message += (err.error.details ? err.error.details[0].message: err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    return this.queryService.executeDeleteQuery('delete', 'direcciones', {}, {id})
   }
 
   cleanDireccion(direccion){

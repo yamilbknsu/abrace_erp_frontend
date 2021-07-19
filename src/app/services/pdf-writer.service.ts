@@ -60,7 +60,13 @@ export class PdfWriterService {
 
     var pageSize = doc.internal.pageSize;
 
-    doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', 50, 30, 60, 60);
+    doc.setFontSize(12);
+    doc.setFont("Roboto-Regular", "normal");
+    doc.setTextColor('black');
+    doc.text(this.usersService.getLineasInf()[0], 50, 50);
+    doc.text(this.usersService.getLineasInf()[1], 50, 70);
+    //doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', pageSize.getWidth() / 2 - 30, 20, 60, 60)
+    //doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', 50, 30, 60, 60);
     
     doc.setFontSize(18);
     doc.setTextColor('black');
@@ -126,7 +132,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
-            styles: {cellPadding: 2, fontSize: 10},
+            styles: {cellPadding: 2, fontSize: 12},
             columns: [
               { dataKey: 'concepto', header: '' },
               { dataKey: 'valor', header: '' },
@@ -147,7 +153,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
-            styles: {cellPadding: 2, fontSize: 10},
+            styles: {cellPadding: 2, fontSize: 12},
             columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             columns: [
               { dataKey: 'concepto', header: '' },
@@ -213,7 +219,14 @@ export class PdfWriterService {
 
     var startY = 180 + nestedTableHeight + tableDelta + 140;
 
-    doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', 50, startY + 30, 60, 60);
+    doc.setFontSize(12);
+    doc.setFont("Roboto-Regular", "normal");
+    doc.setTextColor('black');
+    doc.text(this.usersService.getLineasInf()[0], 50, startY + 50);
+    doc.text(this.usersService.getLineasInf()[1], 50, startY + 70);
+    //doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', pageSize.getWidth() / 2 - 30, startY + 20, 60, 60)
+
+    //doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', 50, startY + 30, 60, 60);
     
     doc.setFontSize(18);
     doc.setTextColor('black');
@@ -265,7 +278,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
-            styles: {cellPadding: 2, fontSize: 10},
+            styles: {cellPadding: 2, fontSize: 12},
             columns: [
               { dataKey: 'concepto', header: '' },
               { dataKey: 'valor', header: '' },
@@ -286,7 +299,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
-            styles: {cellPadding: 2, fontSize: 10},
+            styles: {cellPadding: 2, fontSize: 12},
             columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             columns: [
               { dataKey: 'concepto', header: '' },
@@ -361,7 +374,13 @@ export class PdfWriterService {
 
     var pageSize = doc.internal.pageSize;
 
-    doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', 50, 30, 60, 60);
+    doc.setFontSize(12);
+    doc.setFont("Roboto-Regular", "normal");
+    doc.setTextColor('black');
+    doc.text(this.usersService.getLineasInf()[0], 50, 50);
+    doc.text(this.usersService.getLineasInf()[1], 50, 70);
+    //doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', pageSize.getWidth() / 2 - 30, 20, 60, 60)
+    //doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', 50, 30, 60, 60);
     
     doc.setFontSize(18);
     doc.setTextColor('black');
@@ -438,7 +457,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
-            styles: {cellPadding: 2, fontSize: 10},
+            styles: {cellPadding: 2, fontSize: 12},
             columns: [
               { dataKey: 'concepto', header: '' },
               { dataKey: 'valor', header: '' },
@@ -456,7 +475,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
-            styles: {cellPadding: 2, fontSize: 10},
+            styles: {cellPadding: 2, fontSize: 12},
             columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             columns: [
               { dataKey: 'concepto', header: '' },
@@ -520,7 +539,13 @@ export class PdfWriterService {
 
     var startY = 180 + nestedTableHeight + tableDelta + 150;
 
-    doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', 50, startY + 30, 60, 60);
+    doc.setFontSize(12);
+    doc.setFont("Roboto-Regular", "normal");
+    doc.setTextColor('black');
+    doc.text(this.usersService.getLineasInf()[0], 50, startY + 50);
+    doc.text(this.usersService.getLineasInf()[1], 50, startY + 70);
+    //doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', pageSize.getWidth() / 2 - 30, startY + 20, 60, 60)
+    //doc.addImage('assets/icon/logoabrace.jpg', 'JPEG', 50, startY + 30, 60, 60);
     
     doc.setFontSize(18);
     doc.setTextColor('black');
@@ -574,7 +599,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
-            styles: {cellPadding: 2, fontSize: 10},
+            styles: {cellPadding: 2, fontSize: 12},
             columns: [
               { dataKey: 'concepto', header: '' },
               { dataKey: 'valor', header: '' },
@@ -592,7 +617,7 @@ export class PdfWriterService {
             margin: { left: data.cell.x + 2 },
             tableWidth: data.cell.width - 4,
             theme: 'plain',
-            styles: {cellPadding: 2, fontSize: 10},
+            styles: {cellPadding: 2, fontSize: 12},
             columnStyles: { concepto: { cellWidth: 'auto' }, valor: {halign: 'right'}},
             columns: [
               { dataKey: 'concepto', header: '' },

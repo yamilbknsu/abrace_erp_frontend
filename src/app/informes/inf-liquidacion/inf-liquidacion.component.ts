@@ -36,8 +36,8 @@ export class InfLiquidacionComponent implements OnInit {
     this.date = moment();
 
     this.route.data.subscribe(data => {
-      this.propiedades = data.propiedades;
-      console.log(this.propiedades)
+      this.propiedades = data.propiedades.sort((a,b) => a.uId > b.uId ? 1 : -1);
+      //console.log(this.propiedades)
     });
 
     this.selectedPropiedadId$.subscribe(id => {

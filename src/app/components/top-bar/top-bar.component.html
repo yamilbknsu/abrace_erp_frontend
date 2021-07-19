@@ -5,7 +5,15 @@
                                   padding-left: 5px;' [(ngModel)]='searchInput' (ngModelChange)='updateSearchService()'>
     </div>
     <div id="user-id-panel">
-        <p>{{displayname}}</p>
+        <ng-select [items]="users | async" 
+            bindLabel="displayname" 
+            bindValue="_id"
+            [(ngModel)]="selectedUser"
+            [clearable]='false'
+            (ngModelChange)='changeSelectedUser()'
+            style='width: 250px'>
+         </ng-select>
+        <!--<p>{{selectedUser}}</p>-->
         <div id="user-icon" [routerLink]='"./changepassword"'>
             <div id="user-svg" [inlineSVG]="'assets/icon/usuario.svg'"></div>
         </div>

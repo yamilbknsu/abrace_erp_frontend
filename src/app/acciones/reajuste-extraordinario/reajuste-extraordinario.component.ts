@@ -34,7 +34,7 @@ export class ReajusteExtraordinarioComponent implements OnInit {
           this.contratos = data.map(cont => {
             cont.propiedad = this.propiedadesService.writeDireccionStr(cont.propiedad);
             return cont;
-          });
+          }).sort((a,b) => a.propiedad.uId > b.propiedad.uId ? 1 : -1);
         });
   }
 

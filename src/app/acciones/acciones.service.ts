@@ -17,120 +17,39 @@ export class AccionesService {
   }
   
   loadCierresMes(params={}){
-    return this.queryService.executeGetQuery('read', 'cierresmes', {}, params).pipe(  
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403){
-            console.log('Forbidden access');
-            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-          };
-          return EMPTY;
-        })
-      );
+    return this.queryService.executeGetQuery('read', 'cierresmes', {}, params);
   }
 
   loadContratosCierre(date){
-    return this.queryService.executeGetQuery('read', 'contratoscierre', {}, {fecha: date}).pipe(  
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403){
-            console.log('Forbidden access');
-            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-          };
-          return EMPTY;
-        })
-      );
+    return this.queryService.executeGetQuery('read', 'contratoscierre', {}, {fecha: date});
   }
 
   loadPropiedadesPago(params={}){
-    return this.queryService.executeGetQuery('read', 'pagopropiedades', {}, params).pipe(  
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403){
-            console.log('Forbidden access');
-            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-          };
-          return EMPTY;
-        })
-      );
+    return this.queryService.executeGetQuery('read', 'pagopropiedades', {}, params);
   }
 
   writePago(pago){
-    return this.queryService.executePostQuery('write', 'pagos', pago, {}).pipe(  
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    );
+    return this.queryService.executePostQuery('write', 'pagos', pago, {});
   }
 
   loadPagosInforme(params={}){
-    return this.queryService.executeGetQuery('read', 'infpago', {}, params).pipe(  
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403){
-            console.log('Forbidden access');
-            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-          };
-          return EMPTY;
-        })
-      );
+    return this.queryService.executeGetQuery('read', 'infpago', {}, params);
   }
 
   loadLiquidaciones(params={}){
-    return this.queryService.executeGetQuery('read', 'liquidaciones', {}, params).pipe(  
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403){
-            console.log('Forbidden access');
-            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-          };
-          return EMPTY;
-        })
-      );
+    return this.queryService.executeGetQuery('read', 'liquidaciones', {}, params);
   }
 
   loadBoletasLiquidaciones(propiedad, fecha){
-    return this.queryService.executeGetQuery('read', 'boletasliquidacion', {}, {propiedad, fecha}).pipe(  
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403){
-            console.log('Forbidden access');
-            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-          };
-          return EMPTY;
-        })
-      );
+    return this.queryService.executeGetQuery('read', 'boletasliquidacion', {}, {propiedad, fecha});
   }
 
   writeLiquidacion(liquidacion){
-    return this.queryService.executePostQuery('write', 'liquidaciones', liquidacion, {}).pipe(  
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    );
+    return this.queryService.executePostQuery('write', 'liquidaciones', liquidacion, {});
   }
 
   loadLiquidacionesInforme(params={}){
-    return this.queryService.executeGetQuery('read', 'infliquidacion', {}, params).pipe(  
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403){
-            console.log('Forbidden access');
-            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-          };
-          return EMPTY;
-        })
-      );
+    return this.queryService.executeGetQuery('read', 'infliquidacion', {}, params);
   }
 
   sortByDate(a,b, reverse=false){
@@ -148,143 +67,46 @@ export class AccionesService {
   }
 
   loadIngresos(propiedadId){
-    return this.queryService.executeGetQuery('read', 'ingresos', {}, {propiedad: propiedadId}).pipe(  
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403){
-            console.log('Forbidden access');
-            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-          };
-          return EMPTY;
-        })
-      );
+    return this.queryService.executeGetQuery('read', 'ingresos', {}, {propiedad: propiedadId});
   }
 
   loadEgresos(propiedadId){
-    return this.queryService.executeGetQuery('read', 'egresos', {}, {propiedad: propiedadId}).pipe(  
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403){
-            console.log('Forbidden access');
-            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-          };
-          return EMPTY;
-        })
-      );
+    return this.queryService.executeGetQuery('read', 'egresos', {}, {propiedad: propiedadId});
   }
 
   writeEgreso(egreso){
-    return this.queryService.executePostQuery('write', 'egresos', egreso,{}).pipe(  
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    );
+    return this.queryService.executePostQuery('write', 'egresos', egreso,{});
   }
 
   writeIngreso(ingreso){
-    return this.queryService.executePostQuery('write', 'ingresos', ingreso, {}).pipe(  
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    );
+    return this.queryService.executePostQuery('write', 'ingresos', ingreso, {});
   }
 
   loadReajusteRentas(params={}){
-    return this.queryService.executeGetQuery('read', 'reajusterentas', {}, params).pipe(  
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    );
+    return this.queryService.executeGetQuery('read', 'reajusterentas', {}, params);
   }
 
   loadReajustesExtraordinarios(params={}){
-    return this.queryService.executeGetQuery('read', 'reajustesextraordinarios', {}, params).pipe(  
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    );
+    return this.queryService.executeGetQuery('read', 'reajustesextraordinarios', {}, params);
   }
 
   writeReajustesExtraordinarios(reajuste){
-    return this.queryService.executePostQuery('write', 'reajustesextraordinarios', reajuste, {}).pipe(  
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    );
+    return this.queryService.executePostQuery('write', 'reajustesextraordinarios', reajuste, {});
   }
 
   loadFechasLiqPagos(params={}){
-    return this.queryService.executeGetQuery('read', 'fechasliqpagos', {}, params).pipe(  
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
-    );
+    return this.queryService.executeGetQuery('read', 'fechasliqpagos', {}, params);
   }
 
   deleteReajustesExtraordinarios(id) {
     // Get an Observable from the response of the backend
     return this.queryService.executeDeleteQuery('delete', 'reajustesextraordinarios', {}, {
       id
-    }).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403) {
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        } else {
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-            message += (err.error.details ? err.error.details[0].message : err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    })
   }
 
   loadEstadoPagos(params={}){
-    return this.queryService.executeGetQuery('read', 'estadopagos', {}, params).pipe(  
-        // Catch a Forbidden acces error (return to login).
-        catchError(err => {
-          if (err.status == 403){
-            console.log('Forbidden access');
-            this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-          };
-          return EMPTY;
-        })
-      );
+    return this.queryService.executeGetQuery('read', 'estadopagos', {}, params);
   }
 
 }

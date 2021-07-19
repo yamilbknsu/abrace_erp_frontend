@@ -14,8 +14,8 @@ function createWindow () {
 
   //Create new window
   mainWindow = new BrowserWindow({
-    width: 1600 * screenRatio, //1600
-    height: 900 * screenRatio, // 900
+    width: 1800 * screenRatio, //1600
+    height: 950 * screenRatio, // 900
     useContentSize: true,
     webPreferences: {
       nodeIntegration: true,
@@ -79,7 +79,7 @@ ipcMain.on('confirmation-message', (event, args) => {
 
 ipcMain.on('file-saving-message', (event, args) => {
   dialog.showSaveDialog(args).then((response, checkboxChecked) => {
-    
+
     mainWindow.webContents.send('file-saving-response', response);
   })
 });

@@ -31,44 +31,12 @@ export class PersonasService {
   updatePersona$(persona: Persona): Observable<any>{
     console.log(persona)
     // Get an Observable from the response of the backend
-    return this.queryService.executePostQuery('update', 'personas', this.cleanPersona(persona), {id: persona._id}).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        }else{
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-             message += (err.error.details ? err.error.details[0].message: err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    return this.queryService.executePostQuery('update', 'personas', this.cleanPersona(persona), {id: persona._id})
   }
 
   createPersona$(persona: Persona): Observable<any>{
     // Get an Observable from the response of the backend
-    return this.queryService.executePostQuery('write', 'personas', this.cleanPersona(persona), {id: persona._id}).pipe(
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        }else{
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-             message += (err.error.details ? err.error.details[0].message: err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    return this.queryService.executePostQuery('write', 'personas', this.cleanPersona(persona), {id: persona._id})
   }
 
   loadPersonasFromBackend(){
@@ -77,16 +45,7 @@ export class PersonasService {
       // Add DireccionStr
       map(data => data.map(persona => {
         if(persona.dirParticularData) persona.dirParticularStr = this.direccionesService.getDireccionStr(persona.dirParticularData);
-        return persona})),
-
-      // Catch a Forbidden acces error (return to login).
-      catchError(err => {
-        if (err.status == 403){
-          console.log('Forbidden access');
-          this.router.navigate([{ outlets: { primary: 'login' }}], { queryParams: { expired: true } });
-        };
-        return EMPTY;
-      })
+        return persona}))
     )
     // And subscribe to it
     .subscribe(res => this.personas$.next(res.sort((a,b) => a.nombre > b.nombre ? 1 : -1)));
@@ -94,23 +53,7 @@ export class PersonasService {
 
   deletePersona$(id){
     // Get an Observable from the response of the backend
-    return this.queryService.executeDeleteQuery('delete', 'personas', {}, {id}).pipe(
-
-      // Catch a Forbidden acces error
-      catchError(err => {
-        if (err.status == 403){
-          this.toastService.error('No tienes permiso para realizar esta acción.')
-        }else{
-          console.log(err)
-          var message = err.status + ' ';
-          if (err.error)
-             message += (err.error.details ? err.error.details[0].message: err.error);
-          this.toastService.error('Error desconocido. ' + message)
-
-        }
-        return EMPTY;
-      })
-    )
+    return this.queryService.executeDeleteQuery('delete', 'personas', {}, {id})
   }
 
   cleanPersona(persona){
