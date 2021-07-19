@@ -82,9 +82,9 @@ export class EditUsuarioComponent implements OnInit {
   onCreateUser(){
     this._usuario.permissions = ['read-all', 'write-all', 'update-all', 'delete-all']
     this._usuario.password = this.new_pass;
+    if(this.new_pass != this.new_pass_repeat) return this.toastService.error('Las contraseñas no coinciden');
 
     this.queryService.executePostQuery('auth', 'register', this._usuario, {})
-        
     .subscribe(data =>
         {
           this.toastService.success('Operación realizada con éxito.');
