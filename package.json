@@ -30,7 +30,7 @@
     "@angular/platform-browser": "~11.2.3",
     "@angular/platform-browser-dynamic": "~11.2.3",
     "@angular/router": "~11.2.3",
-    "@ng-select/ng-select": "^5.1.0",
+    "@ng-select/ng-select": "^7.2.0",
     "jspdf": "^2.3.1",
     "jspdf-autotable": "^3.5.14",
     "moment": "^2.29.1",
