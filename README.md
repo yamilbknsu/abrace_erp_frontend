@@ -1,27 +1,20 @@
-# ERPbase
+# ERP System Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.0.
+This repo contains the code to build the front-end of an ERP system for a small real-state office developed using AngularJS and Electron (later compiled for windows and MacOS users). The project was delivered in July 2021, code was uploaded in March 2024 for preservation.
 
-## Development server
+## Screenshots
+All text in the screenshots (as well as most table and queries) is in Spanish
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+#### Main view (registered properties)
+![](images/main_view.png)
 
-## Code scaffolding
+#### Lease details
+![](images/lease_details.png)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Build
+#### Monthly freeze
+One of the requirements of the client was the ability to (manually) freeze balances after a month ended. This allowed them to account for unpayed periods but not overestimate inflation adjustments.
+![](images/freeze_month.png)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+#### PDF report generation UI
+![](images/pdf_report_generation.png)
